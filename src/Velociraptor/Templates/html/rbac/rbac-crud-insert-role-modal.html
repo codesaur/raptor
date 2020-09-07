@@ -1,0 +1,36 @@
+<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <form autocomplete="off" id="rbac_role_{{ action }}" role="form" action="{{ crud }}" method="POST" enctype="multipart/form-data">
+            <div class="modal-header modal-header-solid">
+                <h5 class="modal-title text-uppercase text-info" id="MyModalLabel"><i class="la la-plus"></i> Add Role</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div style="height:400px;overflow-y:auto;overflow-x:hidden;">
+                    {% if action == 'update' %}
+                    <input readonly name="{{ column['id']['name'] }}" value="{{ column['id']['value'] }}" type="hidden">
+                    {% endif %}
+                    <input readonly name="{{ column['alias']['name'] }}" value="{{ column['alias']['value']|e }}" type="hidden">
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'name'|text }}</label>
+                        <div class="col-9">
+                            <input required autocomplete="off" maxlength="{{ column['name']['length'] }}" name="{{ column['name']['name'] }}" placeholder="" value="{{ column['name']['value']|e }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'description'|text }}</label>
+                        <div class="col-9">
+                            <textarea class="form-control" name="{{ column['description']['name'] }}">{{ column['description']['value']|e }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-solid">
+                <button class="submit btn btn-info shadow-sm" type="submit">
+                    <i class="la la-check"></i> <strong>{{ 'save'|text }}</strong>
+                </button>
+                <button class="btn btn-secondary shadow-sm" data-dismiss="modal">{{ 'back'|text }}</button>
+            </div>
+        </form>
+    </div>
+</div>

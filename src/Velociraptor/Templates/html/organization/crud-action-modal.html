@@ -1,0 +1,128 @@
+<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {% if action == 'insert' %}
+            {% set color,caption,icon = 'success','add-record','la la-plus' %}
+        {% elseif action == 'update' %}
+            {% set color,caption,icon = 'primary','edit-record','la la-edit' %}
+        {% else %}
+            {% set color,caption,icon = 'info','view-record','la la-eye' %}
+        {% endif %}
+        <form autocomplete="off" id="organization_{{ action }}" role="form" action="{{ crud }}" method="POST" enctype="multipart/form-data">
+            <div class="modal-header modal-header-solid">
+                <h5 class="modal-title text-uppercase text-{{ color }}" id="MyModalLabel"><i class="{{ icon }}"></i> {{ caption|text }}{% if action != 'insert' %} <small class="text-warning">ID: {{ column['id']['value'] }}</small>{% endif %}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div style="height:400px;overflow-y:auto;overflow-x:hidden;">
+                    {% if action == 'update' %}
+                    <input readonly name="{{ column['id']['name'] }}" value="{{ column['id']['value'] }}" type="hidden">
+                    {% endif %}
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'logo'|text }}</label>
+                        <div class="col-9 text-left">
+                            <div class="input-group col-5" style="float:left;">
+                            {% if column['logo']['value'] is defined and column['logo']['value'] is not empty and column['id']['value'] is defined %}
+                                <img src="{{ column['logo']['value'] }}" height="120px" class="img-fluid">
+                            {% endif %}
+                            </div>
+                            {% if action != 'retrieve' %}
+                            <div class="fileinput fileinput-new col-7" data-provides="fileinput">
+                                <div class="fileinput-preview img-thumbnail" data-trigger="fileinput" style="width:120px;height:68px;"></div>
+                                <div>
+                                    <span class="btn btn-outline-secondary btn-file">
+                                        <span class="fileinput-new">{{ 'select-image'|text }}</span>
+                                        <span class="fileinput-exists">{{ 'change'|text }}</span>
+                                        <input type="file" name="{{ column['logo']['name'] }}" accept="image/*">
+                                    </span>
+                                    <a href="javascript:;" class="btn btn-outline-secondary shadow-sm fileinput-exists" data-dismiss="fileinput">{{ 'remove'|text }}</a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'name'|text }}</label>
+                        <div class="col-9">
+                            <input autocomplete="off" maxlength="{{ column['name']['length'] }}" name="{{ column['name']['name'] }}" placeholder="" value="{{ column['name']['value']|e }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">RBAC (alias)</label>
+                        <div class="col-9">
+                            <input autocomplete="off" maxlength="{{ column['alias']['length'] }}" name="{{ column['alias']['name'] }}" placeholder="" value="{{ column['alias']['value']|e }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">Home URL</label>
+                        <div class="col-9">
+                            <input autocomplete="off" maxlength="{{ column['home_url']['length'] }}" name="{{ column['home_url']['name'] }}" placeholder="" value="{{ column['home_url']['value']|e }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'parent'|text }}</label>
+                        <div class="col-9">
+                            <select name="{{ column['parent_id']['name'] }}" class="form-control">
+                                <option value="0">---</option>
+                            {% for organization in lookup['organizations'] %}
+                                <option{% if organization['id']==column['parent_id']['value'] %} selected{% endif %} value="{{ organization['id'] }}">{{ organization['name']|e }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">External</label>
+                        <div class="col-9">
+                            <input readonly autocomplete="off" maxlength="{{ column['external']['length'] }}" placeholder="" value="{{ column['external']['value']|e }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    {% if action == 'retrieve' %}
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'date-created'|text }}</label>
+                        <div class="col-9">
+                            <input value="{{ column['created_at']['value'] }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'created-by'|text }}</label>
+                        <div class="col-9">
+                            <input value="{{ (lookup['account'][column['created_by']['value']] ?? column['created_by']['value'])|e }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'date-modified'|text }}</label>
+                        <div class="col-9">
+                            <input value="{{ column['updated_at']['value'] }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'updated-by'|text }}</label>
+                        <div class="col-9">
+                            <input value="{{ (lookup['account'][column['updated_by']['value']] ?? column['updated_by']['value'])|e }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-solid">
+                {% if action == 'retrieve' %}
+                <a class="btn btn-info shadow-sm" data-dismiss="modal" href="javascript:;">{{ 'close'|text }}</a>
+                {% else %}
+                <button data-table="organization" class="submit btn btn-{{ action == 'insert' ? 'success' : 'primary' }} shadow-sm" type="submit">
+                    <i class="la la-check"></i> <strong>{{ 'save'|text }}</strong>
+                </button>
+                {% if action == 'update' %}
+                <button class="btn btn-success shadow-sm" type="reset">{{ 'reset'|text }}</button>
+                {% endif %}
+                <button class="btn btn-secondary shadow-sm" data-dismiss="modal">{{ 'back'|text }}</button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    {% if action == 'retrieve' %}
+    $("#organization_{{ action }} .modal-body :input").prop('disabled', true);
+    {% endif %}
+</script>

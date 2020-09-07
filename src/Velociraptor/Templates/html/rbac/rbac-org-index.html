@@ -1,0 +1,60 @@
+<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header modal-header-solid">
+            <h5 class="modal-title text-uppercase text-danger" id="MyModalLabel"><i class="flaticon-safe-shield-protection"></i> RBAC / {{ request.getParam('alias') ~ ' / ' ~ request.getParam('title') }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+            <div style="height:500px;overflow-y:auto;overflow-x:hidden;">
+                <table id="rbac_modal_index" class="table table-striped" style="width:100%">
+                    <thead style="background-color:#ff9999">
+                        <tr>
+                            <th scope="col">Role</th>
+                            {% for permission in permissions %}
+                            <th scope="col" class="text-center">
+                                <span style="cursor:pointer" data-toggle="tooltip" title="{{ permission['description']|e }}">
+                                    {{ permission['name'] }}
+                                </span>
+                            </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for role in roles %}
+                        <tr>
+                            <th scope="row">
+                                <span style="cursor:pointer" data-toggle="tooltip" data-placement="right" title="{{ role['description']|e }}">
+                                    {{ role['name']|e}}
+                                </span>
+                            </th>
+                            {% for permission in permissions %}
+                            <td class="text-center">
+                                <input{% if role_permission[role['id']][permission['id']] is defined %} checked{% endif %} onclick="return false;" role_id="{{ role['id'] }}" permission_id="{{ permission['id'] }}" class="role_permission" type="checkbox">
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot></tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer modal-footer-solid">
+            <button class="btn btn-danger shadow-sm" data-dismiss="modal">{{ 'back'|text }}</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+var table = $('table#rbac_modal_index');
+
+table.DataTable({
+    scrollX: true,
+    paging: false,
+    info: false,
+    filter: false,
+    order: [[ 0, 'asc' ]],
+    fixedColumns: { leftColumns: 1},
+    columnDefs: [{ targets: '_all', orderable: false }],
+    language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ flag }}"}
+});
+</script>

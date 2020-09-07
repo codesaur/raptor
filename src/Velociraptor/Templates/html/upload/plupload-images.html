@@ -1,0 +1,79 @@
+{{ index.plugin('https://cdn.jsdelivr.net/gh/moxiecode/plupload/js/plupload.full.min.js') }}
+
+<div class="plupload-alert"></div>
+{% if note is defined %}
+<div class="alert alert-info margin-bottom-10">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+    {{ note }}
+</div>
+{% endif %}
+
+{% if filelist is not defined %}{% set filelist = 'images_uploader_filelist' %}{% endif %}
+{% if container is not defined %}{% set container = 'images_uploader_container' %}{% endif %}
+{% if pickfiles is not defined %}{% set pickfiles = 'images_uploader_pickfiles' %}{% endif %}
+{% if uploadfiles is not defined %}{% set uploadfiles = 'images_uploader_uploadfiles' %}{% endif %}
+
+<div id="{{ container }}" class="text-align-reverse margin-bottom-10">
+    <a id="{{ pickfiles }}" href="javascript:;" class="btn btn-success"><i class="fa fa-plus"></i> {{ 'select-files'|text }}</a>
+    <a id="{{ uploadfiles }}" href="javascript:;" class="btn btn-primary"><i class="fa fa-share"></i> {{ 'upload-files'|text }}</a>
+</div>
+<div class="row">
+    <div id="{{ filelist }}" class="col-md-6 col-sm-12"></div>
+</div>
+<script>
+var UploadImages = function () {
+    return {
+        init: function (callback) {
+            var uploader = new plupload.Uploader({
+                runtimes: 'html5,flash,silverlight,html4',             
+                container: document.getElementById('{{ container }}'),             
+                browse_button: document.getElementById('{{ pickfiles }}'),
+                filters: {
+                    max_file_size: '{{ maxsize_file_size ?? '20mb' }}',
+                    mime_types: [{{ mime_types|default({title: 'image-files'|text, extensions: 'jpg,gif,png'}) }}]
+                },         
+                url: '{{ upload }}',
+                flash_swf_url: '{{ flash_swf_url|default('https://cdn.jsdelivr.net/gh/moxiecode/plupload/js/Moxie.swf') }}',
+                silverlight_xap_url: '{{ silverlight_xap_url|default('https://cdn.jsdelivr.net/gh/moxiecode/plupload/js/Moxie.xap') }}',
+                init: {
+                    PostInit: function() {
+                        $('#{{ filelist }}').html("");
+                        $('#{{ uploadfiles }}').click(function() {
+                            uploader.start();
+                            return false;
+                        });
+                        $('#{{ filelist }}').on('click', '.added-files .remove', function(){
+                            uploader.removeFile($(this).parent('.added-files').attr("id"));
+                            $(this).parent('.added-files').remove();
+                        });
+                    },
+                    FilesAdded: function(up, files) {
+                        plupload.each(files, function(file) {
+                            $('#{{ filelist }}').append('<div class="alert alert-warning added-files" id="uploaded_file_' + file.id + '">' + file.name + '(' + plupload.formatSize(file.size) + ') <span class="status label label-info"></span>&nbsp;<a href="javascript:;" style="margin-top:-5px" class="remove pull-right btn btn-sm red"><i class="fa fa-times"></i> ' + "{{ 'remove'|text|lower }}" + '</a></div>');
+                        });
+                    },
+                    UploadProgress: function(up, file) {
+                        $('#uploaded_file_' + file.id + ' > .status').html(file.percent + '%');
+                    },
+                    FileUploaded: function(up, file, response) {
+                        let res = $.parseJSON(response.response);
+                        if (res.result && res.result === 'OK') {
+                            $('#uploaded_file_' + file.id + ' > .status').removeClass("label-info").addClass("label-success").html('<i class="fa fa-check"></i> ' + "{{ 'done'|text }}");
+                            $('#uploaded_file_' + file.id).addClass("hidden");
+                            
+                            callback(file, response);
+                        } else {
+                            $('#uploaded_file_' + file.id + ' > .status').removeClass("label-info").addClass("label-danger").html('<i class="fa fa-warning"></i> ' + "{{ 'failed'|text }}");
+                            Dashboard.notify('error', "{{ 'warning'|text }}", res.error.message);
+                        }
+                    },
+                    Error: function(up, err) {
+                        Dashboard.notify('error', "{{ 'warning'|text }}", err.message);
+                    }
+                }
+            });
+            uploader.init();
+        }
+    };
+}();
+</script>

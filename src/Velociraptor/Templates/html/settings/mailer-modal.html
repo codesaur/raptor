@@ -1,0 +1,84 @@
+<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <form autocomplete="off" role="form" action="{{ action }}" method="POST" enctype="multipart/form-data">
+            <div class="modal-header modal-header-solid">
+                <h5 class="modal-title text-uppercase text-danger" id="MyModalLabel"><i class="fa fa-envelope"></i> Mailer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div style="height:400px;overflow-y:auto;overflow-x:hidden;">
+                    <input name="{{ column['id']['name'] }}" readonly value="{{ column['id']['value'] }}" type="hidden">
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">IsSMTP</label>
+                        <div class="col-8">
+                            <div class="form-check" style="margin-top:10px">
+                                <input type="{{ column['is_smtp']['type'] }}" class="form-check-input" name="{{ column['is_smtp']['name'] }}"{% if column['is_smtp']['value'] %} checked{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Charset</label>
+                        <div class="col-8">
+                            <input name="{{ column['charset']['name'] }}" value="{{ column['charset']['value']|e }}" maxlength="{{ column['charset']['length'] }}" type="{{ column['charset']['type'] }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">SMTP Auth</label>
+                        <div class="col-8">
+                            <div class="form-check" style="margin-top:10px">
+                                <input type="{{ column['smtp_auth']['type'] }}" class="form-check-input" name="{{ column['smtp_auth']['name'] }}"{% if column['smtp_auth']['value'] %} checked{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">SMTP Secure</label>
+                        <div class="col-8">
+                            <input name="{{ column['smtp_secure']['name'] }}" value="{{ column['smtp_secure']['value']|e }}" maxlength="{{ column['smtp_secure']['length'] }}" type="{{ column['smtp_secure']['type'] }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Host</label>
+                        <div class="col-8">
+                            <input name="{{ column['host']['name'] }}" value="{{ column['host']['value']|e }}" maxlength="{{ column['host']['length'] }}" type="{{ column['host']['type'] }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Port</label>
+                        <div class="col-8">
+                            <input class="form-control" maxlength="{{ column['port']['length'] }}" name="{{ column['port']['name'] }}" value="{{ column['port']['value'] }}" type="{{ column['port']['type'] }}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Username</label>
+                        <div class="col-8">
+                            <input class="form-control" autocomplete="off" maxlength="{{ column['username']['length'] }}" name="{{ column['username']['name'] }}" value="{{ column['username']['value'] |e}}" type="{{ column['username']['type'] }}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Password</label>
+                        <div class="col-8">
+                            <input class="form-control" autocomplete="new-password" maxlength="{{ column['password']['length'] }}" name="{{ column['password']['name'] }}" value="{{ column['password']['value']|e }}" type="{{ column['password']['type'] }}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">From</label>
+                        <div class="col-8">
+                            <input class="form-control" maxlength="{{ column['name']['length'] }}" name="{{ column['name']['name'] }}" value="{{ column['name']['value']|e }}" type="{{ column['name']['type'] }}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Email</label>
+                        <div class="col-8">
+                            <input class="form-control" maxlength="{{ column['email']['length'] }}" name="{{ column['email']['name'] }}" value="{{ column['email']['value']|e }}" type="{{ column['email']['type'] }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-solid">
+                <button class="submit btn btn-primary shadow-sm" type="submit"><i class="la la-check"></i> <strong>{{ 'save'|text }}</strong></button>
+                <button class="btn btn-success shadow-sm" type="reset">{{ 'reset'|text }}</button>
+                <button class="btn btn-secondary shadow-sm" data-dismiss="modal">{{ 'back'|text }}</button>
+            </div>
+        </form>
+    </div>
+</div>

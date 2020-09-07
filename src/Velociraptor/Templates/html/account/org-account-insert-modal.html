@@ -1,0 +1,246 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title text-uppercase text-success" id="MyModalLabel"><i class="la la-plus"></i> {{ 'add-new-account'|text }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="progress mb-4">
+                <div class="progress-bar" role="progressbar" style="width:33%" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active infoHead" data-toggle="tab" href="#infoPanel" role="tab">{{ 'information'|text }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rolesHead" data-toggle="tab" href="#rolesPanel" role="tab">{{ 'user-role'|text }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link confirmHead" data-toggle="tab" href="#confirmPanel" role="tab">{{ 'confirm'|text }}</a>
+                </li>
+            </ul>
+            <div class="tab-content mt-2">
+                <div class="tab-pane fade show active" id="infoPanel" role="tabpanel">                    
+                    <h5 class="mt-4">Системд бүртгэлтэй хэрэглэгчийг сонгоно уу!</h5>
+                    <div class="form-group">
+                        <label class="text-right">{{ 'account'|text }}</label>
+                        <select class="form-control" id="accounts">
+                            <option value=""></option>
+                            {% for id,account in accounts %}
+                            <option data-account='{{ account|json_encode }}' value="{{ id }}">{{ '[' ~ account['username'] ~ '] ' ~ account['first_name'] ~ ' ' ~ account['last_name'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-right">{{ 'login-name'|text }}</label>
+                        <input class="form-control username" autocomplete="off" placeholder="" readonly value="" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-right">{{ 'fullname'|text }}</label>
+                        <input class="form-control fullname" autocomplete="off" placeholder="" readonly value="" type="text">
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="rolesPanel" role="tabpanel">
+                    <h5 class="mt-4">Хэрэглэгчийн дүрийг сонгон тохируулна уу!</h5>
+                    <div class="form-group">
+                        <select id="roles" name="roles" class="form-control" multiple="multiple">
+                            <optgroup label="{{ user.organization('name') }}" alias="{{ user.organization('alias') }}">
+                            {% for role in roles %}
+                                <option value="{{ role['id'] }}" data-name="{{ role['name'] }}" data-description="{{ role['description'] }}">{{ role['name']|e }}</option>
+                            {% endfor %}
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-right">{{ 'role'|text }}</label>
+                        <ul class="list-group selected_roles">
+                        </ul>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="confirmPanel" role="tabpanel">
+                    <h5 class="mt-4">{{ 'confirm-info'|text }}</h5>
+                    <form id="insert_form" action="{{ crud }}" method="POST" enctype="multipart/form-data" role="form" novalidate="novalidate">
+                        <input name="role" class="user_role" autocomplete="off" hidden value="" type="text">
+                        <input name="account" class="account_id" autocomplete="off" hidden value="" type="text">
+                        <input name="organization" class="organization_id" autocomplete="off" hidden value="" type="text">
+                        <input name="organization_alias" class="organization_alias" autocomplete="off" hidden value="" type="text">
+                    </form>
+                    <div class="form-group">
+                        <label class="text-right">{{ 'login-name'|text }}</label>
+                        <input class="form-control username" autocomplete="off" placeholder="" readonly value="" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-right">{{ 'fullname'|text }}</label>
+                        <input class="form-control fullname" autocomplete="off" placeholder="" readonly value="" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-right">{{ 'role'|text }}</label>
+                        <ul class="list-group selected_roles">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary btn-lg" id="back">
+                {{ 'back'|text }} <i class="la la-arrow-left"></i>
+            </button>
+            <button class="btn btn-success btn-lg" id="continue">
+                {{ 'continue'|text }} <i class="la la-arrow-right"></i>
+            </button>
+            <button class="btn btn-primary btn-lg" id="confirm">
+                <i class="la la-check"></i> {{ 'confirm'|text }}
+            </button>
+            <button class="btn btn-danger btn-lg" data-dismiss="modal">
+                {{ 'close'|text }}
+            </button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+$(function() {
+    $('#modalToggle').click(function() {
+        $('#modal').modal({
+            backdrop: 'static'
+        });
+    });
+    
+    $('.organization_id').val("{{ user.organization('id') }}");
+    $('.organization_alias').val("{{ user.organization('alias') }}");
+
+    $('#accounts').on('change', function(e) {
+        var id = $(this).find('option:selected').val();
+        var data = $(this).find('option:selected').data('account');
+
+        $('.account_id').val(id);
+        $('.username').val(data.username);
+        $('.fullname').val(data.first_name + ' ' + data.last_name);
+    });
+    
+    $('#roles').on('change', function(e) {        
+        let roles = $('#roles').select2('val');
+        $('.user_role').val(roles);
+        $('.selected_roles').empty();
+        roles.forEach(function(id) { 
+            let name = $("#roles option[value='" + id + "']").data('name');
+            let desc = $("#roles option[value='" + id + "']").data('description');
+            $('.selected_roles').append('<li class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">' + desc + ' <span class="badge badge-success badge-pill">' + name + '</span></li>');
+        }); 
+    });
+
+    $('#back').hide();
+    $('#confirm').hide();
+    
+    $('#continue').click(function(e) {
+        e.preventDefault();
+        var id = $('.tab-content .active').attr('id');
+        if (id === 'infoPanel') {
+            $('.progress-bar').css('width', '66%');
+            $('#myTab a[href="#rolesPanel"]').tab('show');
+            $('#back').show();
+        } else if (id === 'rolesPanel') {
+            $('.progress-bar').css('width', '100%');
+            $('#myTab a[href="#confirmPanel"]').tab('show');
+            $(this).hide();
+            $('#confirm').show();
+        }
+    });
+
+    $('#back').click(function(e) {
+        e.preventDefault();
+        
+        $('#confirm').hide();
+        
+        var id = $('.tab-content .active').attr('id');
+        if (id === 'rolesPanel') {
+            $('.progress-bar').css('width', '33%');
+            $('#myTab a[href="#infoPanel"]').tab('show');
+            $(this).hide();
+        } else if (id === 'confirmPanel') {
+            $('.progress-bar').css('width', '66%');
+            $('#myTab a[href="#rolesPanel"]').tab('show');
+            $('#continue').show();
+        }
+    });
+    
+    $('#confirm').click(function(e) {
+        e.preventDefault();
+        
+        Dashboard.submit($('#insert_form'), $(this), '#modal');
+    });
+
+    $('.infoHead').click(function(e) {
+        e.preventDefault();
+    
+        $('#back').hide();
+        $('#continue').show();
+        $('#confirm').hide();
+
+        $('.progress-bar').css('width', '33%');
+        $('#myTab a[href="#infoPanel"]').tab('show');
+    });
+    
+    $('.rolesHead').click(function(e) {
+        e.preventDefault();
+        
+        $('#back').show();
+        $('#continue').show();
+        $('#confirm').hide();
+
+        $('.progress-bar').css('width', '66%');
+        $('#myTab a[href="#rolesPanel"]').tab('show');
+    });
+    
+    $('.confirmHead').click(function(e) {
+        e.preventDefault();
+
+        $('#back').show();
+        $('#continue').hide();
+        $('#confirm').show();
+        
+        $('.progress-bar').css('width', '100%');
+        $('#myTab a[href="#confirmPanel"]').tab('show');
+    });
+    
+    (function($) {
+        $.fn.Select2Roles = function() {
+            var formatSelection = function(state) {
+                if (!state.id) {
+                    return state.text;
+                }
+                
+                let option = $(state.element);
+                let group = option.closest('optgroup');
+                if (group) {
+                    return group.attr('alias') + '_' + state.text;
+                } else {
+                    return state.text;
+                }
+            };
+
+            var formatMenu = function(state) {
+                if (!state.id) {
+                    return state.text;
+                }
+
+                return state.text + ' &nbsp;<span class="text-muted float-right">' + $(state.element).data('description') + '</span>';
+            };
+
+        if (jQuery().select2) {
+                this.select2({
+                    width: '100%',
+                    templateResult: formatMenu,
+                    templateSelection: formatSelection,
+                    escapeMarkup: function(m) { return m; }
+                });
+            };
+
+            return this;
+        };
+    } (jQuery));
+    
+    $('#roles').Select2Roles();
+});
+</script>

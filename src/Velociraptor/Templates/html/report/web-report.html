@@ -1,0 +1,234 @@
+{% set cards = {
+    1: {
+        'color': 'success',
+        'title': 'Нийт хандалт',
+        'desc': 'сайтын хувьд',
+        'change': 'Хувь'
+    },
+    2: {
+        'color': 'dark',
+        'title': 'Home',
+        'desc': 'Нүүр хуудсыг нээсэн тоо',
+        'change': 'Хувь'
+    },
+    3: {
+        'color': 'info',
+        'title': 'Pages',
+        'desc': 'үндсэн цэсний хуудсуудыг уншсан',
+        'change': 'Хувь'
+    },
+    4: {
+        'color': 'primary',
+        'title': 'News',
+        'desc': 'мэдээ мэдээллийг уншсан тоо',
+        'change': 'Хувь'
+    },
+    5: {
+        'color': 'danger',
+        'title': 'Монгол',
+        'desc': 'монгол хэл дээр зочилсон тоо',
+        'change': 'Хувь'
+    },
+    6: {
+        'color': 'warning',
+        'title': 'English',
+        'desc': 'англи хэл дээр зочилсон тоо',
+        'change': 'Хувь'
+    }
+} %}
+
+<div class="card-group mb-3">
+    {% for index,card in cards %}
+    <div class="card border-{{ card['color'] }} shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title text-uppercase text-{{ card['color'] }}">{{ card['title'] }}</h5>
+            <div class="card-text">
+                {{ card['desc'] }}
+                <div class="progress">
+                    <div id="card{{ index }}_progress" class="progress-bar progress-bar-striped bg-{{ card['color'] }}" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <span class="float-left">{{ card['change'] }}</span>
+                <span class="float-right" id="card{{ index }}_percent"></span>
+                <br />
+                <span class="text-{{ card['color'] }} float-right mt-2"><h4 id="card{{ index }}_amount"></h4></span>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{{ index.stylesheet('https://www.amcharts.com/lib/3/plugins/export/export.css') }}
+{{ index.plugin('https://www.amcharts.com/lib/3/amcharts.js') }}
+{{ index.plugin('https://www.amcharts.com/lib/3/serial.js') }}
+{{ index.plugin('https://www.amcharts.com/lib/3/amstock.js') }}
+{{ index.plugin('https://www.amcharts.com/lib/3/themes/light.js') }}
+{{ index.plugin('https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js') }}
+{{ index.plugin('https://www.amcharts.com/lib/3/plugins/export/export.min.js') }}
+
+<div class="card shadow-sm border-success mb-4">
+    <div class="card-header bg-success">
+        <span class="float-left text-light text-uppercase"><i class="flaticon-graph pr-2"></i> Дэлгэрэнгүй тайлан</span>
+    </div>
+    <div class="card-body">
+        <div id="ncle-daily-chart" style="width:100%;height:59vh;min-height:400px"></div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var chartDaily = AmCharts.makeChart('ncle-daily-chart',
+    {
+        'type':'stock',
+        'theme':'light',
+        'dataSets':[
+            {
+                'title':'Нийт хандалт',
+                'color':'#d9534f',
+                'fieldMappings':[
+                    {
+                        'fromField':'value', 'toField':'value'
+                    },
+                    {
+                        'fromField':'volume', 'toField':'volume'
+                    }
+                ],
+                'dataProvider':[],
+                'categoryField':'date'
+            },
+            {
+                'title':'Нүүр хуудас',
+                'color':'#22b9ff',
+                'fieldMappings':[
+                    {
+                        'fromField':'value', 'toField':'value'
+                    },
+                    {
+                        'fromField':'volume', 'toField':'volume'
+                    }
+                ],
+                'dataProvider':[],
+                'categoryField':'date',
+                'compared':true
+            },
+            {
+                'title':'Үндсэн цэсний хуудсууд',
+                'color':'#5bc0de',
+                'fieldMappings':[
+                    {
+                        'fromField':'value', 'toField':'value'
+                    },
+                    {
+                        'fromField':'volume', 'toField':'volume'
+                    }
+                ],
+                'dataProvider':[],
+                'categoryField':'date',
+                'compared':true
+            },
+            {
+                'title':'Мэдээ мэдээлэл',
+                'color':'#f0ad4e',
+                'fieldMappings':[
+                    {
+                        'fromField':'value', 'toField':'value'
+                    },
+                    {
+                        'fromField':'volume', 'toField':'volume'
+                    }
+                ],
+                'dataProvider':[],
+                'categoryField':'date',
+                'compared':true
+            }
+        ],
+        'panels':[
+            {
+                'showCategoryAxis':false,
+                'title':'Дүн',
+                'percentHeight':50,
+                'stockGraphs':[
+                    {
+                        'balloonText':'[[title]]:<b>[[value]]<\/b>',
+                        'id':'g1', 'valueField':'value', 'colorField':'color',
+                        'comparable':true, 'lineThickness':1, 'compareField':'value',
+                        'compareGraph': {
+                            'lineThickness':1, 'balloonText':'[[title]]:<b>[[value]]<\/b>'
+                        }
+                    }
+                ],
+                'stockLegend': {
+                    'periodValueTextComparing':'[[percents.value.close]]%', 'periodValueTextRegular':'[[value.close]]'
+                }
+            },
+            {
+                'title':'Агуулга',
+                'percentHeight':50,
+                'stockGraphs':[
+                    {
+                        'valueField':'volume', 'colorField':'color', 'type':'column', 'showBalloon':false, 'fillAlphas':1
+                    }
+                ],
+                'stockLegend': {
+                    'periodValueTextRegular':'[[value.close]]'
+                }
+            }
+        ],
+        'chartScrollbarSettings': {
+            'graph':'g1'
+        },
+        'chartCursorSettings': {
+            'valueBalloonsEnabled':true, 'fullWidth':true, 'cursorAlpha':0.1,
+            'valueLineBalloonEnabled':true, 'valueLineEnabled':true, 'valueLineAlpha':0.5
+        },
+        'periodSelector': {
+            'fromText':'', 'toText':'-',
+            'periodsText':'', 'position':'bottom',
+            'periods':[
+                {
+                    'period':'MM', 'count':1, 'label':'1 сар'
+                },
+                {
+                    'period':'YYYY', 'count':1, 'label':'1 жил'
+                },
+                {
+                    'period':'YTD', 'label':'Жилийн эхнээс'
+                },
+                {
+                    'period':'MAX', 'label':'Нийт', selected:true
+                }
+            ]
+        },
+        'dataSetSelector': {
+            'position':'top'
+        },
+        'export': {
+            'enabled':true
+        }
+    });
+    
+    $.ajax({
+        url: '{{ request.getPath() }}/indo/web/report/total',
+        success: function(response) {
+            response.forEach(function(stat, index) {
+                $('#card' + (index+1) + '_amount').html(stat['amount']);
+                $('#card' + (index+1) + '_percent').html(stat['percent'] + '%');
+                $('#card' + (index+1) + '_progress').css('width', stat['percent'] + '%');
+            });
+        }
+    }).always(function() {
+        loadDailyChart();
+    });
+
+    function loadDailyChart() {
+        AmCharts.loadFile('{{ request.getPath() }}/indo/web/report/daily', {}, function(data) {
+            let daily_datas = AmCharts.parseJSON(data);
+            chartDaily.dataSets[0]['dataProvider'] = daily_datas[1];
+            chartDaily.dataSets[1]['dataProvider'] = daily_datas[2];
+            chartDaily.dataSets[2]['dataProvider'] = daily_datas[3];
+            chartDaily.dataSets[3]['dataProvider'] = daily_datas[4];
+            chartDaily.periodSelector.periods[0]['selected'] = true;
+            chartDaily.validateData();
+        });
+    }
+});
+</script>

@@ -1,0 +1,146 @@
+<form class="needs-validation" id="template_{{ action }}" action="{{ crud }}" method="POST" enctype="multipart/form-data" novalidate>
+    <div class="card shadow border-primary mb-4">
+        <div class="card-header bg-light">
+            {% if action == 'insert' %}
+            <span class="mt-2 float-left text-success text-uppercase">
+                <i class="la la-plus"></i> {{ 'add-record'|text }}
+            </span>
+            {% elseif action == 'update' %}
+            <span class="mt-2 float-left text-primary text-uppercase">
+                <i class="la la-edit"></i> {{ 'edit-record'|text }} <small class="text-warning">ID: {{ column['id']['value'] }}</small>
+            </span>
+            {% else %}
+            <span class="mt-2 float-left text-info text-uppercase">
+                <i class="la la-eye"></i> {{ 'view-record'|text }} <small class="text-warning">ID: {{ column['id']['value'] }}</small>
+            </span>
+            {% endif %}
+            <ul class="nav nav-pills card-header-pills float-right pr-2">
+                {% if action == 'insert' %}
+                <li class="nav-item pl-2">
+                    <button class="submit nav-link btn btn-success shadow-sm" type="submit"><i class="la la-check"></i> {{ 'save'|text }}</button>
+                </li>
+                {% elseif action == 'update' %}
+                <li class="nav-item pl-2">
+                    <button class="submit nav-link btn btn-primary shadow-sm" type="submit"><i class="la la-check"></i> {{ 'save'|text }}</button>
+                </li>
+                <li class="nav-item pl-2">
+                    <button class="nav-link btn btn-info shadow-sm" type="reset">{{ 'reset'|text }}</button>
+                </li>
+                {% endif %}
+                <li class="nav-item pl-2">
+                    <button class="nav-link btn btn-secondary shadow-sm" onclick="window.history.go(-1);return false;">{{ 'back'|text }}</button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="form-group row">
+                <div class="col-lg-4">
+                    <label>{{ 'keyword'|text }}</label>
+                    <input name="{{ column['_keyword_']['name'] }}" value="{{ column['_keyword_']['value']|e }}" maxlength="{{ column['_keyword_']['length'] }}" placeholder="" required type="text" autocomplete="off" class="form-control">
+                </div>
+                <div class="col-lg-4">
+                    <label>{{ 'type'|text }}</label>
+                    <select name="{{ column['type']['name'] }}" required class="form-control">
+                        {% for value,name in lookup['template_type'] %}
+                        <option{% if value==column['type']['value'] %} selected{% endif %} value="{{ value }}">{{ name|e }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>{{ 'status'|text }}</label>
+                    <div class="form-control">
+                    {% for value,name in lookup['status'] %}
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="{{ column['status']['type'] }}"
+                                 name="{{ column['status']['name'] }}" id="{{ column['status']['name'] ~ value }}"
+                                 {% if value==column['status']['value'] %} checked{% endif %}  value="{{ value }}">
+                          <label class="form-check-label" for="{{ column['status']['name'] ~ value }}">{{ name }}</label>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <ul class="nav nav-tabs nav-tabs-content mt-5" role="tablist">
+                {% for code in language.codes() %}
+                <li class="nav-item">
+                    <a class="nav-link{% if loop.first %} active show{% endif %}" data-toggle="tab" href="#tab-{{ code }}">{{ 'content'|text }} <img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/{{ code }}.png"></a>
+                </li>
+                {% endfor %}
+                {% if action != 'insert' %}
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-history">{{ 'history'|text }}</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-version">{{ 'version'|text }}</a></li>
+                {% endif %}
+            </ul>
+            <div class="tab-content">
+                {% for code in language.codes() %}
+                <div class="tab-pane{% if loop.first %} active show{% endif %}" id="tab-{{ code }}" role="tabpanel">
+                    <div class="form-group">
+                        <label>{{ 'title'|text }} ({{ code }})</label>
+                        <input name="{{ column['title'][code]['name'] }}" value="{{ column['title'][code]['value']|e }}" maxlength="{{ column['title'][code]['length'] }}" placeholder="" type="text" autocomplete="off" class="form-control">
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label>{{ 'short'|text }} ({{ code }})</label>
+                        <textarea name="{{ column['short'][code]['name'] }}" maxlength="{{ column['short']['length'] }}" class="form-control">{{ column['short'][code]['value']|e }}</textarea>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label>{{ 'full'|text }} ({{ code }})</label>
+                        <textarea name="{{ column['full'][code]['name'] }}" rows="10" class="form-control">{{ column['full'][code]['value']|e }}</textarea>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if action != 'insert' %}
+                <div class="tab-pane" id="tab-history" role="tabpanel">
+                    <div class="form-group">
+                        <label>{{ 'date-created'|text }}</label>
+                        <input disabled value="{{ column['created_at']['value'] }}" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'created-by'|text }}</label>
+                        <input disabled value="{{ (lookup['account'][column['created_by']['value']] ?? column['created_by']['value'])|e }}" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'date-modified'|text }}</label>
+                        <input disabled value="{{ column['updated_at']['value'] }}" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'updated-by'|text }}</label>
+                        <input disabled value="{{ (lookup['account'][column['updated_by']['value']] ?? column['updated_by']['value'])|e }}" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab-version" role="tabpanel">
+                </div>
+                <input name="{{ column['id']['name'] }}" value="{{ column['id']['value'] }}" readonly type="hidden">
+                {% endif %}
+            </div>
+        </div>
+        {% if action == 'insert' %}
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-12">
+                    <button class="submit btn btn-success btn-block shadow-sm" type="submit"><i class="la la-check"></i> {{ 'save'|text }}</button>
+                </div>
+            </div>
+        </div>
+        {% elseif action == 'update' %}
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-8">
+                    <button class="submit btn btn-primary btn-block shadow-sm" type="submit"><i class="la la-check"></i> {{ 'save'|text }}</button>
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-info btn-block shadow-sm" type="reset">{{ 'reset'|text }}</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</form>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+    {% if action == 'retrieve' %}
+        $('#template_{{ action }} .card-body :input').prop('disabled', true);
+    {% endif %}
+    });
+</script>

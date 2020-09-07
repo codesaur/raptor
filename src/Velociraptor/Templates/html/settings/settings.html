@@ -1,0 +1,306 @@
+<form class="needs-validation" action="{{ action }}" method="POST" enctype="multipart/form-data" novalidate>
+    <div class="card shadow border-primary mb-4">
+        <div class="card-header bg-light">
+            <span class="mt-2 float-left text-primary text-uppercase">
+                <i class="la la-cogs"></i> {{ 'settings'|text }}
+            </span>
+            <ul class="nav nav-pills card-header-pills float-right pr-2">
+                <li class="nav-item pl-2">
+                    <button class="submit nav-link btn btn-primary shadow-sm" type="submit"><i class="la la-check"></i> {{ 'save'|text }}</button>
+                </li>
+                <li class="nav-item pl-2">
+                    <button class="nav-link btn btn-info shadow-sm" type="reset">{{ 'reset'|text }}</button>
+                </li>
+                <li class="nav-item pl-2">
+                    <button class="nav-link btn btn-secondary shadow-sm" onclick="window.history.go(-1);return false;">{{ 'back'|text }}</button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <ul class="nav nav-tabs nav-tabs-content" role="tablist">
+                <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#tab-message">{{ 'general'|text }}</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-image">{{ 'logo'|text }}</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-icon">{{ 'icon'|text ~ ' / ' ~ 'image'|text }}</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active show" id="tab-message" role="tabpanel">
+                    <input name="{{ column['id']['name'] }}" readonly value="{{ column['id']['value'] }}" type="hidden">
+                    <input name="{{ column['alias']['name'] }}" readonly value="{{ column['alias']['value']|e }}" type="hidden">
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">{{ 'title'|text }}</label>
+                        <div class="col-10">
+                            {% for code in language.codes() %}
+                            <div class="input-group{% if not loop.first %} mt-1{% endif %}">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><img src="{{ resource }}/flags/16x11/{{ code }}.png"></span>
+                                </div>
+                                <textarea class="form-control" name="{{ column['title'][code]['name'] }}">{{ column['title'][code]['value'] }}</textarea>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">{{ 'open-hours'|text }}</label>
+                        <div class="col-10">
+                            {% for code in language.codes() %}
+                            <div class="input-group{% if not loop.first %} mt-1{% endif %}">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><img src="{{ resource }}/flags/16x11/{{ code }}.png"></span>
+                                </div>
+                                <textarea class="form-control" name="{{ column['open_hours'][code]['name'] }}">{{ column['open_hours'][code]['value'] }}</textarea>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">{{ 'address'|text }}</label>
+                        <div class="col-10">
+                            {% for code in language.codes() %}
+                            <div class="input-group{% if not loop.first %} mt-1{% endif %}">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><img src="{{ resource }}/flags/16x11/{{ code }}.png"></span>
+                                </div>
+                                <textarea class="form-control" name="{{ column['address'][code]['name'] }}">{{ column['address'][code]['value'] }}</textarea>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">{{ 'contact'|text }}</label>
+                        <div class="col-10">
+                            {% for code in language.codes() %}
+                            <div class="input-group{% if not loop.first %} mt-1{% endif %}">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><img src="{{ resource }}/flags/16x11/{{ code }}.png"></span>
+                                </div>
+                                <textarea class="form-control" name="{{ column['contact'][code]['name'] }}">{{ column['contact'][code]['value'] }}</textarea>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">Phone</label>
+                        <div class="col-10">
+                            {% for code in language.codes() %}
+                            <div class="input-group{% if not loop.first %} mt-1{% endif %}">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><img src="{{ resource }}/flags/16x11/{{ code }}.png"></span>
+                                </div>
+                                <textarea class="form-control" name="{{ column['phone'][code]['name'] }}">{{ column['phone'][code]['value'] }}</textarea>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">Email</label>
+                        <div class="col-10">
+                            {% for code in language.codes() %}
+                            <div class="input-group{% if not loop.first %} mt-1{% endif %}">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><img src="{{ resource }}/flags/16x11/{{ code }}.png"></span>
+                                </div>
+                                <textarea class="form-control" name="{{ column['email'][code]['name'] }}">{{ column['email'][code]['value'] }}</textarea>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">Copyright</label>
+                        <div class="col-10">
+                            {% for code in language.codes() %}
+                            <div class="input-group{% if not loop.first %} mt-1{% endif %}">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><img src="{{ resource }}/flags/16x11/{{ code }}.png"></span>
+                                </div>
+                                <textarea class="form-control" name="{{ column['copyright'][code]['name'] }}">{{ column['copyright'][code]['value'] }}</textarea>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab-image" role="tabpanel">
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">{{ 'full'|text }}</label>
+                        <div class="col-10">
+                            {% for code in language.codes() %}
+                            <div class="text-left row{% if not loop.first %} mt-1{% endif %}">
+                                <div class="input-group col-5" style="float:left;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><img src="{{ resource }}/flags/16x11/{{ code }}.png"></span>
+                                    </div>
+                                    {% if column['full'][code]['path'] is defined and column['id']['value'] is defined %}
+                                    <img src="{{ column['full'][code]['path'] }}"
+                                         id="full_{{code }}_current" height="120px" class="img-fluid">
+                                    <a style="position:absolute;top:7px;left:60px;"
+                                       files_id="{{ column['full'][code]['files_id'] }}"
+                                       class="delete btn btn-outline-danger btn-icon btn-pill"
+                                       href="{{ column['id']['value'] }}" pre-img="full_{{code }}_current"><i class="la la-trash"></i></a>
+                                    {% endif %}
+                                </div>
+                                <div class="fileinput fileinput-new col-7" data-provides="fileinput">
+                                    <div class="fileinput-preview img-thumbnail" data-trigger="fileinput" style="width:120px;height:68px;"></div>
+                                    <div>
+                                        <span class="btn btn-outline-secondary btn-file">
+                                            <span class="fileinput-new">{{ 'select-image'|text }}</span>
+                                            <span class="fileinput-exists">{{ 'change'|text }}</span>
+                                            <input type="file" name="{{ column['full'][code]['name'] }}" accept="image/*">
+                                        </span>
+                                        <a href="javascript:;" class="btn btn-outline-secondary fileinput-exists" data-dismiss="fileinput">{{ 'remove'|text }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">{{ 'short'|text }}</label>
+                        <div class="col-10">
+                            {% for code in language.codes() %}
+                            <div class="text-left row{% if not loop.first %} mt-1{% endif %}">
+                                <div class="input-group col-5" style="float:left;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><img src="{{ resource }}/flags/16x11/{{ code }}.png"></span>
+                                    </div>
+                                    {% if column['short'][code]['path'] is defined and column['id']['value'] is defined %}
+                                    <img src="{{ column['short'][code]['path'] }}"
+                                         id="short_{{code }}_current" height="120px" class="img-fluid">
+                                    <a style="position:absolute;top:7px;left:60px;"
+                                       files_id="{{ column['short'][code]['files_id'] }}"
+                                       class="delete btn btn-outline-danger btn-icon btn-pill"
+                                       href="{{ column['id']['value'] }}" pre-img="short_{{code }}_current"><i class="la la-trash"></i></a>
+                                    {% endif %}
+                                </div>
+                                <div class="fileinput fileinput-new col-7" data-provides="fileinput">
+                                    <div class="fileinput-preview img-thumbnail" data-trigger="fileinput" style="width:120px;height:68px;"></div>
+                                    <div>
+                                        <span class="btn btn-outline-secondary btn-file">
+                                            <span class="fileinput-new">{{ 'select-image'|text }}</span>
+                                            <span class="fileinput-exists">{{ 'change'|text }}</span>
+                                            <input type="file" name="{{ column['short'][code]['name'] }}" accept="image/*">
+                                        </span>
+                                        <a href="javascript:;" class="btn btn-outline-secondary fileinput-exists" data-dismiss="fileinput">{{ 'remove'|text }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab-icon" role="tabpanel">
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">Favico</label>
+                        <div class="col-10">
+                            <div class="mb-2"><span class="text-warning">{{ 'current'|text }}: </span><a href="{{ column['favico']['value'] }}" target="__blank">{{ column['favico']['value'] }}</a></div>
+                            <div class="input-group">
+                                <div class="input-group-prepend mt-1 mr-2"><span class="text-danger">{{ 'change'|text }}: </span></div>
+                                <div class="custom-file">
+                                    <input class="custom-file-input" name="{{ column['favico']['name'] }}" type="file" accept=".ico">
+                                    <label class="custom-file-label" for="txt_favico">{{ 'choose-file'|text }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">Apple Touch Icon</label>
+                        <div class="col-10">
+                            <div class="text-left row">
+                                <div class="input-group col-5" style="float:left;">
+                                {% if column['apple_touch']['path'] is defined and column['id']['value'] is defined %}
+                                    <img src="{{ column['apple_touch']['path'] }}"
+                                         id="apple_touch_current" height="120px" class="img-fluid">
+                                    <a style="position:absolute;top:7px;left:17px;"
+                                       files_id="{{ column['apple_touch']['files_id'] }}"
+                                       class="delete btn btn-outline-danger btn-icon btn-pill"
+                                       href="{{ column['id']['value'] }}" pre-img="apple_touch_current"><i class="la la-trash"></i></a>
+                                {% endif %}
+                                </div>
+                                <div class="fileinput fileinput-new col-7" data-provides="fileinput">
+                                    <div class="fileinput-preview img-thumbnail" data-trigger="fileinput" style="width:120px;height:68px;"></div>
+                                    <div>
+                                        <span class="btn btn-outline-secondary btn-file">
+                                            <span class="fileinput-new">{{ 'select-image'|text }}</span>
+                                            <span class="fileinput-exists">{{ 'change'|text }}</span>
+                                            <input type="file" name="{{ column['apple_touch']['name'] }}" accept="image/*">
+                                        </span>
+                                        <a href="javascript:;" class="btn btn-outline-secondary fileinput-exists" data-dismiss="fileinput">{{ 'remove'|text }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">Icopng</label>
+                        <div class="col-10">
+                            <div class="text-left row">
+                                <div class="input-group col-5" style="float:left;">
+                                {% if column['ico_png']['path'] is defined and column['id']['value'] is defined %}
+                                    <img src="{{ column['ico_png']['path'] }}"
+                                         id="ico_png_current" height="120px" class="img-fluid">
+                                    <a style="position:absolute;top:7px;left:17px;"
+                                       files_id="{{ column['ico_png']['files_id'] }}"
+                                       class="delete btn btn-outline-danger btn-icon btn-pill"
+                                       href="{{ column['id']['value'] }}" pre-img="ico_png_current"><i class="la la-trash"></i></a>
+                                {% endif %}
+                                </div>
+                                <div class="fileinput fileinput-new col-7" data-provides="fileinput">
+                                    <div class="fileinput-preview img-thumbnail" data-trigger="fileinput" style="width:120px;height:68px;"></div>
+                                    <div>
+                                        <span class="btn btn-outline-secondary btn-file">
+                                            <span class="fileinput-new">{{ 'select-image'|text }}</span>
+                                            <span class="fileinput-exists">{{ 'change'|text }}</span>
+                                            <input type="file" name="{{ column['ico_png']['name'] }}" accept="image/*">
+                                        </span>
+                                        <a href="javascript:;" class="btn btn-outline-secondary fileinput-exists" data-dismiss="fileinput">{{ 'remove'|text }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">Background</label>
+                        <div class="col-10">
+                            <div class="text-left row">
+                                <div class="input-group col-5" style="float:left;">
+                                {% if column['background']['path'] is defined and column['id']['value'] is defined %}
+                                    <img src="{{ column['background']['path'] }}"
+                                         id="background_current" height="120px" class="img-fluid">
+                                    <a style="position:absolute;top:7px;left:17px;"
+                                       files_id="{{ column['background']['files_id'] }}"
+                                       class="delete btn btn-outline-danger btn-icon btn-pill"
+                                       href="{{ column['id']['value'] }}" pre-img="background_current"><i class="la la-trash"></i></a>
+                                {% endif %}
+                                </div>
+                                <div class="fileinput fileinput-new col-7" data-provides="fileinput">
+                                    <div class="fileinput-preview img-thumbnail" data-trigger="fileinput" style="width:120px;height:68px;"></div>
+                                    <div>
+                                        <span class="btn btn-outline-secondary btn-file">
+                                            <span class="fileinput-new">{{ 'select-image'|text }}</span>
+                                            <span class="fileinput-exists">{{ 'change'|text }}</span>
+                                            <input type="file" name="{{ column['background']['name'] }}" accept="image/*">
+                                        </span>
+                                        <a href="javascript:;" class="btn btn-outline-secondary fileinput-exists" data-dismiss="fileinput">{{ 'remove'|text }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-8">
+                    <button class="submit btn btn-primary btn-block shadow-sm" type="submit"><i class="la la-check"></i> {{ 'save'|text }}</button>
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-success btn-block shadow-sm" type="reset">{{ 'reset'|text }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

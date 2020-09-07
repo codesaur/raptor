@@ -1,0 +1,25 @@
+<table class="table table-bordered table-hover" id="developer">
+    <thead style="background:#5867dd">
+        <tr>
+            <th scope="col" class="text-light">{{ 'name'|text }}</th>
+            <th scope="col" class="text-light">{{ 'date-created'|text }}</th>
+            <th scope="col" class="text-light">{{ 'action'|text }}</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot></tfoot>
+</table>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        var table = $('table#developer');
+        
+        table.DataTable({
+            lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]],
+            responsive: true, bStateSave: true, pageLength: 10, order: [[0, 'asc']],
+            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ flag }}"},
+            ajax: {method: 'GET', url: "{{ 'datatable'|link }}?logger=developer&table=forgot&controller=Velociraptor\\Controllers\\DeveloperController"}
+        });
+        
+        Dashboard.ajaxModal(table);
+    });
+</script>

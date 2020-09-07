@@ -1,0 +1,30 @@
+{
+    "name": "codesaur/raptor",
+    "description": "An elegant object-oriented application development framework for PHP 7.1 or newer",
+    "keywords": ["codesaur","mongol","mongolia","mongolian","ololt","framework","narankhuu","coden","php framework","php","кодзавр","монгол","ололт","мөнхийн","мөнхийн-ололт","мөнхийн ололт","наранхүү","коден","мөнхийн-ололт","ерөнхий бүтэц","фреймворк","raptor","velociraptor","indoraptor","swift seizer","mongoliensis","content management system","агуулга удирдах систем","cms"],
+    "homepage": "https://ololt.mn/codesaur",
+    "authors": [
+        {
+            "name": "Narankhuu",
+            "email": "codesaur@gmail.com",
+            "homepage": "https://ololt.mn/narankhuu"
+        }
+    ],
+    "require": {
+        "codesaur/framework": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Indoraptor\\": "src/Indoraptor",
+            "Indoraptor\\Models\\": "src/Indoraptor/Models",
+            "Indoraptor\\Describes\\": "src/Indoraptor/Describes",
+            "Indoraptor\\Controllers\\": "src/Indoraptor/Controllers",
+            "Velociraptor\\": "src/Velociraptor",
+            "Velociraptor\\Controllers\\": "src/Velociraptor/Controllers",
+            "Velociraptor\\Templates\\": "src/Velociraptor/Templates",
+            "Velociraptor\\Templates\\Boot4\\": "src/Velociraptor/Templates/Boot4"
+        }
+    },
+    "license": "MIT",
+    "minimum-stability": "dev"
+}

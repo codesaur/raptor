@@ -1,0 +1,28 @@
+<table class="table table-striped table-bordered table-hover" id="translation_{{ id }}">
+    <thead>
+        <tr>
+            <th scope="col">{{ 'keyword'|text }}</th>
+            {% for code,country in language.complete() %}
+            <th scope="col">{{ country }} <img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/{{ code }}.png"></th>
+            {% endfor %}
+            <th scope="col">{{ 'type'|text }}</th>
+            <th scope="col" style="width:120px">{{ 'action'|text }}</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot></tfoot>
+</table>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        var table = $('table#translation_{{ id }}');
+        
+        table.DataTable({
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "{{ 'all1'|text }}"]],
+            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ flag }}"},
+            responsive: true, bStateSave: true, pagingType: 'full_numbers', pageLength: 10, order: [[0, 'asc']],
+            ajax: {method: 'GET', url: "{{ 'datatable'|link }}?logger=localization&table={{ id }}&controller=Velociraptor\\Controllers\\TranslationsController"}
+        });
+        
+        Dashboard.ajaxModal(table);
+    });
+</script>

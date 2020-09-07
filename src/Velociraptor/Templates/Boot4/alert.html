@@ -1,0 +1,6 @@
+<div class="alert {{ class }} shadow-sm fade show" role="{{ role|default('alert') }}">
+    {% if icon is defined %}<i class="{{ icon }} pr-2"></i> {% endif %}{{ content }}
+    <button type="button" class="close {{ close }}" data-dismiss="alert" aria-label="{{ 'close'|text }}">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>

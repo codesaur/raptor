@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="{{ flag ?? 'en' }}">
+    <head>
+        <meta charset="{{ meta['charset'] ?? 'utf-8' }}">
+        <title>{{ meta['title']|default('dashboard'|text) }}</title>
+        <meta name="author" content="{{ meta['author']|default('Narankhuu, contact@ololt.mn, +976 70040707') }}">
+        <meta name="robots" content="index,follow">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,shrink-to-fit=no">
+        {% if meta['description'] is defined %}<meta name="description" content="{{ meta['description'] }}">{% endif %}
+        {% if meta['keywords'] is defined %}<meta name="keywords" content="{{ meta['keywords'] }}">{% endif %}
+        <link rel="icon" href="{{ meta['icon']|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/images/ololt-leafs.png') }}" type="image/png">
+        <link rel="shortcut icon" href="{{ meta['shortcut icon']|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/images/ololt.ico') }}" type="image/x-icon">
+        <link rel="apple-touch-icon" href="{{ meta['apple-touch-icon']|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/images/ololt-leafs-iphone-touch-icon.png') }}">
+        {% if meta['google-site-verification'] is defined %}<meta name="google-site-verification" content="{{ meta['google-site-verification'] }}">{% endif %}
+        {% if meta['mobile-web-app-capable'] is defined %}<meta name="keywords" content="{{ meta['mobile-web-app-capable'] }}">{% endif %}
+        {% if meta['apple-mobile-web-app-capable'] is defined %}<meta name="keywords" content="{{ meta['apple-mobile-web-app-capable'] }}">{% endif %}
+        {% if meta['apple-mobile-web-app-status-bar-style'] is defined %}<meta name="keywords" content="{{ meta['apple-mobile-web-app-status-bar-style'] }}">{% endif %}
+        {% if meta['og']['title'] is defined %}<meta name="og:title" content="{{ meta['og']['title'] }}">{% endif %}
+        {% if meta['og']['description'] is defined %}<meta name="og:description" content="{{ meta['og']['description'] }}">{% endif %}
+        {% if meta['og']['type'] is defined %}<meta name="og:type" content="{{ meta['og']['type'] }}">{% endif %}
+        {% if meta['og']['url'] is defined %}<meta name="og:url" content="{{ meta['og']['url'] }}">{% endif %}
+        {% if meta['og']['site_name'] is defined %}<meta name="og:site_name" content="{{ meta['og']['site_name'] }}">{% endif %}
+        {% if meta['og']['image'] is defined %}<meta name="og:image" content="{{ meta['og']['image'] }}">{% endif %}
+        {% if meta['og']['image:width'] is defined %}<meta name="og:image:width" content="{{ meta['og']['image:width'] }}">{% endif %}
+        {% if meta['og']['image:height'] is defined %}<meta name="og:image:height" content="{{ meta['og']['image:height'] }}">{% endif %}
+        {% if meta['fb']['app_id'] is defined %}<meta name="fb:app_id" content="{{ meta['fb']['app_id'] }}">{% endif %}
+        {% if meta['fb']['page_id'] is defined %}<meta name="fb:page_id" content="{{ meta['fb']['page_id'] }}">{% endif %}
+        {% if meta['fb']['admins'] is defined %}<meta name="fb:admins" content="{{ meta['fb']['admins'] }}">{% endif %}
+        {% if meta['twitter']['card'] is defined %}<meta name="twitter:card" content="{{ meta['twitter']['card'] }}">{% endif %}
+        {% if meta['twitter']['url'] is defined %}<meta name="twitter:url" content="{{ meta['twitter']['url'] }}">{% endif %}
+        {% if meta['twitter']['title'] is defined %}<meta name="twitter:title" content="{{ meta['twitter']['title'] }}">{% endif %}
+        {% if meta['twitter']['description'] is defined %}<meta name="twitter:description" content="{{ meta['twitter']['description'] }}">{% endif %}
+        {% if meta['twitter']['image'] is defined %}<meta name="twitter:image" content="{{ meta['twitter']['image'] }}">{% endif %}
+        {% if meta['twitter']['image:width'] is defined %}<meta name="twitter:image:width" content="{{ meta['twitter']['image:width'] }}">{% endif %}
+        {% if meta['twitter']['image:height'] is defined %}<meta name="twitter:image:height" content="{{ meta['twitter']['image:height'] }}">{% endif %}
+        {% if meta['twitter']['site'] is defined %}<meta name="twitter:site" content="{{ meta['twitter']['site'] }}">{% endif %}
+
+        <!-- Global Mandatory Styles -->
+        <link href="https://cdn.jsdelivr.net/gh/codesaur/resources/vendor/flaticon/flaticon.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/gh/codesaur/resources/vendor/flaticon2/flaticon.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css" rel="stylesheet">        
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/css/jasny-bootstrap.min.css" rel="stylesheet">        
+        <link href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">        
+        <link href="https://cdn.jsdelivr.net/gh/codesaur/resources/vendor/notifyme/notifyme.min.css" rel="stylesheet">        
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.compat.css" rel="stylesheet">        
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/hamburgers/1.1.3/hamburgers.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/animsition/4.0.2/css/animsition.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/gh/codesaur/resources/vendor/bootstrap-addon/inline-button-loader/css/component-spinners.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/styles/bootstrap-extend.css" rel="stylesheet">
+        
+        <!-- Page Styles -->
+        {% for item in stylesheet %}
+        <link href="{{ item['href'] }}" rel="stylesheet" type="text/css" {{ item['attr'] }}>
+        {% endfor %}
+
+        <link href="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/main.css" rel="stylesheet" type="text/css">
+    </head>
+    <body class="{{ class }}">
+        
+        <div class="modal fade" id="modal" role="dialog" aria-labelledby="MyModalLabel" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header modal-header-solid">
+                        <h5 class="modal-title text-uppercase" id="MyModalLabel">{{ 'title'|text }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/spinner.gif"> &nbsp;&nbsp;&nbsp;{{ 'loading'|text }}...
+                    </div>
+                    <div class="modal-footer modal-footer-solid">
+                        <button class="btn btn-secondary" data-dismiss="modal">{{ 'close'|text }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{ content }}
+        
+        <!-- Global Mandatory Scripts -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/js/jasny-bootstrap.min.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/gh/codesaur/resources/vendor/bootstrap-addon/inline-button-loader/js/component-spinners.min.js" type="text/javascript"></script>
+        <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js" type="text/javascript" ></script>
+        <script src="https://cdn.jsdelivr.net/gh/codesaur/resources/vendor/notifyme/notifyme.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+        <script src="sweetalert2.all.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animsition/4.0.2/js/animsition.min.js" type="text/javascript"></script>
+        <script src="https://unpkg.com/@popperjs/core@2.4.4/dist/umd/popper.min.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js" type="text/javascript"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/gh/codesaur/resources/vendor/countdowntime/countdowntime.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/npm/fingerprintjs2@2/dist/fingerprint2.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/scripts/functions.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/scripts/dashboard.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/main.js" type="text/javascript"></script>
+
+        <!-- Page scripts -->
+        {% for item in plugin %}
+        <script src="{{ item['src'] }}" type="text/javascript" {{ item['attr'] }}></script>
+        {% endfor %}
+        
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                Boot4.init();
+                
+                Dashboard.init({
+                    text: {
+                        error: {{ 'error'|text|json_encode }},
+                        notice: {{ 'notice'|text|json_encode }},
+                        conn_error: {{ 'connection-error!'|text|json_encode }},
+                        invalid_res: {{ 'invalid-response!'|text|json_encode }},
+                        processing: {{ ('processing'|text ~ ' ...')|json_encode }},
+                        form_error: {{ 'u-have-some-form-errors'|text|json_encode }},
+                        cant_complete: {{ 'cant-complete-request'|text|json_encode }}
+                    }
+                });
+
+                {{ javascript }}
+            });
+        </script>
+        
+        {% if google['analytics']['id'] is defined %}
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments);},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m);
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            ga('create', '{{ google['analytics']['id'] }}', 'auto'); ga('send', 'pageview');
+        </script>
+        {%  endif %}
+        
+        {% if facebook['page']['id'] is defined %}
+        <div id="fb-root"></div>
+        <script>
+            window.fbAsyncInit = function() {
+                FB.init({xfbml: true, version : 'v3.3'});
+            };
+            (function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12&autoLogAppEvents=1';
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+        </script>
+        <div class="fb-customerchat" attribution=setup_tool page_id="{{ facebook['page']['id'] }}"
+            {% if facebook['page']['messenger_theme_color'] is defined %} theme_color="{{ facebook['page']['messenger_theme_color'] }}"{% endif %}
+            logged_in_greeting="{{ facebook['page']['messenger_in_greeting']|default('Сайн байна уу? Бидэнтэй холбогдож байгаа таньд баярлалаа') }}"
+            logged_out_greeting="{{ facebook['page']['messenger_out_greeting']|default('Сайн байна уу? Бидэнтэй холбогдож байгаа таньд баярлалаа') }}">
+        </div>
+        {% endif %}
+        
+    </body>
+</html>

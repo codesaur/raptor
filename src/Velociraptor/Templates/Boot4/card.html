@@ -1,0 +1,32 @@
+<div class="card shadow-sm {{ class }}" id="{{ id|default('card_' ~ random()) }}">
+{% if header is defined %}
+    <div class="card-header {{ header['class'] }}">
+    {% if header['content'] is defined %}
+        {{ header['content'] }}
+    {% else %}
+        <span class="float-left {{ header['caption']['class'] }}">
+            {% if icon is defined %}<i class="{{ icon }}"></i> {% endif %}{{ header['caption']['text'] }}
+        </span>
+        {% if header['buttons'] is defined %}
+        <ul class="nav nav-pills card-header-pills float-right pr-2">
+        {% for btn in header['buttons'] %}
+            <li class="nav-item {{ btn['li-class'] }} pl-2">
+                <a class="nav-link {{ btn['class'] }}" href="{{ btn['href'] }}" {{ btn['attr'] }}>
+                    {% if btn['icon'] is defined %}<i class="{{ btn['icon'] }}"></i> {% endif %}{{ btn['text'] }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endif %}
+    </div>
+{% endif %}
+    <div class="card-body {{ body_class }}">
+        {{ content }}
+    </div>
+{% if footer is defined %}
+    <div class="card-footer {{ footer['class'] }}">
+        {{ footer['content'] }}
+    </div>
+{% endif %}
+</div>

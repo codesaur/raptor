@@ -1,0 +1,6 @@
+<div class="bd-callout bd-callout-{{ type }} {{ class }}" id="{{ id }}">
+    <button type="button" class="close {{ close }}" data-target="#{{ id }}" data-dismiss="alert" aria-label="{{ 'close'|text }}">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <p>{% if icon is defined %}<i class="{{ icon }} pr-2 text-{{ type }}"></i> {% endif %}{{ content }}</p>
+</div>

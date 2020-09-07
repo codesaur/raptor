@@ -1,0 +1,412 @@
+{{ index.stylesheet('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/login.css') }}
+
+<div class="form-signin">
+    <div class="text-center mb-4" id="logo">
+        <a href="{{ 'home'|link }}">
+            <img class="mb-4" alt="{{ 'dashboard'|text }}" src="{{ logo|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/images/ololt-logo-hor-' ~ flag ~ '.png') }}">
+        </a>
+    </div>
+    <form id="login_form" action="{{ 'entry'|link }}" method="POST">
+        <div class="form-label-group" id="user">
+            <input autofocus type="text" placeholder="{{ 'user'|text }}" name="username" id="username" autocomplete="on" class="form-control">
+            <label for="inputEmail">{{ 'user'|text }}</label>
+        </div>
+        <div class="form-label-group" id="pass">
+            <input type="password" placeholder="{{ 'password'|text }}" name="password" id="password" class="form-control">
+            <label for="inputPassword">{{ 'password'|text }}</label>
+        </div>
+        <div class="pb-5">
+            <button id="login_signin_submit" class="btn btn-lg btn-{{ button|default('primary') }} btn-spinner float-left text-uppercase" data-spinner-type="grow">
+                &nbsp;<i class="flaticon-user-ok"></i> &nbsp;{{ 'signin'|text }} &nbsp;
+            </button>
+            <a href="javascript:;" id="forget_password" class="float-right pt-2">
+                <span>{{ 'forgot-password'|text }}</span>
+            </a>
+        </div>
+        {% if content is defined %}<hr>{{ content }}{% endif %}
+        <hr>
+        <div class="text-center">
+            <span>{{ 'dont-have-account-yet'|text }}</span>
+            <a href="javascript:;" id="signup">{{ 'signup'|text }}</a>
+        </div>
+        <hr>
+        <p class="mt-3 mb-3 text-muted text-center">
+            {{ 'now'|date('Y') }} &copy; {{ copyright|default(flag == 'mn' ? 'Мөнхийн-Ололт ХХК, Монгол улс' : 'Munkhiin-Ololt LLC, Mongolia') }}
+        </p>
+        <hr>
+        <div class="text-center">
+            <span id="language">
+            {%  if flag == 'mn' %}
+                Click for <a href="{{ 'language'|link({'language': 'en'}) }}">English</a>
+            {% else %}
+                Системийн хэлийг <a href="{{ 'language'|link({'language': 'mn'}) }}">Монгол</a> болго
+            {% endif %}
+            </span>
+        </div>
+    </form>
+
+    <form id="forgot_form" class="d-none" action="{{ 'login-request'|link }}" method="POST">
+        <h3 class="text-center mb-4">{{ 'forgotten-password-reset'|text }}</h3>
+        <span>{{ 'enter-email-below'|text }}</span>
+        <div class="form-group">
+            <input class="form-control" type="email" placeholder="{{ 'email'|text }}" name="codeForgetEmail" id="codeForgetEmail" autocomplete="off">
+        </div>
+        <div>
+            <button id="forget_password_submit" class="btn btn-primary btn-spinner shadow-sm float-left" data-spinner-type="grow">{{ 'request'|text }}</button>
+            <button id="forget_password_cancel" class="btn btn-secondary shadow-sm float-right">{{ 'cancel'|text }}</button>
+        </div>
+    </form>
+
+    <form id="signup_form" class="d-none" action="{{ 'signup'|link }}" method="POST">
+        <h3 class="text-center mb-4">{{ 'signup'|text }}</h3>
+        <span>{{ 'enter-personal-details'|text }}</span>
+        <div class="form-group mt-4">
+            <input class="form-control" type="text" placeholder="{{ 'username'|text }}/{{ 'login-name'|text }}" name="codeUsername" id="codeUsername" autocomplete="new-account">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" placeholder="{{ 'email'|text }}" name="codeEmail" id="codeEmail" autocomplete="new-email">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" placeholder="{{ 'password'|text }}" name="codePassword" id="codePassword" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" placeholder="{{ 'retype-password'|text }}" name="codeRePassword" id="codeRePassword"  autocomplete="new-password-retype">
+        </div>
+        <div class="form-group text-center">
+        {% if flag == 'mn' %}
+            Бүртгүүлэх товчыг дарснаар, та манай <a data-target="#tos" data-toggle="modal" href="javascript:;">системийг хэрэглэх ерөнхий нөхцөл</a>
+            хүлээн зөвшөөрч, <a data-target="#pp" data-toggle="modal" href="javascript:;">хувийн нууцлалын бодлоготой</a> танилцсан болно.
+        {% else %}
+            By clicking Sign Up, you agree to our <a data-target="#tos" data-toggle="modal" href="javascript:;">terms and conditions</a>
+            and have read our <a data-target="#pp" data-toggle="modal" href="javascript:;">privacy policy</a>.
+        {% endif %}
+        </div>
+        <div>
+            <button id="signup_submit" class="btn btn-primary btn-spinner shadow-sm float-left" data-spinner-type="grow">{{ 'signup'|text }}</button>
+            <button id="signup_cancel" class="btn btn-secondary shadow-sm float-right">{{ 'cancel'|text }}</button>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        let formLogin = $('#login_form');
+        let formForgot = $('#forgot_form');
+        let formSignUp = $('#signup_form');
+        
+        function showMessage(form, type, msg) {
+            var alert = $('<div class="alert alert-' + type + '" role="alert"></div>');
+
+            form.find('.alert').remove();
+            alert.prependTo(form);
+
+            alert.html(msg);
+        };
+        
+        function displaySignIn() {
+            $('#signup_form').addClass('d-none');
+            $('#forgot_form').addClass('d-none');
+            
+            $('#login_form').removeClass('d-none');
+            
+            formLogin.addClass('animated flipInX');
+        }
+
+        jQuery.validator.addMethod('passwordMatch', function(value, element) {
+            var password = $('#codePassword').val();
+            var confirmPassword = $('#codeRePassword').val();
+            
+            return password === confirmPassword;
+        }, 'Passwords must match');
+        
+        jQuery.validator.addMethod('passwordCheck', function(value, element) {
+            var password = $('#codePassword').val();
+            
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/.test(password);
+        }, 'Password must contain at least 8 characters in that 1 upper case letter, 1 lower case letter, 1 number, 1 special character');
+        
+        $('#login_signin_submit').click(function(e) {
+            e.preventDefault();
+
+            var btn = $(this);
+            var form = $(this).closest('form');
+            form.validate({
+
+            }), form.valid() && (
+                    btn.buttonLoader('start'),
+                    btn.attr('disabled', true),
+                    $(document).ajaxStop($.unblockUI),
+                    $.blockUI({message: "{{ 'processing'|text }} ..."}),
+            form.ajaxSubmit({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: form.serialize(),
+                success: function(response, status, xhr, $form) {
+                    let loginMsg;
+                    let type = 'danger';
+
+                    try {
+                        if (typeof response.message !== 'undefined') {
+                            loginMsg = response.message;
+                        } else {
+                            loginMsg = "{{ 'invalid-response!'|text }}";
+                        }
+                    } catch(e) {
+                        loginMsg = "{{ 'connection-error!'|text }}";
+                    }
+
+                    if (typeof response.type !== 'undefined') {
+                        type = response.type;
+                    }
+
+                    if (loginMsg === 'success') {
+                        if (typeof response.url === 'undefined') {
+                            response.url = $('logo').children('a').attr('href');
+                        }
+                        window.location.href = response.url;
+                    } else {
+                        showMessage(form, type, loginMsg);
+                        btn.buttonLoader('stop');
+                        btn.attr('disabled', false);
+                    }
+                },
+                error: function (xhr, status, error)
+                {
+                    showMessage(form, 'warning', "{{ 'something-went-wrong'|text }}");
+                    btn.buttonLoader('stop');
+                    btn.attr('disabled', false);
+                }
+            }));
+        });
+        
+        $('#forget_password').click(function(e) {
+            e.preventDefault();
+            
+            $('#login_form').addClass('d-none');
+            $('#signup_form').addClass('d-none');
+            
+            $('#forgot_form').removeClass('d-none');
+            
+            formForgot.addClass('animated flipInX');
+        });
+
+        $('#forget_password_cancel').click(function(e) {
+            e.preventDefault();
+
+            displaySignIn();
+        });
+
+        $('#signup').click(function(e) {
+            e.preventDefault();
+            
+            $('#login_form').addClass('d-none');
+            $('#forgot_form').addClass('d-none');
+            
+            $('#signup_form').removeClass('d-none');
+            
+            formSignUp.addClass('animated flipInX');
+        });
+
+        $('#signup_cancel').click(function(e) {
+            e.preventDefault();
+
+            displaySignIn();
+        });
+        
+        $('#forget_password_submit').click(function(e) {
+            e.preventDefault();
+
+            var btn = $(this),
+            form = $(this).closest('form');
+            form.validate({
+                rules: {
+                    codeForgetEmail: {
+                        required: true,
+                        email: true
+                    }
+                },
+                messages: {
+                    codeForgetEmail: {
+                        required: '<span class="text-danger">{{ 'enter-email-empty'|text }}</span>',
+                        email: '<span class="text-danger">{{ 'enter-email-valid'|text }}</span>'
+                    }
+                }
+            }), form.valid() && (
+                    btn.buttonLoader('start'),
+                    btn.attr('disabled', true),
+                    $(document).ajaxStop($.unblockUI),
+                    $.blockUI({message: "{{ 'processing'|text }} ..."}),
+            form.ajaxSubmit({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: form.serialize(),
+                success: function(response, status, xhr, $form) {
+                    let resetMsg;
+
+                    try {
+                        if (typeof response.message !== 'undefined') {
+                            resetMsg = response.message;
+                        } else {
+                            resetMsg = "{{ 'invalid-response!'|text }}";
+                        }
+                    } catch(e) {
+                        resetMsg = "{{ 'connection-error!'|text }}";
+                    }
+                    
+                    btn.buttonLoader('stop');
+                    btn.attr('disabled', false);
+
+                    if (typeof response.type !== 'undefined' && response.type === 'success') {
+                        form.clearForm();
+                        form.validate().resetForm();
+
+                        displaySignIn();
+                        
+                        formLogin.clearForm();
+                        formLogin.validate().resetForm();
+                        
+                        showMessage(formLogin, response.type, resetMsg);
+                    } else {
+                        showMessage(form, 'danger', resetMsg);
+                    }
+                },
+                error: function (xhr, status, error)
+                {
+                    showMessage(form, 'warning', "{{ 'something-went-wrong'|text }}");
+
+                    btn.buttonLoader('stop');
+                    btn.attr('disabled', false);
+                }
+            }));
+        });
+        
+        $('#signup_submit').click(function(e) {
+            e.preventDefault();
+
+            var btn = $(this);
+            var form = $(this).closest('form');
+
+            form.validate({
+                rules: {
+                    codeUsername: {
+                        required: true
+                    },
+                    codeEmail: {
+                        required: true,
+                        email: true
+                    },
+                    codePassword: {
+                        required: true,
+                        minlength: 8,
+                        passwordCheck: true
+                    },
+                    codeRePassword: {
+                        required: true,
+                        minlength: 8,
+                        passwordMatch: true
+                    }
+                },
+                messages: {
+                    codeUsername: {
+                        required: '<span class="text-danger">{{ 'error-username-empty'|text }}</span>'
+                    },
+                    codeEmail: {
+                        required: '<span class="text-danger">{{ 'enter-email-empty'|text }}</span>',
+                        email: '<span class="text-danger">{{ 'enter-email-valid'|text }}</span>'
+                    },
+                    codePassword: {
+                        required: '<span class="text-danger">{{ 'error-password-empty'|text }}</span>',
+                        minlength: '<span class="text-danger">{{ 'password-format8'|text }}</span>',
+                        passwordCheck: '<span class="text-danger">{{ 'password-format8'|text }}</span>'
+                    },
+                    codeRePassword: {
+                        required: '<span class="text-danger">{{ 'password-must-confirm'|text }}</span>',
+                        minlength: '<span class="text-danger">{{ 'password-must-match'|text }}</span>',
+                        passwordMatch: '<span class="text-danger">{{ 'password-must-match'|text }}</span>'
+                    }
+                }
+            }), form.valid() && (
+                    btn.buttonLoader('start'),
+                    btn.attr('disabled', true),
+                    $(document).ajaxStop($.unblockUI),
+                    $.blockUI({message: "{{ 'processing'|text }} ..."}),
+            form.ajaxSubmit({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: form.serialize(),
+                success: function(response, status, xhr, $form) {
+                    let signupMsg;
+
+                    try {
+                        if (typeof response.message !== 'undefined') {
+                            signupMsg = response.message;
+                        } else {
+                            signupMsg = "{{ 'invalid-response!'|text }}";
+                        }
+                    } catch(e) {
+                        signupMsg = "{{ 'connection-error!'|text }}";
+                    }
+
+                    btn.buttonLoader('stop');
+                    btn.attr('disabled', false);
+
+                    if (typeof response.type !== "undefined" && response.type === "success") {
+                        form.clearForm();
+                        form.validate().resetForm();
+
+                        displaySignIn();
+
+                        formLogin.clearForm();
+                        formLogin.validate().resetForm();
+                        
+                        showMessage(formLogin, response.type, signupMsg);
+                    } else {
+                        showMessage(form, response.type, signupMsg);
+                    }
+                },
+                error: function (xhr, status, error)
+                {
+                    showMessage(form, 'warning', "{{ 'something-went-wrong'|text }}");
+
+                    btn.buttonLoader('stop');
+                    btn.attr('disabled', false);
+                }
+            }));
+        });
+    });
+</script>
+<div class="modal fade" id="tos" role="dialog" aria-labelledby="MyModalLabel" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-solid">
+                <h5 class="modal-title text-primary text-uppercase" id="MyModalLabel">{{ tos['title'][flag] }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+            </div>            
+            <div class="modal-body">
+                <div style="height:400px;overflow-y:auto;overflow-x:hidden;">
+                    {{ tos['full'][flag] }}
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-solid">
+                 <button class="btn btn-primary shadow-sm" data-dismiss="modal">{{ 'close'|text }}</button>
+            </div>            
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="pp" role="dialog" aria-labelledby="MyModalLabel" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">            
+            <div class="modal-header modal-header-solid">
+                <h5 class="modal-title text-primary text-uppercase" id="MyModalLabel">{{ pp['title'][flag] }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+            </div>            
+            <div class="modal-body">
+                <div style="height:400px;overflow-y:auto;overflow-x:hidden;">
+                {{ pp['full'][flag] }}
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-solid">
+                 <button class="btn btn-primary shadow-sm" data-dismiss="modal">{{ 'close'|text }}</button>
+            </div>            
+        </div>
+    </div>
+</div>

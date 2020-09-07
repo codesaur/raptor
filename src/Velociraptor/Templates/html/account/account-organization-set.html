@@ -1,0 +1,50 @@
+<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <form autocomplete="off" id="account_organization_set" role="form" action="{{ 'account-organization-set'|link({'id':id}) }}" method="POST" enctype="multipart/form-data">
+            <div class="modal-header modal-header">
+                <h5 class="modal-title text-uppercase" id="MyModalLabel"><i class="la la-bank"></i> {{ 'organization'|text }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div style="height:400px;overflow-y:auto;overflow-x:hidden;">
+                    <input readonly name="account_id" value="{{ id }}" type="hidden">
+                    <div class="form-group">
+                        <label>Хэрэглэгчийн харъяалагдах байгууллагыг сонгон тохируулна уу!</label>
+                        <select id="organizations" name="organizations" class="form-control" multiple="multiple">
+                            {% for organization in organizations %}
+                            <option value="{{ organization['id'] }}">{{ organization['name'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-solid">
+                <button class="submit btn btn-dark shadow-sm" type="submit">
+                    <i class="la la-check"></i> <strong>{{ 'save'|text }}</strong>
+                </button>
+                <button class="btn btn-secondary shadow-sm" data-dismiss="modal">{{ 'back'|text }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    (function($) {
+        $.fn.Select2Organizations = function() {
+            if (jQuery().select2) {
+                this.select2({
+                    width: '100%',
+                    escapeMarkup: function(m) { return m; }
+                });
+            };
+
+            return this;
+        };
+    } (jQuery));
+    
+    $('#organizations').Select2Organizations();
+    
+    {% if current_organizations is defined and current_organizations is not empty %}
+    $('#organizations').val([{{ current_organizations }}]);
+    $('#organizations').trigger('change');
+    {% endif %} 
+</script>

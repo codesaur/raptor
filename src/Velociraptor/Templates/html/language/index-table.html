@@ -1,0 +1,27 @@
+<table class="table table-striped table-bordered table-hover" id="language">
+    <thead>
+        <tr>
+            <th scope="col">{{ 'code'|text }}</th>
+            <th scope="col">{{ 'name'|text }}</th>
+            <th scope="col">{{ 'flag'|text }}</th>
+            <th scope="col">{{ 'date-created'|text }}</th>
+            <th scope="col" style="width:120px">{{ 'action'|text }}</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot></tfoot>
+</table>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        var table = $('table#language');
+        
+        table.DataTable({
+            lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]],
+            responsive: true, bStateSave: true, pageLength: 10, order: [[0, 'asc']],
+            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ flag }}"},
+            ajax: {method: 'GET', url: "{{ 'datatable'|link }}?logger=localization&table=language&controller=Velociraptor\\Controllers\\LanguagesController"}
+        });
+        
+        Dashboard.ajaxModal(table);
+    });
+</script>

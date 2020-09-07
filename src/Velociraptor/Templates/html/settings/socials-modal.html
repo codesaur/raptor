@@ -1,0 +1,66 @@
+<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <form autocomplete="off" role="form" action="{{ action }}" method="POST" enctype="multipart/form-data">
+            <div class="modal-header modal-header-solid">
+                <h5 class="modal-title text-uppercase text-info" id="MyModalLabel"><i class="flaticon-network"></i> {{ 'social-network'|text }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div style="height:400px;overflow-y:auto;overflow-x:hidden;">
+                    <input name="{{ column['id']['name'] }}" readonly value="{{ column['id']['value'] }}" type="hidden">
+                    <input name="{{ column['alias']['name'] }}" readonly value="{{ column['alias']['value']|e }}" type="hidden">
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Facebook</label>
+                        <div class="col-8">
+                            <input class="form-control" maxlength="{{ column['facebook']['length'] }}" name="{{ column['facebook']['name'] }}" value="{{ column['facebook']['value']|e }}" type="{{ column['facebook']['type'] }}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Facebook widget</label>
+                        <div class="col-8">
+                            <textarea class="form-control" maxlength="{{ column['facebook_widget']['length'] }}" name="{{ column['facebook_widget']['name'] }}" rows="5">{{ column['facebook_widget']['value']|e }}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Facebook pixels</label>
+                        <div class="col-8">
+                            <textarea class="form-control" maxlength="{{ column['facebook_pixels']['length'] }}" name="{{ column['facebook_pixels']['name'] }}" rows="5">{{ column['facebook_pixels']['value']|e }}</textarea>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Twitter</label>
+                        <div class="col-8">
+                            <input class="form-control" maxlength="{{ column['twitter']['length'] }}" name="{{ column['twitter']['name'] }}" value="{{ column['twitter']['value']|e }}" type="{{ column['twitter']['type'] }}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Twitter widget</label>
+                        <div class="col-8">
+                            <textarea class="form-control" maxlength="{{ column['twitter_widget']['length'] }}" name="{{ column['twitter_widget']['name'] }}" rows="5">{{ column['twitter_widget']['value']|e }}</textarea>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Youtube</label>
+                        <div class="col-8">
+                            <input class="form-control" maxlength="{{ column['youtube']['length'] }}" name="{{ column['youtube']['name'] }}" value="{{ column['youtube']['value']|e }}" type="{{ column['youtube']['type'] }}">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">Flickr</label>
+                        <div class="col-8">
+                            <input class="form-control" maxlength="{{ column['flickr']['length'] }}" name="{{ column['flickr']['name'] }}" value="{{ column['flickr']['value']|e }}" type="{{ column['flickr']['type'] }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-solid">
+                <button class="submit btn btn-primary shadow-sm" type="submit"><i class="la la-check"></i> <strong>{{ 'save'|text }}</strong></button>
+                <button class="btn btn-success shadow-sm" type="reset">{{ 'reset'|text }}</button>
+                <button class="btn btn-secondary shadow-sm" data-dismiss="modal">{{ 'back'|text }}</button>
+            </div>
+        </form>
+    </div>
+</div>

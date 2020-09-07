@@ -1,0 +1,55 @@
+<div class="card shadow-sm border-primary">
+    <div class="card-header bg-primary">
+        <span class="float-left text-light text-uppercase"><i class="flaticon-graph pr-2"></i> {{ 'google-analytics'|text }}</span>
+    </div>
+    <div class="card-body">
+        <div style="width:100%;height:75vh;min-height:400px">
+            <a href="https://analytics.google.com/analytics/web/?utm_source=marketingplatform.google.com&utm_medium=et&utm_campaign=marketingplatform.google.com%2Fabout%2Fanalytics%2F#/report-home/a138970599w199696834p194077593" target="__blank" class="btn btn-warning">{{ 'google'|text }} - {{ 'dashboard'|text }}</a>
+            <br />
+            <section id="auth-button"></section>
+            <section id="view-selector"></section>
+            <section id="timeline"></section>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(w,d,s,g,js,fjs){
+        g=w.gapi||(w.gapi={});g.analytics={q:[],ready:function(cb){this.q.push(cb);}};
+        js=d.createElement(s);fjs=d.getElementsByTagName(s)[0];
+        js.src='https://apis.google.com/js/platform.js';
+        fjs.parentNode.insertBefore(js,fjs);js.onload=function(){g.load('analytics');};
+    }(window,document,'script'));
+</script>
+
+<script>
+gapi.analytics.ready(function() {
+    var CLIENT_ID = '{{ GOOGLE_CLIENT_ID }}';
+    gapi.analytics.auth.authorize({container: 'auth-button', clientid: CLIENT_ID});
+    
+    var viewSelector = new gapi.analytics.ViewSelector({container: 'view-selector'});
+    
+    var timeline = new gapi.analytics.googleCharts.DataChart({
+        reportType: 'ga',
+        query: {
+            'dimensions': 'ga:date',
+            'metrics': 'ga:sessions',
+            'start-date': '30daysAgo',
+            'end-date': 'yesterday'
+        },
+        chart: {
+            type: 'LINE',
+            container: 'timeline'
+        }
+    });
+    
+    gapi.analytics.auth.on('success', function(response) {
+        viewSelector.execute();
+    });
+    
+    viewSelector.on('change', function(ids) {
+        var newIds = { query: {ids: ids} };
+        timeline.set(newIds).execute();
+    });
+});
+</script>

@@ -1,0 +1,131 @@
+<div class="card shadow-sm border-primary mb-4">
+    <div class="card-header bg-light">
+        <span class="mt-2 float-left text-uppercase text-danger">
+            <i class="flaticon-users"></i> {{ 'accounts'|text }}
+        </span>
+        <ul class="nav nav-pills card-header-pills float-right pr-2">
+            {% if user.can(user.organization('alias') ~ '_account_forgot_index') %}
+            <li class="nav-item pl-2">
+                <a class="nav-link btn btn-outline-dark shadow-sm" data-target="#modal" data-toggle="modal"
+                   href="{{ 'crud'|link({'action':'index'}) }}?logger=account&table=forgot&controller=Velociraptor\Controllers\AccountController">
+                    {{ 'password-reset-request'|text }}
+                </a>
+            </li>
+            {% endif %}
+            {% if user.can(user.organization('alias') ~ '_account_insert') %}
+            <li class="nav-item pl-2">
+                <a class="nav-link btn btn-success shadow-sm" data-target="#modal" data-toggle="modal"
+                   href="{{ 'crud'|link({'action':'insert'}) }}?logger=account&table=account&controller=Velociraptor\Controllers\AccountController">
+                    <i class="flaticon-add"></i> {{ 'add-new-account'|text }}
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="card-body accounts_list">
+        <table class="table table-striped table-bordered table-hover" id="org_account" width="100%">
+            <thead>
+                <tr>
+                    <th scope="col">{{ 'photo'|text }}</th>
+                    <th scope="col">{{ 'name'|text }}</th>
+                    <th scope="col"><!--{{ 'login-name'|text }}--></th>
+                    <th scope="col">{{ 'email'|text }}</th>
+                    <th scope="col">{{ 'user-role'|text }}</th>
+                    <th scope="col">{{ 'status'|text }}</th>
+                    <th scope="col" style="width:120px">{{ 'action'|text }}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for account in accounts %}
+                <tr id="account_{{ account['id'] }}">
+                    <th scope="row">
+                        {% set photo = image.singlePath(account['id']) %}
+                        <img alt="{{ name }}" src="{% if image.isEmpty(photo) %}https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif{% else %}{{ photo }}{% endif %}" width="60px">
+                    <td>{{ account['first_name'] ~ ' ' ~ account['last_name'] }}</td>
+                    <td>{{ account['username'] }}</td>
+                    <td>{{ account['email'] }}</td>
+                    <td>
+                        <a href="{{ 'crud'|link({'action':'update'}) }}?logger=rbac&controller=Velociraptor\Controllers\RBACController&thing=user_role&id={{ account['id'] }}"
+                           class="ajax-modal btn btn-primary btn-sm shadow-sm" data-target="#modal" data-toggle="modal"><i class="flaticon2-user-1"></i>
+                        </a>
+                    {% for role in account['roles'] %}
+                        <span class="badge badge-{{ role == 'system_coder' ? 'info' : 'success' }} shadow-sm">{{ role }}</span>
+                    {% endfor %}
+                    </td>
+                    <td>
+                        <span class="badge badge-{{ account['status'] ? 'danger' : 'secondary' }}">Системд нэвтрэх эрх: {{ (lookup['status'][account['status']] ?? account['status']) }}</span>
+                        <span class="badge badge-{{ account['org_status'] ? 'danger' : 'secondary' }}">Байгууллагын эрх: {{ lookup['status'][account['org_status']] ?? account['org_status'] }}</span>
+                    </td>
+                    <td>
+                        <div class="float-right">
+                            {% if user.can(user.organization('alias') ~ '_account_delete') %}
+                            <a href="javascript:;" onclick="stripAccount({{ account['id'] }}, {{ user.organization('id') }}, '{{ account['first_name'] ~ ' ' ~ account['last_name'] }}', '{{ user.organization('alias') }}');" class="btn btn-danger shadow-sm"><i class="la la-trash"></i></a>
+                            {% endif %}
+                            {% if user.can(user.organization('alias') ~ '_account_retrieve') %}
+                            <a href="{{ 'crud'|link({'action':'retrieve'}) }}?logger=account&controller=Velociraptor\Controllers\AccountController&id={{ account['id'] }}" class="btn btn-info shadow-sm"><i class="la la-eye"></i></a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot></tfoot>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+function stripAccount(id, org, name, alias) {
+    bootbox.confirm({
+        title: "{{ 'confirmation'|text }}",
+        message: '(' + name + ') хэрэглэгчийн байгууллагаар нэвтрэх эрхийг хүчингүй болгохдоо итгэлтэй байна уу?',
+        buttons: {
+            confirm: {
+                label: '<i class="fa fa-check"></i> ' + "{{ 'yes'|text }}",
+                className: 'btn-success'
+            },
+            cancel: {
+                label: '<i class="fa fa-times"></i> ' + "{{ 'no'|text }}",
+                className: 'btn-danger'
+            }
+        },
+        callback: function (result) {
+            if (result) {
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        account: id,
+                        organization: org,
+                        organization_alias: alias
+                    },
+                    url: "{{ 'crud'|link({'action':'kick'}) }}?logger=account&controller=Velociraptor\\Controllers\\AccountController",
+                    success: function(response) {
+                        var type = (typeof response.status !== 'undefined') ? response.status : 'default';
+                        var title = (typeof response.title !== 'undefined') ? response.title : 'Мэдэгдэл';
+                        var message = (typeof response.message !== 'undefined') ? response.message : 'Үр дүн тодорхой бус!';
+                        
+                        Dashboard.notify(type, title, message);
+                        
+                        if (type === 'success') {
+                            $('#account_' + id).remove();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Dashboard.notify('error', 'Мэдэгдэл', 'Үйлдэл гүйцэтгэх боломжгүй!');
+                    }
+                });
+            }
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var table = $('table#org_account');
+
+    table.DataTable({
+        lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]],
+        language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ flag }}"},
+        
+        responsive: true, bStateSave: true, pagingType: 'full_numbers', pageLength: 10, order: [[0, 'asc']]
+    });
+});
+</script>

@@ -1,0 +1,56 @@
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+        <form role="form" action="{{ action }}" method="POST" enctype="multipart/form-data">
+            <div class="modal-header modal-header-solid">
+                <h5 class="modal-title text-uppercase text-primary" id="MyModalLabel"><i class="la la-edit"></i> {{ 'edit-record'|text }} <small class="text-warning">ID: {{ column['id']['value'] }}</small></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div style="height:400px;overflow-y:auto;overflow-x:hidden;">
+                    <input name="{{ column['id']['name'] }}" readonly value="{{ column['id']['value'] }}" type="hidden">
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">{{ 'code'|text }}</label>
+                        <div class="col-8">
+                            <input class="form-control" disabled maxlength="{{ column['short']['length'] }}" name="{{ column['short']['name'] }}" value="{{ column['short']['value']|e }}" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">{{ 'flag'|text }}</label>
+                        <div class="col-8"><img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/25x15/{{ column['short']['value'] }}.png" style="margin-top:12px"></div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">{{ 'name'|text }}</label>
+                        <div class="col-8">
+                            <input class="form-control" disabled maxlength="{{ column['full']['length'] }}" name="{{ column['full']['name'] }}" value="{{ column['full']['value']|e }}" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">{{ 'copy-translations-from'|text }}</label>
+                        <div class="col-8">
+                            <input class="form-control" disabled maxlength="{{ column['copy']['length'] }}" name="{{ column['copy']['name'] }}" value="{{ column['copy']['value']|e }}" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">{{ 'description'|text }}</label>
+                        <div class="col-8">
+                            <textarea class="form-control" maxlength="{{ column['description']['length'] }}" name="{{ column['description']['name'] }}">{{ column['description']['value']|e }}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label text-right">is default?</label>
+                        <div class="col-8">
+                            <div class="form-check" style="margin-top:10px">
+                                <input disabled type="checkbox" class="form-check-input" name="{{ column['is_default']['name'] }}"{% if column['is_default']['value'] %} checked{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-solid">
+                <button class="submit btn btn-primary shadow-sm" type="submit" data-table="language"><i class="la la-check"></i> <strong>{{ 'save'|text }}</strong></button>
+                <button class="btn btn-success shadow-sm" type="reset">{{ 'reset'|text }}</button>
+                <button class="btn btn-secondary shadow-sm" data-dismiss="modal">{{ 'back'|text }}</button>
+            </div>
+        </form>
+    </div>
+</div>

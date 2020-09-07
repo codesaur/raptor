@@ -1,0 +1,17 @@
+{{ index.stylesheet('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/login.css') }}
+
+<div class="form-signin">
+    <div class="text-center mb-4" id="logo">
+        <a href="{{ 'home'|link }}">
+            <img class="mb-4" alt="{{ 'dashboard'|text }}" src="{{ logo|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/images/ololt-logo-hor-' ~ flag ~ '.png') }}">
+        </a>
+    </div>
+    <form>
+        <div>
+            <h3>{{ title|default('failure'|text) }}</h3>
+            <span class="text-center">{{ notice|default('reset-link-expired'|text) }}</span>
+            <hr>
+            <a href="{{ 'home'|link }}" class="btn btn-{{ btn_class|default('secondary') }} shadow-sm">{{ btn|default('back'|text) }}</a>
+        </div>
+    </form>
+</div>

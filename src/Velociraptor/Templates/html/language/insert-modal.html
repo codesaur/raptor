@@ -1,0 +1,238 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title text-uppercase text-danger" id="MyModalLabel"><i class="la la-plus"></i> {{ 'add-new-language'|text }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="progress mb-4">
+                <div class="progress-bar" role="progressbar" style="width:33%" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active infoHead" data-toggle="tab" href="#infoPanel" role="tab">{{ 'general-info'|text }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link settingsHead" data-toggle="tab" href="#settingsPanel" role="tab">{{ 'translation-settings'|text }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link confirmHead" data-toggle="tab" href="#confirmPanel" role="tab">{{ 'confirm'|text }}</a>
+                </li>
+            </ul>
+            <div class="tab-content mt-2">
+                <div class="tab-pane fade show active" id="infoPanel" role="tabpanel">                    
+                    <h5 class="mt-4">{{ 'enter-language-details'|text }}</h5>
+                    <div class="form-group">
+                        <label class="text-right">{{ 'country'|text }}</label>
+                        <select class="select2 form-control" id="countries">
+                            <option value=""></option>
+                            {% for country in countries %}
+                            <option speak="{{ country['speak'] }}" value="{{ country['code'] }}"> &nbsp;{{ country['title'][flag]|e }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-right">{{ 'code'|text }}*</label>
+                        <input class="form-control lang_short" autocomplete="off" maxlength="6" placeholder="" readonly value="" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-right">{{ 'flag'|text }}</label>
+                        <p class="lang_flag"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-right">{{ 'language'|text }}*</label>
+                        <input class="form-control lang_full" id="txt_full" autocomplete="off" maxlength="32" placeholder="" value="" type="text">
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="settingsPanel" role="tabpanel">
+                    <h5 class="mt-4">{{ 'select-translation-settings'|text }}</h5>
+                    <div class="form-group">
+                        <label>{{ 'copy-translations-from'|text }}</label>
+                        <select class="form-control" id="available_languages">
+                            <option value=""></option>
+                            {% for flag,name in languages %}
+                            <option value="{{ flag }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'code'|text }}</label>
+                        <input class="form-control copy_short" autocomplete="off" maxlength="6" placeholder="" readonly value="" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'flag'|text }}</label>
+                        <p class="copy_flag"></p>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="confirmPanel" role="tabpanel">
+                    <h5 class="mt-4">{{ 'confirm-info'|text }}</h5>
+                    <form id="insert_form" action="{{ action }}" method="POST" enctype="multipart/form-data" role="form" novalidate="novalidate">
+                        <div class="form-group">
+                            <label>{{ 'code'|text }}</label>
+                            <input class="form-control lang_short" autocomplete="off" maxlength="6" name="txt_short" placeholder="" readonly value="" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label>{{ 'flag'|text }}</label>
+                            <p class="lang_flag"></p>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ 'name'|text }}</label>
+                            <input class="form-control lang_full" id="txt_full_confirm" autocomplete="off" maxlength="32" name="txt_full" placeholder="" required="required" value="" type="text">
+                        </div>
+                            <div class="form-group">
+                            <label>{{ 'copy-translations-from'|text }}</label>
+                            <input class="form-control copy_short" readonly autocomplete="off" maxlength="6" name="txt_copy" placeholder="" required="required" value="" type="text">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary btn-lg" id="back">
+                {{ 'back'|text }} <i class="la la-arrow-left"></i>
+            </button>
+            <button class="btn btn-primary btn-lg" id="continue">
+                {{ 'continue'|text }} <i class="la la-arrow-right"></i>
+            </button>
+            <button class="btn btn-success btn-lg" id="confirm">
+                <i class="la la-check"></i> {{ 'confirm'|text }}
+            </button>
+            <button class="btn btn-danger btn-lg" data-dismiss="modal">
+                {{ 'close'|text }}
+            </button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+$(function() {
+    $('#modalToggle').click(function() {
+        $('#modal').modal({
+            backdrop: 'static'
+        });
+    });
+    
+    (function($) {
+        $.fn.Select2Country = function() {
+            var format = function(state) {
+                if (!state.id) {
+                    return state.text;
+                }
+
+                return $(
+                        '<span><img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/' +
+                        state.element.value.toLowerCase() +
+                        '.png" class="img-flag" /> ' +
+                        state.text + '</span>');
+            };
+
+            if (jQuery().select2) {
+                this.select2({
+                    width: '100%',
+                    templateResult: format,
+                    templateSelection: format,
+                    escapeMarkup: function(m) { return m; },
+                    placeholder: '<i class="fa fa-map-marker"></i>&nbsp; {{ 'select-a-country'|text }}'
+                });
+            };
+
+            return this;
+        }; 
+    } (jQuery));
+    
+    $('#countries').Select2Country();
+
+    $('#countries').on('change', function(e) {
+        var ID = $(this).find('option:selected').attr('value').toLowerCase();
+        var Name = $(this).find('option:selected').attr('speak');
+
+        $('.lang_short').val(ID);
+        $('.lang_flag').html('<img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/' + ID + '.png" style="margin-top:10px" />');
+        $('.lang_full').val(Name);
+    });
+    
+    $('#txt_full').bind('input', function() {
+        $('#txt_full_confirm').val($(this).val());
+    });
+    
+    $('#available_languages').on('change', function(e) {
+        $('.copy_short').val($(this).find('option:selected').val());
+    });
+    
+    $('#back').hide();
+    $('#confirm').hide();
+    
+    $('#continue').click(function(e) {
+        e.preventDefault();
+        var id = $('.tab-content .active').attr('id');
+        if (id === 'infoPanel') {
+            $('.progress-bar').css('width', '66%');
+            $('#myTab a[href="#settingsPanel"]').tab('show');
+            $('#back').show();
+        } else if (id === 'settingsPanel') {
+            $('.progress-bar').css('width', '100%');
+            $('#myTab a[href="#confirmPanel"]').tab('show');
+            $(this).hide();
+            $('#confirm').show();
+        }
+    });
+
+    $('#back').click(function(e) {
+        e.preventDefault();
+        
+        $('#confirm').hide();
+        
+        var id = $('.tab-content .active').attr('id');
+        if (id === 'settingsPanel') {
+            $('.progress-bar').css('width', '33%');
+            $('#myTab a[href="#infoPanel"]').tab('show');
+            $(this).hide();
+        } else if (id === 'confirmPanel') {
+            $('.progress-bar').css('width', '66%');
+            $('#myTab a[href="#settingsPanel"]').tab('show');
+            $('#continue').show();
+        }
+    });
+    
+    $('#confirm').click(function(e) {
+        e.preventDefault();
+        
+        Dashboard.submit($('#insert_form'), $(this), '#modal');
+    });
+
+
+    $('.infoHead').click(function(e) {
+        e.preventDefault();
+    
+        $('#back').hide();
+        $('#continue').show();
+        $('#confirm').hide();
+
+        $('.progress-bar').css('width', '33%');
+        $('#myTab a[href="#infoPanel"]').tab('show');
+    });
+    
+    $('.settingsHead').click(function(e) {
+        e.preventDefault();
+        
+        $('#back').show();
+        $('#continue').show();
+        $('#confirm').hide();
+
+        $('.progress-bar').css('width', '66%');
+        $('#myTab a[href="#settingsPanel"]').tab('show');
+    });
+    
+    $('.confirmHead').click(function(e) {
+        e.preventDefault();
+
+        $('#back').show();
+        $('#continue').hide();
+        $('#confirm').show();
+        
+        $('.progress-bar').css('width', '100%');
+        $('#myTab a[href="#confirmPanel"]').tab('show');
+    });
+});
+</script>

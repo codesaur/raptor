@@ -1,0 +1,96 @@
+<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {% if action == 'insert' %}
+            {% set color,caption,icon = 'success','add-record','la la-plus' %}
+        {% elseif action == 'update' %}
+            {% set color,caption,icon = 'primary','edit-record','la la-edit' %}
+        {% else %}
+            {% set color,caption,icon = 'info','view-record','la la-eye' %}
+        {% endif %}
+        <form autocomplete="off" id="translation_{{ action }}" role="form" action="{{ crud }}" method="POST" enctype="multipart/form-data">
+            <div class="modal-header modal-header-solid">
+                <h5 class="modal-title text-uppercase text-{{ color }}" id="MyModalLabel"><i class="{{ icon }}"></i> {{ caption|text }}{% if action != 'insert' %} <small class="text-warning">ID: {{ column['id']['value'] }}</small>{% endif %}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div style="height:400px;overflow-y:auto;overflow-x:hidden;">
+                    {% if action == 'update' %}
+                    <input readonly name="{{ column['id']['name'] }}" value="{{ column['id']['value'] }}" type="hidden">
+                    {% endif %}
+                    <input name="{{ column['type']['name'] }}" value="{{ column['type']['value']|default('1') }}" type="hidden">
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'keyword'|text }}</label>
+                        <div class="col-9">
+                            <input{% if action == 'update' %} readonly{% endif %} autocomplete="off" maxlength="{{ column['_keyword_']['length'] }}" name="{{ column['_keyword_']['name'] }}" placeholder="" value="{{ column['_keyword_']['value']|e }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'title'|text }}</label>
+                        <div class="col-9">
+                            {% for code in language.codes() %}
+                                <div class="input-group{% if not loop.first %} mt-1{% endif %}">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/{{ code }}.png"></span>
+                                    </div>
+                                    <textarea maxlength="{{ column['title'][code]['length'] }}" name="{{ column['title'][code]['name'] }}" rows="2" class="form-control">{{ column['title'][code]['value']|e }}</textarea>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if action == 'retrieve' %}
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'type'|text }}</label>
+                        <div class="col-9">
+                            <input value="{{ lookup['record_type'][column['type']['value']] }}" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'date-created'|text }}</label>
+                        <div class="col-9">
+                            <input value="{{ column['created_at']['value'] }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'created-by'|text }}</label>
+                        <div class="col-9">
+                            <input value="{{ (lookup['account'][column['created_by']['value']] ?? column['created_by']['value'])|e }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'date-modified'|text }}</label>
+                        <div class="col-9">
+                            <input value="{{ column['updated_at']['value'] }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right">{{ 'updated-by'|text }}</label>
+                        <div class="col-9">
+                            <input value="{{ (lookup['account'][column['updated_by']['value']] ?? column['updated_by']['value'])|e }}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-solid">
+                {% if action == 'retrieve' %}
+                <a class="btn shadow-sm btn-info" data-dismiss="modal" href="javascript:;">{{ 'close'|text }}</a>
+                {% else %}
+                <button data-table="{{ table }}" class="submit btn btn-{{ action == 'insert' ? 'success' : 'primary' }} shadow-sm" type="submit">
+                    <i class="la la-check"></i> <strong>{{ 'save'|text }}</strong>
+                </button>
+                {% if action == 'update' %}
+                <button class="btn btn-info shadow-sm" type="reset">{{ 'reset'|text }}</button>
+                {% endif %}
+                <button class="btn btn-secondary shadow-sm" data-dismiss="modal">{{ 'back'|text }}</button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    {% if action == 'retrieve' %}
+    $("#translation_{{ action }} .modal-body :input").prop("disabled", true);
+    {% endif %}
+</script>

@@ -1,0 +1,55 @@
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header modal-header-solid">
+            <h5 class="modal-title text-uppercase text-primary" id="MyModalLabel"><i class="flaticon-user"></i> {{ 'request-new-account'|text }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-hover" id="account_requests" style="width:100%">
+                <thead style="background:#2786fb">
+                    <tr>
+                        <th scope="col" class="text-light">{{ 'username'|text }}</th>
+                        <th scope="col" class="text-light">{{ 'email'|text }}</th>
+                        <th scope="col" class="text-light">{{ 'language'|text }}</th>
+                        <th scope="col" class="text-light">{{ 'date-created'|text }}</th>
+                        <th scope="col" class="text-light">{{ 'status'|text }}</th>
+                        <th scope="col" class="text-light">{{ 'action'|text }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in rows %}    
+                    <tr>
+                        <th scope="row">{{ row['username'] }}</th>
+                        <td>{{ row['email'] }}</td>
+                        <td><img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/{{ row['code'] }}.png"></td>
+                        <td>{{ row['created_at'] }}</td>
+                        <td>
+                        {% if row['is_active'] == 0 %}
+                            <span class="badge badge-pill badge-success">approved</span>
+                        {% else %}
+                            <span class="badge badge-pill badge-danger">waiting</span>
+                        {% endif %}    
+                        </td>
+                        <td>
+                        {% if user.can('system_account_insert') and row['is_active'] == 1 %}
+                            <button type="button" data-toggle="modal" data-target="#modal_approve" data-newbie='{{ row|json_encode }}' class="btn btn-sm btn-primary shadow-sm"><i class="fa fa-user-check"></i> Accept</button>
+                        {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot></tfoot>
+            </table>
+        </div>
+        <div class="modal-footer modal-footer-solid">
+            <button class="btn btn-primary shadow-sm" data-dismiss="modal">{{ 'close'|text }}</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('table#account_requests').DataTable({
+        pageLength: 5, responsive: true,
+        lengthMenu: [[5, 10, 20, 50, -1], [5, 10, 20, 50, "{{ 'all1'|text }}"]],
+        language: {"url": "{{ request.getPath }}/indo/translation/datatable/{{ flag }}"}
+    });
+</script>

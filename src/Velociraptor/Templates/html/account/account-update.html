@@ -1,0 +1,150 @@
+<form class="needs-validation" action="{{ crud }}" method="POST" enctype="multipart/form-data" novalidate>
+    <div class="card shadow border-primary mb-4">
+        <div class="card-header bg-light">
+            <span class="mt-2 float-left text-primary text-uppercase">
+                <i class="la la-plus"></i> {{ 'edit-account'|text }} <small class="text-warning">ID: {{ column['id']['value'] }}</small>
+            </span>
+            <ul class="nav nav-pills card-header-pills float-right pr-2">
+                <li class="nav-item pl-2">
+                    <button class="submit nav-link btn btn-primary shadow-sm" type="submit"><i class="la la-check"></i> {{ 'save'|text }}</button>
+                </li>
+                <li class="nav-item pl-2">
+                    <button class="nav-link btn btn-info shadow-sm" type="reset">{{ 'reset'|text }}</button>
+                </li>
+                <li class="nav-item pl-2">
+                    <button class="nav-link btn btn-secondary shadow-sm" onclick="window.history.go(-1);return false;">{{ 'back'|text }}</button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <ul class="nav nav-tabs nav-tabs-content" role="tablist">
+                <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#tab-personal">{{ 'personal-info'|text }}</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-picture">{{ 'image'|text }}</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-security">{{ 'change-password'|text }}</a></li>
+            </ul>
+            <div class="tab-content">
+                <input name="{{ column['id']['name'] }}" value="{{ column['id']['value'] }}" readonly type="hidden">
+                <div class="tab-pane active show" id="tab-personal" role="tabpanel">
+                    <div class="form-group">
+                        <label>{{ 'login-name'|text }}</label>
+                        <input name="{{ column['username']['name'] }}" value="{{ column['username']['value']|e }}" maxlength="{{ column['username']['length'] }}" placeholder="" required type="text" autocomplete="off" class="form-control">
+                        <div class="invalid-feedback">{{ 'field-is-required'|text }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'firstname'|text }}</label>
+                        <input name="{{ column['first_name']['name'] }}" value="{{ column['first_name']['value']|e }}" maxlength="{{ column['first_name']['length'] }}" placeholder="" required type="text" autocomplete="off" class="form-control">
+                        <div class="invalid-feedback">{{ 'field-is-required'|text }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'lastname'|text }}</label>
+                        <input name="{{ column['last_name']['name'] }}" value="{{ column['last_name']['value']|e }}" maxlength="{{ column['last_name']['length'] }}" placeholder="" required type="text" autocomplete="off" class="form-control">
+                        <div class="invalid-feedback">{{ 'field-is-required'|text }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'telephone'|text }}</label>
+                        <input name="{{ column['phone']['name'] }}" value="{{ column['phone']['value']|e }}" maxlength="{{ column['phone']['length'] }}" placeholder="" required type="text" autocomplete="off" class="form-control">
+                        <div class="invalid-feedback">{{ 'field-is-required'|text }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'address'|text }}</label>
+                        <textarea name="{{ column['address']['name'] }}" maxlength="{{ column['address']['length'] }}" rows="2" class="form-control">{{ column['address']['value']|e }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'email'|text }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text">@</span></div>
+                            <input name="{{ column['email']['name'] }}" value="{{ column['email']['value']|e }}" maxlength="{{ column['email']['length'] }}" placeholder="" required type="email" autocomplete="off" class="form-control">
+                            <div class="invalid-feedback">{{ 'enter-valid-email'|text }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'status'|text }}</label>
+                        <div>
+                            {% for value,name in lookup['status'] %}
+                            <div class="form-check form-check-inline">
+                                <input id="status{{ value }}" name="{{ column['status']['name'] }}"  class="form-check-input"
+                                       value="{{ value }}" type="radio"{% if value==column['status']['value'] %} checked{% endif %}>
+                                <label class="form-check-label" for="status{{ value }}">{{ name }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <span class="form-text text-muted">{{ 'active-account-can-login'|text }}</span>
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab-picture" role="tabpanel">
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label text-right">{{ 'photo'|text }}</label>
+                        <div class="col-10">
+                            <div class="text-left row">
+                                <div class="input-group col-5" style="float:left;">
+                                {% if column['image']['path'] is defined and column['id']['value'] is defined %}
+                                    <img src="{{ column['image']['path'] }}"
+                                         id="image_current" height="120px" class="img-fluid">
+                                    <a style="position:absolute;top:7px;left:24px;"
+                                       files_id="{{ column['image']['files_id'] }}"
+                                       class="delete btn btn-outline-danger btn-icon btn-pill"
+                                       href="{{ column['id']['value'] }}" pre-img="image_current"><i class="la la-trash"></i></a>
+                                {% endif %}
+                                </div>
+                                <div class="fileinput fileinput-new col-7" data-provides="fileinput">
+                                    <div class="fileinput-preview img-thumbnail" data-trigger="fileinput" style="width:120px;height:68px;"></div>
+                                    <div>
+                                        <span class="btn btn-outline-secondary btn-file">
+                                            <span class="fileinput-new">{{ 'select-image'|text }}</span>
+                                            <span class="fileinput-exists">{{ 'change'|text }}</span>
+                                            <input type="file" name="{{ column['image']['name'] }}" accept="image/*">
+                                        </span>
+                                        <a href="javascript:;" class="btn btn-outline-secondary shadow-sm fileinput-exists" data-dismiss="fileinput">{{ 'remove'|text }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab-security" role="tabpanel">
+                    <div class="form-group">
+                        <label>{{ 'current-password'|text }}</label>
+                        <input id="{{ column['password']['name'] }}" name="{{ column['password']['name'] }}" value="" maxlength="{{ column['password']['length'] }}" placeholder="" type="password" autocomplete="off" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'new-password'|text }}</label>
+                        <input id="password_new" name="password_new" value="" maxlength="{{ column['password']['length'] }}" disabled placeholder="" type="password" autocomplete="off" class="form-control">
+                        <div class="invalid-feedback">{{ 'field-is-required'|text }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'retype-new-password'|text }}</label>
+                        <input id="password_retype" name="password_retype" value="" maxlength="{{ column['password']['length'] }}" disabled placeholder="" type="password" autocomplete="off" class="form-control">
+                        <div class="invalid-feedback">{{ 'same-pass-again'|text }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-8">
+                    <button class="submit btn btn-primary btn-block shadow-sm" type="submit"><i class="la la-check"></i> {{ 'save'|text }}</button>
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-success btn-info btn-block shadow-sm" type="reset">{{ 'reset'|text }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('{{ column['password']['name'] }}').addEventListener('change', function() {
+            document.getElementById('password_new').disabled = (this.value === '');
+            document.getElementById('password_retype').disabled = (this.value === '');
+            if (this.value === '') {
+                document.getElementById('password_new').value = '';
+                document.getElementById('password_retype').value = '';
+                document.getElementById('password_new').disabled = true;
+                document.getElementById('password_retype').disabled = true;
+            } else {
+                document.getElementById('password_new').disabled = false;
+                document.getElementById('password_retype').disabled = false;
+            }
+        });
+    });
+</script>

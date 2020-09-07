@@ -1,0 +1,55 @@
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header modal-header-solid">
+            <h5 class="modal-title text-uppercase" id="MyModalLabel"><i class="flaticon-security"></i> {{ 'password-reset-request'|text }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-hover" id="forgot_requests" style="width:100%">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" class="text-light">ID</th>
+                        <th scope="col" class="text-light">{{ 'email'|text }}</th>
+                        <th scope="col" class="text-light">{{ 'account'|text }}</th>
+                        <th scope="col" class="text-light">{{ 'language'|text }}</th>
+                        <th scope="col" class="text-light">{{ 'status'|text }}</th>
+                        <th scope="col" class="text-light">{{ 'date-created'|text }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <th scope="row">{{ row['use_id'] }}</th>
+                        <td>{{ row['email'] }}</td>
+                        <td>{{ row['first_name'] }} {{ row['last_name'] }} [{{ row['username'] }}: {{ row['account'] }}]</td>
+                        <td><img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/{{ row['flag'] }}.png"></td>
+                        <td>
+                            {% if row['is_active'] == 0 %}
+                            <span class="badge badge-pill badge-success">used</span>
+                            {% else %}
+                                {% if login.isNotExpired(row['created_at']) %}
+                                <span class="badge badge-pill badge-primary">ready</span>
+                                {% else %}
+                                <span class="badge badge-pill badge-danger">expired</span>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td>{{ row['created_at'] }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot></tfoot>
+            </table>
+        </div>
+        <div class="modal-footer modal-footer-solid">
+            <button class="btn btn-dark shadow-sm" data-dismiss="modal">{{ 'close'|text }}</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('table#forgot_requests').DataTable({
+        pageLength: 5, responsive: true,
+        lengthMenu: [[5, 10, 20, 50, -1], [5, 10, 20, 50, "{{ 'all1'|text }}"]],
+        language: {"url": "{{ request.getPath }}/indo/translation/datatable/{{ flag }}"}
+    });
+</script>
