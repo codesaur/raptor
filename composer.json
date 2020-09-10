@@ -1,7 +1,7 @@
 {
     "name": "codesaur/raptor",
     "description": "An elegant object-oriented application development framework for PHP 7.1 or newer",
-    "keywords": ["codesaur","mongol","mongolia","mongolian","ololt","framework","narankhuu","coden","php framework","php","кодзавр","монгол","ололт","мөнхийн","мөнхийн-ололт","мөнхийн ололт","наранхүү","коден","мөнхийн-ололт","ерөнхий бүтэц","фреймворк","raptor","velociraptor","indoraptor","swift seizer","mongoliensis","content management system","агуулга удирдах систем","cms"],
+    "keywords": ["codesaur","mongol","mongolia","mongolian","ololt","framework","narankhuu","coden","php framework","php","кодзавр","монгол","ололт","мөнхийн","мөнхийн-ололт","мөнхийн ололт","наранхүү","коден","munkhiin ololt","ерөнхий бүтэц","фреймворк","raptor","velociraptor","indoraptor","swift seizer","mongoliensis","content management system","агуулга удирдах систем","cms"],
     "homepage": "https://ololt.mn/codesaur",
     "authors": [
         {
