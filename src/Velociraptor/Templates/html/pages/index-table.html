@@ -18,7 +18,7 @@
         
         table.DataTable({
             lengthMenu: [[5, 10, 30, 50, -1], [5, 10, 30, 50, "{{ 'all1'|text }}"]],
-            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ flag }}"},
+            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ language.current }}"},
             responsive: true, bStateSave: true, pagingType: 'full_numbers', pageLength: 10, order: [[0, 'asc']],
             ajax: {method: 'GET', url: "{{ 'datatable'|link }}?logger=pages&controller=Velociraptor\\Controllers\\PagesController"}
         });

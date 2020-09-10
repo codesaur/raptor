@@ -55,6 +55,6 @@ table.DataTable({
     order: [[ 0, 'asc' ]],
     fixedColumns: { leftColumns: 1},
     columnDefs: [{ targets: '_all', orderable: false }],
-    language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ flag }}"}
+    language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ language.current }}"}
 });
 </script>

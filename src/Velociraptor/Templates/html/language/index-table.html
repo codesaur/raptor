@@ -18,7 +18,7 @@
         table.DataTable({
             lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]],
             responsive: true, bStateSave: true, pageLength: 10, order: [[0, 'asc']],
-            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ flag }}"},
+            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ language.current }}"},
             ajax: {method: 'GET', url: "{{ 'datatable'|link }}?logger=localization&table=language&controller=Velociraptor\\Controllers\\LanguagesController"}
         });
         

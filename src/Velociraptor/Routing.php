@@ -29,11 +29,8 @@ class Routing extends \codesaur\Http\Routing
         }
 
         $response['data']['rbac'] = $rbac;
+        
         single::user()->login($response['data']);
-
-        if (\getenv(_ACCOUNT_ID_, true) === false) {
-            \putenv(_ACCOUNT_ID_ . "={$response['data']['account']['id']}");
-        }
         
         return $route;
     }

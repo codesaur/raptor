@@ -50,6 +50,6 @@
     $('table#forgot_requests').DataTable({
         pageLength: 5, responsive: true,
         lengthMenu: [[5, 10, 20, 50, -1], [5, 10, 20, 50, "{{ 'all1'|text }}"]],
-        language: {"url": "{{ request.getPath }}/indo/translation/datatable/{{ flag }}"}
+        language: {"url": "{{ request.getPath }}/indo/translation/datatable/{{ language.current }}"}
     });
 </script>

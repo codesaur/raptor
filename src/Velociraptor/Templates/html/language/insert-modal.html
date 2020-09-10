@@ -29,7 +29,7 @@
                         <select class="select2 form-control" id="countries">
                             <option value=""></option>
                             {% for country in countries %}
-                            <option speak="{{ country['speak'] }}" value="{{ country['code'] }}"> &nbsp;{{ country['title'][flag]|e }}</option>
+                            <option speak="{{ country['speak'] }}" value="{{ country['code'] }}"> &nbsp;{{ country['title'][language.current]|e }}</option>
                             {% endfor %}
                         </select>
                     </div>

@@ -1,7 +1,7 @@
 {% set login_user,location = user.data(),request.getUrl()|trim('/', 'right') %}
 
 {% if copyright is not defined %}
-{% set copyright = flag == 'mn' ? 'Мөнхийн-Ололт ХХК, Монгол улс' : 'Munkhiin-Ololt LLC, Mongolia' %}
+{% set copyright = language.current == 'mn' ? 'Мөнхийн-Ололт ХХК, Монгол улс' : 'Munkhiin-Ololt LLC, Mongolia' %}
 {% endif %}
 
 <nav class="navbar navbar-expand-xl fixed-top navbar-dark bg-primary top-navigation shadow-sm">
@@ -120,12 +120,12 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link" href="javascript:;" id="dropdown502" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/25x15/{{ flag == 'en' ? 'gb' : flag }}.png" height="15px" class="shadow-sm">
+                    <img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/25x15/{{ language.current == 'en' ? 'gb' : language.current }}.png" height="15px" class="shadow-sm">
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdown502">
                 {% set urlLang = request.getCleanUrl() ~ request.getParamsAsStr() %}
                 {% for lang, country in language.complete() %}
-                    <a class="dropdown-item{{ lang == flag ? ' active' : '' }} language-item" href="{{ 'language'|link({'language': lang}) }}?ulang={{ urlLang }}">
+                    <a class="dropdown-item{{ lang == language.current ? ' active' : '' }} language-item" href="{{ 'language'|link({'language': lang}) }}?ulang={{ urlLang }}">
                         <img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/{{ lang == 'en' ? 'gb' : lang }}.png" alt="{{ country }}" style="position:relative;top:-2px"> {{ country }}
                     </a>
                 {% endfor %}
