@@ -21,7 +21,7 @@ class TranslationController extends IndoController
             return $this->success(array('names' => $this->model->getTranslationNames()));
         } else {
             return $this->error('Not Allowed!');
-        }        
+        }
     }
 
     public function retrieve()
