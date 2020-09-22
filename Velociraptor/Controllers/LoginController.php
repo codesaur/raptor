@@ -18,7 +18,7 @@ class LoginController extends RaptorController
 
     public function frontend()
     {
-        single::header()->location(single::app()->webUrl(false));
+        single::header()->location(single::app()->webUrl(true));
     }
 
     public function index()

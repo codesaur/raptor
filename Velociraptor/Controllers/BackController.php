@@ -49,7 +49,7 @@ class BackController extends Controller
     
     final public function indouri($url)
     {
-        return single::app()->webUrl(true) . "/indo/$url";
+        return single::app()->webUrl(false) . "/indo/$url";
     }
 
     final public function indolink($route, array $params = [])

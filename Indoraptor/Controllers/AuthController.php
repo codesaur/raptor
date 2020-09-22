@@ -308,7 +308,7 @@ class AuthController extends IndoController
             $template = new Template();
             $template->set('email', $payload->email);
             $template->source($templates['full'][$flag]);
-            $login_link = $payload->login ?? (single::app()->webUrl(true) . '/dashboard/login');
+            $login_link = $payload->login ?? (single::app()->webUrl(false) . '/dashboard/login');
             $template->set('link', "$login_link?forgot=$useid");
 
             $mailer->MsgHTML($template->output());

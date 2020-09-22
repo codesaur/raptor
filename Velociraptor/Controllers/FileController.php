@@ -4,6 +4,8 @@ use codesaur as single;
 use codesaur\Generic\File;
 use codesaur\Generic\LogLevel;
 
+defined('_document') || define('_document', \dirname($_SERVER['SCRIPT_FILENAME']));
+
 class FileController extends RaptorController
 {
     public $file;
@@ -36,10 +38,10 @@ class FileController extends RaptorController
     }
     
     public function setFolder(
-            string $folder, $path = null, $public = null, bool $pathGlobal = false)
+            string $folder, $local = null, $public = null, bool $relative = true)
     {
-        $this->local = ($path ?? (_document . '/public')) . "$folder/";
-        $this->public = ($public ?? single::app()->publicUrl($pathGlobal)) . "$folder/";
+        $this->local = ($local ?? (_document . '/public')) . "$folder/";
+        $this->public = ($public ?? single::app()->publicUrl($relative)) . "$folder/";
     }
     
     public function getPath() : string

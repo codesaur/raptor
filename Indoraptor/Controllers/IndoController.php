@@ -378,6 +378,6 @@ class IndoController extends Controller
     
     final public function view()
     {
-        single::header()->redirect(single::app()->webUrl(false) . '/dashboard/indoraptor');
+        single::header()->redirect(single::app()->webUrl(true) . '/dashboard/indoraptor');
     }
 }

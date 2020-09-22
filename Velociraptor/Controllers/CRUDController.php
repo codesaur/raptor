@@ -139,11 +139,17 @@ class CRUDController extends RaptorController
                 }
                 
                 if ($result) {
+                    if ($this->controller instanceof Base) {
+                        $logdata['message'] = $this->controller->getMe();
+                    } else {
+                        $logdata['message'] = $this->getMe();
+                    }
+                    
                     if ($crud) {
-                        $logdata['message'] = $this->controller->getMe() . " нь $message үйлдлийг эхлүүллээ.";
+                        $logdata['message'] .= " нь $message үйлдлийг эхлүүллээ.";
                         $level = $action == 'retrieve' ? LogLevel::View : LogLevel::Record;
                     } else {
-                        $logdata['message'] = $this->controller->getMe() . " нь $message үйлдлийг амжилттай гүйцэтгэлээ.";
+                        $logdata['message'] .= " нь $message үйлдлийг амжилттай гүйцэтгэлээ.";
                         
                         if (\is_array($result)) {
                             $logdata += $result;
@@ -178,7 +184,10 @@ class CRUDController extends RaptorController
     public function execute(string $action, array $params = [], bool $haltOnError = true)
     {
         if ( ! $this->controller instanceof Base) {
-            if ($haltOnError) {
+            if ($this->hasMethod($action) &&
+                    $this->isCallable($action)) {
+                return $this->callFuncArray(array($this, $action), $params);
+            } elseif ($haltOnError) {
                 single::app()->error('Invalid or undefined object!');
             }
         } elseif ($this->controller->hasMethod($action) &&
@@ -320,7 +329,7 @@ class CRUDController extends RaptorController
         return isset($response) ? false : null;
     }
     
-    public function strip_file($callBack)
+    public function strip_file()
     {
         $post = new Post();
         $files_id = $post->has('files_id') ? $post->value('files_id') : null;
@@ -329,13 +338,8 @@ class CRUDController extends RaptorController
             
             $query = "table=$this->table&model=" . \urlencode('Indoraptor\\Models\\Files');            
             $result = $this->indopost("/record/retrieve?$query", $payload);            
-            if (isset($result['data']['record'])) {
-                if ($callBack) { 
-                    $payload['callBack'] = $callBack;
-                }
-                
+            if (isset($result['data']['record'])) {                
                 $response = $this->indodelete("/record?$query", $payload);
-                
                 if (isset($response['data']['id'])) {
                     $actual = $this->indopost('/record/retrieve?model='
                             . \urlencode('Indoraptor\\Models\\File'),
