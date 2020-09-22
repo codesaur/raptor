@@ -1,4 +1,4 @@
-1<?php namespace Indoraptor\Controllers;
+<?php namespace Indoraptor\Controllers;
 
 use codesaur as single;
 use codesaur\Globals\Post;
