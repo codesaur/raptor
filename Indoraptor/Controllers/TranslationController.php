@@ -43,7 +43,10 @@ class TranslationController extends IndoController
                 $clean = \preg_replace('/[^A-Za-z0-9_-]/', '', $table);
                 
                 if ( ! \in_array($clean, $table_names)) {
-                    continue;
+                    $initial = new \Indoraptor\Models\Initial();
+                    if ( ! \method_exists($initial, 'translation_' . $clean . '_key')) {
+                        continue;
+                    }
                 }
                 
                 $text = $this->getTranslations($table, $flag);
@@ -57,6 +60,7 @@ class TranslationController extends IndoController
                 return $this->success($translations);
             }
         }
+        
         return $this->error('Not Found');
     }
     
