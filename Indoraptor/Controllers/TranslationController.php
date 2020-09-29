@@ -103,6 +103,8 @@ class TranslationController extends IndoController
     
     public function datatable($flag)
     {
+        \session_write_close();
+        
         $this->getLocally(array('default', 'datatable'), $flag);
 
         $language = array(
