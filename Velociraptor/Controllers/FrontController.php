@@ -38,8 +38,8 @@ class FrontController extends BackController
             }
         }
 
-        if (single::language()->select($flag)
-                && single::controller() instanceof Controller) {
+        if (single::language()->select($flag) &&
+                single::controller() instanceof Controller) {
             if (single::controller()->hasMethod('onChangeLanguage') &&
                     single::controller()->isCallable('onChangeLanguage')) {
                 single::controller()->onChangeLanguage($flag);
