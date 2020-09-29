@@ -105,7 +105,7 @@
             {% endif %}
             <li class="nav-item dropdown mr-4">            
                 <a class="nav-link" href="javascript:;" id="dropdown501" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="{{ login_user['account']['picture'] ?? ('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif') }}" height="26px" class="rounded-circle shadow-sm">
+                    <img id="account_profile_image" src="{{ login_user['account']['picture'] ?? ('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif') }}" height="26px" class="rounded-circle shadow-sm">
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdown501">
                 {% set account_profile_link = 'crud'|link({'action': 'update'}) ~ '?logger=account&controller=Velociraptor\\Controllers\\AccountController&id=' ~ login_user['account']['id'] %}
