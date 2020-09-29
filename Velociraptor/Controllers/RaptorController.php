@@ -99,6 +99,8 @@ abstract class RaptorController extends FrontController
     
     final public function onDatatable()
     {
+        single::session()->lock();
+                
         $controller = $this->grab('controller');
         
         if ($controller instanceof Base
