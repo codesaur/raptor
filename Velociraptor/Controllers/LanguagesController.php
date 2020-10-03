@@ -242,7 +242,7 @@ class LanguagesController extends RaptorController
                 $rows[] = array(
                     \htmlentities($record['short']),
                     \htmlentities($record['full']),
-                    html::img(['src' => single::app()->resourceUrl() . "/flags/16x11/{$record['short']}.png"]),
+                    html::img(['src' => "https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/{$record['short']}.png"]),
                     $record['created_at'],
                     $action ?? ''
                 );

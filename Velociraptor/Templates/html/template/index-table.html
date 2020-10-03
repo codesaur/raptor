@@ -15,13 +15,11 @@
 </table>
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
-        var table = $('table#templates');
-        
-        table.DataTable({
+        $('table#templates').DataTable({
             lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]],
-            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ language.current }}"},
             responsive: true, bStateSave: true, pagingType: 'full_numbers', pageLength: 10, order: [[0, 'asc']],
             ajax: {method: 'GET', url: "{{ 'datatable'|link }}?logger=reference&table=templates&controller=Velociraptor\\Controllers\\TemplatesController"}
+            {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
         });
     });
 </script>

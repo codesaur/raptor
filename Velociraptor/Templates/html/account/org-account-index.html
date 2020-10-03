@@ -119,13 +119,10 @@ function stripAccount(id, org, name, alias) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    var table = $('table#org_account');
-
-    table.DataTable({
-        lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]],
-        language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ language.current }}"},
-        
+     $('table#org_account').DataTable({
+        lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]]
         responsive: true, bStateSave: true, pagingType: 'full_numbers', pageLength: 10, order: [[0, 'asc']]
+        {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
     });
 });
 </script>

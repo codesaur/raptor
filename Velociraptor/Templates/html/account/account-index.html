@@ -143,12 +143,10 @@
 </div>
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
-        var table = $('table#account');
-        
-        table.DataTable({
+        $('table#account').DataTable({
             lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]],
-            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ language.current }}"},
             responsive: true, bStateSave: true, pagingType: 'full_numbers', pageLength: 10, order: [[0, 'asc']]
+            {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
         });
         
         var acceptModal;

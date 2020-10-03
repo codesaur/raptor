@@ -45,16 +45,14 @@
     </div>
 </div>
 <script type="text/javascript">
-var table = $('table#rbac_modal_index');
-
-table.DataTable({
+$('table#rbac_modal_index').DataTable({
     scrollX: true,
     paging: false,
     info: false,
     filter: false,
     order: [[ 0, 'asc' ]],
     fixedColumns: { leftColumns: 1},
-    columnDefs: [{ targets: '_all', orderable: false }],
-    language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ language.current }}"}
+    columnDefs: [{ targets: '_all', orderable: false }]
+    {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
 });
 </script>

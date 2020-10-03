@@ -14,15 +14,13 @@
 </table>
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
-        var table = $('table#translation_{{ id }}');
-        
+        var table = $('table#translation_{{ id }}');        
         table.DataTable({
             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "{{ 'all1'|text }}"]],
-            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ language.current }}"},
             responsive: true, bStateSave: true, pagingType: 'full_numbers', pageLength: 10, order: [[0, 'asc']],
             ajax: {method: 'GET', url: "{{ 'datatable'|link }}?logger=localization&table={{ id }}&controller=Velociraptor\\Controllers\\TranslationsController"}
-        });
-        
+            {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
+        });        
         Dashboard.ajaxModal(table);
     });
 </script>

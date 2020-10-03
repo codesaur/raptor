@@ -11,15 +11,13 @@
 </table>
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
-        var table = $('table#developer');
-        
+        var table = $('table#developer');        
         table.DataTable({
             lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]],
             responsive: true, bStateSave: true, pageLength: 10, order: [[0, 'asc']],
-            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ language.current }}"},
             ajax: {method: 'GET', url: "{{ 'datatable'|link }}?logger=developer&table=forgot&controller=Velociraptor\\Controllers\\DeveloperController"}
-        });
-        
+            {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
+        });        
         Dashboard.ajaxModal(table);
     });
 </script>

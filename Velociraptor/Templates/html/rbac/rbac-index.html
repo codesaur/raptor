@@ -31,16 +31,14 @@
 </table>
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
-        var table = $('table#rbac_{{ alias }}');
-        
+        var table = $('table#rbac_{{ alias }}');        
         table.DataTable({
             scrollX: true,
             order: [[ 0, 'asc' ]],
             fixedColumns: { leftColumns: 1},
-            columnDefs: [{ targets: '_all', orderable: false }],
-            language: {url: "{{ request.getPath }}/indo/translation/datatable/{{ language.current }}"}
-        });
-        
+            columnDefs: [{ targets: '_all', orderable: false }]
+            {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
+        });        
         Dashboard.ajaxModal(table);
         
         var classname = document.getElementsByClassName('role_permission');

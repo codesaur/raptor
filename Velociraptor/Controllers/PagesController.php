@@ -204,12 +204,12 @@ class PagesController extends RaptorController
                 
                 $row[] = $record['id'] ;
                 
-                $row[] = html::img(['src' => single::app()->resourceUrl() . '/boot4/no-image-' . single::flag() . '.gif']);
+                $row[] = html::img(['src' =>  'https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-image-' . (single::flag() == 'mn' ? 'mn' : 'en') . '.gif']);                
                 
                 $titles = $status = '';
                 
                 foreach (single::language()->codes() as $code) {
-                    $flag = html::img(['src' => single::app()->resourceUrl() . "/flags/16x11/$code.png", 'style' => 'position:relative;top:-2px']) . ' ';
+                    $flag = html::img(['src' => "https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/$code.png", 'style' => 'position:relative;top:-2px']) . ' ';
                     
                     if ($titles != '') {
                         $titles .= '<br />';

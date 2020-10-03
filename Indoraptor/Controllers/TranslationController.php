@@ -100,38 +100,4 @@ class TranslationController extends IndoController
             return $this->error('Not Found');
         }
     }
-    
-    public function datatable($flag)
-    {
-        \session_write_close();
-        
-        $this->getLocally(array('default', 'datatable'), $flag);
-
-        $language = array(
-            'sEmptyTable'     => $this->text('no data available in table'),
-            'sInfo'           => $this->text('showing _START_ to _END_ of _TOTAL_ records'),
-            'sInfoEmpty'      => $this->text('no records found to show'),
-            'sInfoFiltered'   => $this->text('(filtered from _MAX_ total records)'),
-            'sInfoPostFix'    => '',
-            'sInfoThousands'  => '.',
-            'sLengthMenu'     => $this->text('view _MENU_ records'),
-            'sLoadingRecords' => $this->text('loading') . '...',
-            'sProcessing'     => $this->text('processing') . '...',
-            'sSearch'         => $this->text('search'),
-            'sZeroRecords'    => $this->text('no matching records found'),
-            'oPaginate'       => array(
-                'sFirst'    => $this->text('first'),
-                'sPrevious' => $this->text('prev'),
-                'sNext'     => $this->text('next'),
-                'sLast'     => $this->text('last'),
-                'sPage'     => $this->text('page')
-            ),
-            'oAria' => array(
-                'sSortAscending'  => $this->text(': activate to sort column ascending'),
-                'sSortDescending' => $this->text(': activate to sort column descending')
-            )
-        );
-        
-        $this->respond($language);
-    }
 }

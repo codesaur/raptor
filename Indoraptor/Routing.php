@@ -57,8 +57,7 @@ class Routing extends \codesaur\Http\Routing
         return array(
             ['/translation', 'Indoraptor\\Controllers\\TranslationController'],
             ['/translation/getby', 'getBy@Indoraptor\\Controllers\\TranslationController', ['methods' => 'POST']],
-            ['/translation/retrieve', 'retrieve@Indoraptor\\Controllers\\TranslationController', ['methods' => 'POST']],
-            ['/translation/datatable/:flag', 'datatable@Indoraptor\\Controllers\\TranslationController', ['filters' => ['flag' => '(\w+)']]]
+            ['/translation/retrieve', 'retrieve@Indoraptor\\Controllers\\TranslationController', ['methods' => 'POST']]
         );
     }
     
