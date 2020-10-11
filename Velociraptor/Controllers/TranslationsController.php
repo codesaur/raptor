@@ -71,12 +71,10 @@ class TranslationsController extends RaptorController
 
                     $cards[$table]->addContent(new TwigTemplate(velociraptor_html . '/translation/index-table.html', array('id' => $table)));
                 }
-
-                $view->addDelete(array(
-                    'logger' => 'localization', 'model' => 'Indoraptor\\Models\\Translation'));
             }
         }
         
+        $view->addDelete(array('logger' => 'localization', 'model' => 'Indoraptor\\Models\\Translation'));        
         $view->render($cards ?? null);
     }
     

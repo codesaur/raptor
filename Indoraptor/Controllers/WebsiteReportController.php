@@ -6,7 +6,7 @@ class WebsiteReportController extends IndoController
     {
         parent::__construct();
         
-        if ( ! $$this->connect(false)) {
+        if ( ! $this->connect(false)) {
             return $this->error('Not Connected!');
         }
     }

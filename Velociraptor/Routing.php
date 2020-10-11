@@ -27,10 +27,12 @@ class Routing extends \codesaur\Http\Routing
                 $response['data']['organization']['alias'])) {
             return $this->redirectLogin($route);
         }
-
+        
         $response['data']['rbac'] = $rbac;
         
         single::user()->login($response['data']);
+        
+        single::session()->lock();
         
         return $route;
     }
