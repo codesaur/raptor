@@ -73,8 +73,7 @@ class OrganizationController extends RaptorController
             $lookup = $this->getLookup(array('status'));
             $lookup['account'] = $this->getAccounts();
             
-            if (single::user()->can('system_org_index')) {
-                
+            if (single::user()->can('system_org_index')) {                
                 $orgs_response = $this->indopost('/record/retrieve?model='
                         . \urlencode('Indoraptor\\Account\\OrganizationModel'),
                         array('condition' => array('WHERE' => $where, 'ORDER By' => 'name')));
