@@ -59,7 +59,7 @@ class OrganizationController extends RaptorController
             $where = 'id != 1';
             if (isset($id)) {
                 $response = $this->indopost('/record/retrieve?model='
-                        . \urlencode('IIndoraptor\\Account\\OrganizationModel'), array('id' => $id));
+                        . \urlencode('Indoraptor\\Account\\OrganizationModel'), array('id' => $id));
                 
                 if ( ! isset($response['data']['record'])) {
                     throw new \Exception("No data for $action!");
@@ -84,7 +84,7 @@ class OrganizationController extends RaptorController
             $vars = array(
                 'crud' => $crud, 'action' => $action,
                 'column' => $column, 'lookup' => $lookup);
-
+            
             (new TwigTemplate(\dirname(__FILE__) . '/organization-crud-action-modal.html', $vars))->render();
             
             return true;
