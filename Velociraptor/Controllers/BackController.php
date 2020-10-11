@@ -7,8 +7,8 @@ use codesaur\Http\Client;
 use codesaur\Http\Request;
 use codesaur\Globals\Server;
 use codesaur\Http\Controller;
-use codesaur\Generic\LogLevel;
-use codesaur\Generic\OutputBuffer;
+use codesaur\Common\LogLevel;
+use codesaur\Common\OutputBuffer;
 
 use Indoraptor\Controllers\IndoController;
 

@@ -2,7 +2,7 @@
 
 use codesaur as single;
 use codesaur\Globals\Post;
-use codesaur\Generic\LogLevel;
+use codesaur\Common\LogLevel;
 use codesaur\HTML\TwigTemplate;
 use codesaur\HTML\HTML5 as html;
 

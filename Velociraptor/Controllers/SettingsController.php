@@ -170,7 +170,7 @@ class SettingsController extends RaptorController
         $status = $this->indopost('/status', array('table' => $table));
         $auto_increment = (int) ($record['id'] ?? $status['data']['Auto_increment'] ?? 1);
         
-        if ($describe instanceof SettingDescribe) {
+        if ($describe instanceof SettingsDescribe) {
             if (\is_numeric($auto_increment)) {                
                 $file = (new FileController("/$table/$auto_increment"));
                 $file->setSizeLimit(262144);

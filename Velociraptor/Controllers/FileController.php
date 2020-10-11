@@ -1,8 +1,8 @@
 <?php namespace Velociraptor\Controllers;
 
 use codesaur as single;
-use codesaur\Generic\File;
-use codesaur\Generic\LogLevel;
+use codesaur\Common\File;
+use codesaur\Common\LogLevel;
 
 defined('_document') || define('_document', \dirname($_SERVER['SCRIPT_FILENAME']));
 

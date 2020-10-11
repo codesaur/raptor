@@ -3,7 +3,7 @@
 use codesaur as single;
 use codesaur\Globals\Get;
 use codesaur\Globals\Post;
-use codesaur\Generic\LogLevel;
+use codesaur\Common\LogLevel;
 
 use Velociraptor\Templates\Boot4\Login;
 

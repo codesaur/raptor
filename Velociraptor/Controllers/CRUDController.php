@@ -1,10 +1,10 @@
 <?php namespace Velociraptor\Controllers;
 
 use codesaur as single;
-use codesaur\Generic\Base;
+use codesaur\Common\Base;
 use codesaur\Globals\Post;
 use codesaur\Globals\Server;
-use codesaur\Generic\LogLevel;
+use codesaur\Common\LogLevel;
 use codesaur\HTML\TwigTemplate;
 use codesaur\DataObject\Describe;
 use codesaur\MultiModel\MultiDescribe;

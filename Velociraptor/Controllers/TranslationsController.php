@@ -5,7 +5,7 @@ use codesaur\Globals\Post;
 use codesaur\HTML\TwigTemplate;
 use codesaur\HTML\HTML5 as html;
 
-use Indoraptor\Models\Initial;
+use Indoraptor\Common\Initial;
 use Indoraptor\Describes\TranslationDescribe;
 
 use Velociraptor\Templates\Boot4\Card;

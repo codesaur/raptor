@@ -1,8 +1,8 @@
 <?php namespace Velociraptor\Controllers;
 
 use codesaur as single;
+use codesaur\Common\File;
 use codesaur\Globals\Post;
-use codesaur\Generic\File;
 use codesaur\HTML\TwigTemplate;
 use codesaur\HTML\HTML5 as html;
 

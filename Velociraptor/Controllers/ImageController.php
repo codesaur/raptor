@@ -1,6 +1,6 @@
 <?php namespace Velociraptor\Controllers;
 
-use codesaur\Generic\File;
+use codesaur\Common\File;
 
 class ImageController extends FileController
 {

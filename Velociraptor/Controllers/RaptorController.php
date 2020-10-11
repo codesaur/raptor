@@ -1,8 +1,8 @@
 <?php namespace Velociraptor\Controllers;
 
 use codesaur as single;
-use codesaur\Generic\Base;
-use codesaur\Generic\LogLevel;
+use codesaur\Common\Base;
+use codesaur\Common\LogLevel;
 
 use PHPMailer\PHPMailer\PHPMailer;
 

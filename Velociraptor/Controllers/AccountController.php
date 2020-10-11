@@ -3,7 +3,7 @@
 use codesaur as single;
 use codesaur\Globals\Post;
 use codesaur\HTML\Template;
-use codesaur\Generic\LogLevel;
+use codesaur\Common\LogLevel;
 use codesaur\HTML\TwigTemplate;
 
 use Indoraptor\Describes\AccountDescribe;
