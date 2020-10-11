@@ -1,0 +1,88 @@
+<table id="rbac_{{ alias }}" class="table table-striped" style="width:100%">
+    <thead style="background-color:#ff9999">
+        <tr>
+            <th scope="col">Role</th>
+            {% for permission in permissions %}
+            <th scope="col" class="text-center">
+                <span style="cursor:pointer" data-toggle="tooltip" title="{{ permission['description']|e }}">
+                    {{ permission['name'] }}
+                </span>
+            </th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for role in roles %}
+        <tr>
+            <th scope="row">
+                <span style="cursor:pointer" data-toggle="tooltip" data-placement="right" title="{{ role['description']|e }}">
+                    {{ role['name'] }}
+                </span>
+            </th>
+            {% for permission in permissions %}
+            <td class="text-center">
+                <input{% if role_permission[role['id']][permission['id']] is defined %} checked{% endif %} role_id="{{ role['id'] }}" permission_id="{{ permission['id'] }}" class="role_permission" type="checkbox">
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot></tfoot>
+</table>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        var table = $('table#rbac_{{ alias }}');        
+        table.DataTable({
+            scrollX: true,
+            order: [[ 0, 'asc' ]],
+            fixedColumns: { leftColumns: 1},
+            columnDefs: [{ targets: '_all', orderable: false }]
+            {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
+        });        
+        Dashboard.ajaxModal(table);
+        
+        var classname = document.getElementsByClassName('role_permission');
+
+        var sendRolePermission = function() {
+            var form = document.createElement('form');                        
+            let idStr = 'form' + (document.forms.length + 1);
+            
+            form.id = idStr;
+            form.method = 'POST';
+
+            if (this.checked) {
+                form.action = '{{ 'crud-submit'|link({'action':'insert'}) }}';
+            } else {
+                form.action = '{{ 'crud-submit'|link({'action':'update'}) }}';
+            }
+            
+            form.action += '?logger=rbac&thing=role_permission&alias={{ alias }}&controller=Velociraptor\\RBAC\\RBACController';
+
+            var alias = document.createElement('input');
+            alias.name = 'txt_alias';
+            alias.value = '{{ alias }}';
+            alias.type = 'hidden';
+            form.appendChild(alias);
+
+            var role = document.createElement('input');
+            role.name = 'txt_role_id';
+            role.value = this.getAttribute('role_id');
+            role.type = 'hidden';
+            form.appendChild(role);
+
+            var permission = document.createElement('input');
+            permission.name = 'txt_permission_id';
+            permission.value = this.getAttribute('permission_id');
+            permission.type = 'hidden';
+            form.appendChild(permission);
+            
+            document.body.appendChild(form);
+            Dashboard.submit($('#' + idStr));
+            document.body.removeChild(form);
+        };
+
+        for (var i = 0; i < classname.length; i++) {
+            classname[i].addEventListener('click', sendRolePermission);
+        }
+    });
+</script>

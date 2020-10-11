@@ -1,0 +1,170 @@
+<div class="card shadow-sm border-primary mb-4">
+    <div class="card-header bg-light">
+        <span class="mt-2 float-left text-uppercase text-danger">
+            <i class="flaticon-users"></i> {{ 'accounts'|text }}
+        </span>
+        <ul class="nav nav-pills card-header-pills float-right">
+            {% if user.can('system_forgot_index') %}
+            <li class="nav-item pl-2">
+                <a class="nav-link btn btn-outline-dark shadow-sm" data-target="#modal" data-toggle="modal"
+                   href="{{ 'crud'|link({'action':'index'}) }}?logger=account&table=forgot&controller=Velociraptor\Account\AccountController">
+                    {{ 'password-reset-request'|text }}
+                </a>
+            </li>
+            {% endif %}
+            {% if user.can('system_newbie_index') %}
+            <li class="nav-item pl-2">
+                <a class="nav-link btn btn-outline-primary shadow-sm" data-target="#modal" data-toggle="modal"
+                   href="{{ 'crud'|link({'action':'index'}) }}?logger=account&table=newbie&controller=Velociraptor\Account\AccountController">
+                    {{ 'request-new-account'|text }}
+                </a>
+            </li>
+            {% endif %}
+            {% if user.can('system_account_insert') %}
+            <li class="nav-item pl-2">
+                <a class="nav-link btn btn-success shadow-sm"
+                   href="{{ 'crud'|link({'action':'insert'}) }}?logger=account&table=account&controller=Velociraptor\Account\AccountController">
+                    <i class="flaticon-add"></i> {{ 'add-new-account'|text }}
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="card-body accounts_list">
+        <table class="table table-striped table-bordered table-hover" id="account" width="100%">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">{{ 'photo'|text }}</th>
+                    <th scope="col">{{ 'name'|text }}</th>
+                    <th scope="col"><!--{{ 'login-name'|text }}--></th>
+                    <th scope="col">{{ 'email'|text }}</th>
+                    <th scope="col">{{ 'organization'|text }}</th>
+                    <th scope="col">{{ 'user-role'|text }}</th>
+                    <th scope="col">{{ 'status'|text }}</th>
+                    <th scope="col" style="width:120px">{{ 'action'|text }}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for account in accounts %}
+                <tr id="account_{{ account['id'] }}">
+                    <th scope="row">{{ account['id'] }}</th>
+                    <th scope="row">
+                        {% set photo = image.singlePath(account['id']) %}
+                        <img alt="{{ name }}" src="{% if image.isEmpty(photo) %}https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif{% else %}{{ photo }}{% endif %}" width="60px">
+                    <td>{{ account['first_name'] ~ ' ' ~ account['last_name'] }}</td>
+                    <td>{{ account['username'] }}</td>
+                    <td>{{ account['email'] }}</td>
+                    <td>
+                        <a href="{{ 'account-organization-set'|link({'id':account['id']}) }}"
+                           class="ajax-modal btn btn-dark btn-sm shadow-sm" data-target="#modal" data-toggle="modal"><i class="la la-bank"></i>
+                        </a>
+                    {% for org,status in account['organizations'] %}
+                        {% if status == 0 %}
+                            {%  set org_badge = 'secondary' %}
+                        {% else %}
+                            {%  set org_badge = organizations[org]['alias'] == 'system' ? 'info' : 'warning' %}
+                        {% endif %}
+                        <a href="{{ 'crud'|link({'action':'retrieve'}) }}?logger=organization&controller=Velociraptor\Organization\OrganizationController&id={{ organizations[org]['id'] }}"
+                           class="ajax-modal badge badge-{{ org_badge }}" data-target="#modal" data-toggle="modal">{{ organizations[org]['name'] }}
+                        </a>
+                    {% endfor %}
+                    </td>
+                    <td>
+                        <a href="{{ 'crud'|link({'action':'update'}) }}?logger=rbac&controller=Velociraptor\RBAC\RBACController&thing=user_role&id={{ account['id'] }}"
+                           class="ajax-modal btn btn-danger btn-sm shadow-sm" data-target="#modal" data-toggle="modal"><i class="flaticon-safe-shield-protection"></i>
+                        </a>
+                    {% for role in account['roles'] %}
+                        <span class="badge badge-{{ role == 'system_coder' ? 'primary' : 'success' }} shadow-sm">{{ role }}</span>
+                    {% endfor %}
+                    </td>
+                    <td>
+                        <span class="float-left badge badge-{{ account['status'] ? 'danger' : 'secondary' }}">{{ lookup['status'][account['status']] ?? account['status'] }}</span>
+                    </td>
+                    <td>
+                        <div class="float-right">
+                            {% if user.can('system_account_retrieve') %}
+                            <a href="{{ 'crud'|link({'action':'retrieve'}) }}?logger=account&controller=Velociraptor\Account\AccountController&id={{ account['id'] }}" class="btn btn-info shadow-sm"><i class="la la-eye"></i></a>
+                            {% endif %}
+                            {% if account['id'] == user.account('id') or (account['id'] != 1 and user.can('system_account_update')) %}
+                            <a href="{{ 'crud'|link({'action':'update'}) }}?logger=account&controller=Velociraptor\Account\AccountController&id={{ account['id'] }}" class="btn btn-primary shadow-sm"><i class="la la-edit"></i></a>
+                            {% endif %}
+                            {% if account['id'] != user.account('id') and user.account('id') == 1 and user.can('system_account_delete') %}
+                            <a href="{{ account['id'] }}" on-success="$('#account_{{ account['id'] }}').remove();" class="delete btn btn-danger shadow-sm"><i class="la la-trash"></i></a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot></tfoot>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="modal_approve" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header modal-header-solid">
+                <h5 class="modal-title text-uppercase text-primary" id="MyModalLabel"><i class="fa fa-user-check"></i> {{ 'confirm'|text }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'close'|text }}"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="confirm_form" action="{{ 'account-accept'|link }}" class="needs-validation" method="POST" enctype="multipart/form-data" novalidate>
+                    <input id="id" name="id" type="hidden">
+                    <div class="form-group">
+                        <label>{{ 'username'|text }}</label>
+                        <div class="form-control" id="username">ner</div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'email'|text }}</label>
+                        <div class="form-control" id="email">ner</div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'status'|text }}</label>
+                        <div class="bg-light">
+                            {% for value,name in lookup['status'] %}
+                            <div class="form-check form-check-inline">
+                                <input id="status{{ value }}" name="status"  class="form-check-input"
+                                       value="{{ value }}" type="radio"{% if value==1 %} checked{% endif %}>
+                                <label class="form-check-label" for="status{{ value }}">{{ name }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <span class="form-text text-muted">{{ 'active-account-can-login'|text }}</span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer modal-footer-solid">
+                <button class="btn btn-secondary shadow-sm" data-dismiss="modal">{{ 'no'|text }}</button>
+                <button class="btn btn-primary shadow-sm" id="accept-submit">{{ 'yes'|text }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        $('table#account').DataTable({
+            lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]],
+            responsive: true, bStateSave: true, pagingType: 'full_numbers', pageLength: 10, order: [[0, 'asc']]
+            {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
+        });
+        
+        var acceptModal;
+        $('#modal_approve').on('show.bs.modal', function (event) {
+            document.getElementById('confirm_form').reset();
+            
+            acceptModal = $(this);
+            var button = $(event.relatedTarget);
+            var newbie = button.data('newbie');
+            
+            acceptModal.find('#id').val(newbie.id);
+            acceptModal.find('#username').html(newbie.username);
+            acceptModal.find('#email').html(newbie.email);
+            /*acceptModal.find('#status' + newbie.status).prop('checked', true);*/
+        });
+        
+        document.getElementById('accept-submit').addEventListener('click', function() {
+            Dashboard.submit($('#confirm_form'), $(this), acceptModal);
+        });
+    });
+</script>

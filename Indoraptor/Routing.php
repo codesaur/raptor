@@ -80,9 +80,9 @@ class Routing extends \codesaur\Http\Routing
     function getSettingsRules() : array
     {
         return array(
-            ['/settings/mailer', 'mailer@Indoraptor\\Helper\\SettingsController'],
-            ['/settings/:alias', 'settings@Indoraptor\\Helper\\SettingsController', ['filters' => ['alias' => '(\w+)']]],
-            ['/settings/socials/:alias', 'socials@Indoraptor\\Helper\\SettingsController', ['filters' => ['alias' => '(\w+)']]]
+            ['/settings/mailer', 'mailer@Indoraptor\\Content\\SettingsController'],
+            ['/settings/:alias', 'settings@Indoraptor\\Content\\SettingsController', ['filters' => ['alias' => '(\w+)']]],
+            ['/settings/socials/:alias', 'socials@Indoraptor\\Content\\SettingsController', ['filters' => ['alias' => '(\w+)']]]
         );
     }
     

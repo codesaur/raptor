@@ -1,0 +1,26 @@
+<table class="table table-striped table-bordered table-hover" id="organization" width="100%">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">{{ 'logo'|text }}</th>
+            <th scope="col">{{ 'name'|text }}</th>
+            <th scope="col">RBAC (alias)</th>
+            <th scope="col">{{ 'status'|text }}</th>
+            <th scope="col" style="width:160px">{{ 'action'|text }}</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot></tfoot>
+</table>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        var table = $('table#organization');
+        table.DataTable({
+            lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]],
+            responsive: true, bStateSave: true, pagingType: 'full_numbers', pageLength: 10, order: [[0, 'asc']],
+            ajax: {method: 'GET', url: "{{ 'datatable'|link }}?logger=organization&controller=Velociraptor\\Organization\\OrganizationController"}
+            {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
+        });        
+        Dashboard.ajaxModal(table);
+    });
+</script>

@@ -1,0 +1,59 @@
+<div class="card border-danger shadow-sm">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+        {% for name in names %}
+            <li class="nav-item">
+                <a class="nav-link{% if name == 'dashboard' %} active{% endif %}" role="tab" data-toggle="tab" href="#log_{{ name }}">{{ name|upper }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="card-body">
+        <div class="tab-content">
+        {% for name in names %}
+            <div class="tab-pane{% if name == 'dashboard' %} active{% endif %}" id="log_{{ name }}" style="width:100%;height:74vh;min-height:400px;overflow-y:auto;overflow-x:hidden;">
+                <ul class="list-group">
+                {% for item in logs[name] %}
+                    {% if item['level'] == constant('codesaur\\Common\\LogLevel::Basic') %}
+                        {% set type='light' %}
+                    {%  elseif item['level'] == constant('codesaur\\Common\\LogLevel::Security') %}
+                        {% set type='primary' %}
+                    {%  elseif item['level'] == constant('codesaur\\Common\\LogLevel::Error') %}
+                        {% set type='danger' %}
+                    {%  elseif item['level'] == constant('codesaur\\Common\\LogLevel::Record') %}
+                        {% set type='warning' %}
+                    {%  elseif item['level'] == constant('codesaur\\Common\\LogLevel::Endpoint') %}
+                        {% set type='info' %}
+                    {%  elseif item['level'] == constant('codesaur\\Common\\LogLevel::View') %}
+                        {% set type='secondary' %}
+                    {%  else %}
+                        {% set type='dark' %}
+                    {% endif %}
+                    
+                    {% set info_uri=('crud'|link({'action':'retrieve'})) ~ '?table=' ~ name ~ '&controller=Velociraptor\\Log\\AdvancedLogController&id=' ~ item['id'] %}
+                    
+                    <li class="list-group-item list-group-item-action list-group-item-{{ type }}">
+                        <span class="pull-left pr-2">[{{ item['id'] }}]</span>
+                        <a data-target="#modal" data-toggle="modal" class="pull-left" href="{{ info_uri|e }}">{{ item['created_at'] }}</a> 
+                        <span class="pl-2 pr-2">
+                        {% if item['info']['message'] is not defined or item['info']['message'] is empty %}
+                            <span class="text-danger">{{ item['reason'] }}</span> {{ item['info']['request']['uri']|e }}
+                        {% else %}
+                            {{ item['info']['message']|e }}
+                        {% endif %}
+                        </span>
+                        {% if item['created_by'] is defined and accounts[item['created_by']] is defined %}
+                            {% set account = accounts[item['created_by']] %}
+                            <span class="text-muted small"><u>{{ item['reason'] }} by {{ account|replace({ (' =>' ~ account|split(' =>')|last): '' }) }}</u></span>
+                        {% endif %}
+                        {% if item['info']['path'] is defined %}
+                        <a target="_blank" href="{{ item['info']['path'] }}" class="pull-right">{{ item['info']['path']|replace({ ('.' ~ item['info']['path']|split('.')|last): '' }) }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+         {% endfor %}
+        </div>
+    </div>
+</div>

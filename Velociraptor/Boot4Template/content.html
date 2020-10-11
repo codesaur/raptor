@@ -1,0 +1,235 @@
+{% set login_user,location = user.data(),request.getUrl()|trim('/', 'right') %}
+
+{% if copyright is not defined %}
+{% set copyright = language.current == 'mn' ? 'Мөнхийн-Ололт ХХК, Монгол улс' : 'Munkhiin-Ololt LLC, Mongolia' %}
+{% endif %}
+
+<nav class="navbar navbar-expand-xl fixed-top navbar-dark bg-primary top-navigation shadow-sm">
+    {% if login_user['organization']['id'] == 1 %}
+    <a class="navbar-brand text-light" href="{{ 'home'|link }}">
+        <span class="pr-5">{{ 'dashboard'|text|upper }}</span>
+    </a>
+    {% else %}
+    <a class="navbar-brand text-light" href="{{ login_user['organization']['home_url'] is defined and login_user['organization']['home_url'] is not empty ? login_user['organization']['home_url'] : 'home'|link }}">
+        {% if login_user['organization']['logo'] is defined and login_user['organization']['logo'] is not empty %}
+        <img class="float-left pr-2" height="32px" src="{{ login_user['organization']['logo'] }}">
+        {% endif %}
+        <span class="pr-5">{{ login_user['organization']['name']|upper }}</span>
+    </a>
+    {% endif %}
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topnavbar" aria-controls="topnavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="pl-4 collapse navbar-collapse" id="topnavbar">
+        <ul class="navbar-nav mr-auto">
+        {% for menu in header %}
+            {% if menu['route'] is defined %}
+                {% if menu['param'] is defined %}
+                    {% set href %}{{ menu['route']|link(menu['param']) }}{% endset %}
+                {% else %}
+                    {% set href %}{{ menu['route']|link }}{% endset %}
+                {% endif %}                                
+            {% else %}
+                {% set href = menu['href']|default('') %} 
+            {% endif %}
+
+            {% if menu['query'] is defined %}
+                {% set href = href ~ '?' ~ menu['query'] %}
+            {% endif %}
+
+            {% if menu['text'] is defined %}
+                {% set caption %}{{ menu['text']|text }}{% endset %}
+            {% else %}
+                {% set caption = menu['title']|default('') %} 
+            {% endif %}
+            
+            {% set menuIndex = loop.index %}
+
+            {% if menu['dropdown'] is defined %}
+            <li class="nav-item dropdown mr-4">
+                <a class="nav-link dropdown-toggle" href="javascript:;" id="dropdown{{ menuIndex }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ caption }}</a>
+                <div class="dropdown-menu" aria-labelledby="dropdown{{ menuIndex }}">
+                {% for item in menu['dropdown'] %}
+                    {% if item['divider'] is defined and item['divider'] %}
+                    <div class="dropdown-divider"></div>
+                    {% endif %}
+                    
+                    {% if item['route'] is defined %}
+                        {% if item['param'] is defined %}
+                            {% set href %}{{ item['route']|link(item['param']) }}{% endset %}
+                        {% else %}
+                            {% set href %}{{ item['route']|link }}{% endset %}
+                        {% endif %}                                
+                    {% else %}
+                        {% set href = item['href']|default('javascript:;') %} 
+                    {% endif %}
+
+                    {% if item['query'] is defined %}
+                        {% set href = href ~ '?' ~ item['query'] %}
+                    {% endif %}
+                    
+                    {% if item['text'] is defined %}
+                        {% set caption %}{{ item['text']|text }}{% endset %}
+                    {% else %}
+                        {% set caption = item['title']|default('') %} 
+                    {% endif %}
+                    <a class="dropdown-item dropdown-sub-item {{ href == location ? ' active' : '' }}" href="{{ href }}" {{ item['attr'] }}>
+                        {% if item['icon'] is defined %}
+                            <i class="{{ item['icon'] }}"></i> 
+                        {% elseif item['img'] is defined %}
+                            <img src="{{ item['img'] }}"> 
+                        {% endif %} {{ caption }}
+                    </a>
+                {% endfor %}
+                </div>
+            {% else %}
+            <li class="nav-item{{ href == location ? ' active' : '' }} mr-4">
+                <a class="nav-link{{ href == location ? ' text-light' : '' }}" href="{{ href }}" {{ menu['attr'] }}>{{ caption }}</a>
+            {% endif %}
+            </li>
+        {% endfor %}
+            <li class="nav-item dropdown mr-4">
+            {% if login_user['organizations'] is defined and login_user['organizations']|length > 1 %}
+                <a class="nav-link dropdown-toggle" href="javascript:;" id="dropdown500" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ 'organization'|text }}
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdown500">
+                {% for org in login_user['organizations'] %}
+                    <a class="dropdown-item {{ org['id'] == login_user['organization']['id'] ? ' active' : '' }}" href="{{ 'organization'|link({'id':org['id']}) }}">
+                        {{ org['name'] }}
+                    </a>
+                {% endfor %}
+                </div>
+            </li>
+            {% endif %}
+            <li class="nav-item dropdown mr-4">            
+                <a class="nav-link" href="javascript:;" id="dropdown501" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img id="account_profile_image" src="{{ login_user['account']['picture'] ?? ('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif') }}" height="26px" class="rounded-circle shadow-sm">
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdown501">
+                {% set account_profile_link = 'crud'|link({'action': 'update'}) ~ '?logger=account&controller=Velociraptor\\Account\\AccountController&id=' ~ login_user['account']['id'] %}
+                    <a class="dropdown-item dropdown-sub-item{{ location == account_profile_link ? ' active' : '' }}" href="{{ account_profile_link }}">
+                        <i class="flaticon-user-settings"></i> {{ 'my-profile'|text }}
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ 'logout'|link }}">
+                        <i class="flaticon-logout"></i> {{ 'logout'|text }}
+                    </a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="javascript:;" id="dropdown502" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/25x15/{{ language.current == 'en' ? 'gb' : language.current }}.png" height="15px" class="shadow-sm">
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdown502">
+                {% set urlLang = request.getCleanUrl() ~ request.getParamsAsStr() %}
+                {% for lang, country in language.complete() %}
+                    <a class="dropdown-item{{ lang == language.current ? ' active' : '' }} language-item" href="{{ 'language'|link({'language': lang}) }}?ulang={{ urlLang }}">
+                        <img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/{{ lang == 'en' ? 'gb' : lang }}.png" alt="{{ country }}" style="position:relative;top:-2px"> {{ country }}
+                    </a>
+                {% endfor %}
+                </div>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="{{ 'enter-search-terms'|text }}" aria-label="Search">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-light" type="button">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>      
+    </div>
+</nav>
+{% if breadcrumb is defined %}
+<nav aria-label="breadcrumb" class="shadow mt-n4">
+    <ol class="breadcrumb pl-4">
+        <li class="breadcrumb-item"><a href="{{ 'home'|link }}"><i class="flaticon2-protection"></i> {{ 'dashboard'|text }}</a></li>
+    {% for item in breadcrumb %}
+        {% if not item.link %}{% set link = location %}{% else %}{% set link = item.link %}{% endif %}
+        {% if link == location %}
+        <li class="breadcrumb-item active" aria-current="page">{{ item.text }}</li>
+        {% else %}
+        <li class="breadcrumb-item"><a href="{{ link }}">{{ item.text }}</a></li>
+        {% endif %}
+    {% endfor %}
+    </ol>
+    <div style="position:absolute;right:1rem;top:66px;">
+    {% for button in toolbar %}
+        {% if button['route'] is defined %}
+            {% if button['param'] is defined %}
+                {% set href %}{{ button['route']|link(button['param']) }}{% endset %}
+            {% else %}
+                {% set href %}{{ button['route']|link }}{% endset %}
+            {% endif %}                                
+        {% else %}
+            {% set href = button['href']|default('javascript:;') %} 
+        {% endif %}
+
+        {% if button['query'] is defined %}
+            {% set href = href ~ '?' ~ button['query'] %}
+        {% endif %}
+
+        {% if button['text'] is defined %}
+            {% set caption %}{{ button['text']|text }}{% endset %}
+        {% else %}
+            {% set caption = button['title']|default('') %} 
+        {% endif %}
+        <a href="{{ href }}" class="btn-sm {{ button['class'] }}" {{ button['attr'] }}
+           {% if button['data-target'] is defined %} data-target="{{ button['data-target'] }}"{% endif %}
+           {% if button['data-toggle'] is defined %} data-toggle="{{ button['data-toggle'] }}"{% endif %}>
+            <i class="{{ button['icon'] }}"></i>
+            {{ caption }}
+        </a>
+    {% endfor %}
+    </div>
+</nav>
+{% endif %}
+
+{{ subheader }}
+
+<main role="main" class="container-fluid mb-4 pb-2">{{ content }}</main>
+
+<a class="scroll-to-top pt-2"><i class="fa fa-arrow-up text-light"></i></a>
+
+<footer class="footer py-2 fixed-bottom bg-primary">
+    <div class="container-fluid text-light">
+        <div class="clearfix">
+            <span class="float-left">
+                <a href="{{ home_global ?? request.getHttpHost() }}" target="__blank"><img class="float-left pr-3" height="24px" src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/images/ololt-leafs.png"></a>
+                {{ 'now'|date('Y') }} &copy; {{ copyright }} - {{ 'dashboard'|text }}
+            </span>
+            <div class="float-right d-none d-xl-block">
+            {% for item in footer %}                    
+                {% if item['route'] is defined %}
+                    {% if item['param'] is defined %}
+                        {% set href %}{{ item['route']|link(item['param']) }}{% endset %}
+                    {% else %}
+                        {% set href %}{{ item['route']|link }}{% endset %}
+                    {% endif %}
+                {% else %}
+                    {% set href = item['href']|default('javascript:;') %} 
+                {% endif %}
+
+                {% if item['query'] is defined %}
+                    {% set href = href ~ '?' ~ item['query'] %}
+                {% endif %}
+
+                {% if item['text'] is defined %}
+                    {% set caption %}{{ item['text']|text }}{% endset %}
+                {% else %}
+                    {% set caption = item['title']|default('') %} 
+                {% endif %}
+                <a class="footer-link {{ href == location ? ' text-warning' : 'text-light' }} pl-4" href="{{ href }}" {{ item['attr'] }}>
+                    <span>{% if item['icon'] is defined %}
+                    <i class="{{ item['icon'] }}"></i> 
+                    {% endif %}{{ caption }}</span>
+                </a>
+            {% endfor %}
+            </div>
+        </div>    
+  </div>
+</footer>

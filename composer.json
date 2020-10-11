@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "codesaur/erketu": "^7.1.4"
+        "codesaur/erketu": "^7.1.5"
     },
     "autoload": {
         "psr-4": {
@@ -24,9 +24,16 @@
             "Indoraptor\\Localization\\": "Indoraptor/Localization",
             "Indoraptor\\Logger\\": "Indoraptor/Logger",
             "Velociraptor\\": "Velociraptor",
-            "Velociraptor\\Controllers\\": "Velociraptor/Controllers",
-            "Velociraptor\\Templates\\": "Velociraptor/Templates",
-            "Velociraptor\\Templates\\Boot4\\": "Velociraptor/Templates/Boot4"
+            "Velociraptor\\Common\\": "Velociraptor/Common",
+            "Velociraptor\\Account\\": "Velociraptor/Account",
+            "Velociraptor\\Content\\": "Velociraptor/Content",
+            "Velociraptor\\Helper\\": "Velociraptor/Helper",
+            "Velociraptor\\Localization\\": "Velociraptor/Localization",
+            "Velociraptor\\Log\\": "Velociraptor/Log",
+            "Velociraptor\\Organization\\": "Velociraptor/Organization",
+            "Velociraptor\\RBAC\\": "Velociraptor/RBAC",
+            "Velociraptor\\Report\\": "Velociraptor/Report",
+            "Velociraptor\\Boot4Template\\": "Velociraptor/Boot4Template"
         }
     },
     "license": "MIT",

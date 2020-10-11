@@ -26,8 +26,8 @@ class RecordController extends IndoController
         $this->init();
         
         if ( ! \in_array($this->model->getMe(), array(
-            //'Indoraptor\\Models\\Language',
-            //'Indoraptor\\Models\\Translation'
+            //'Indoraptor\\Localization\\Language',
+            //'Indoraptor\\Localization\\Translation'
         )) &&  ! $this->accept()) {
             return $this->error('Not Allowed');
         }
@@ -57,8 +57,8 @@ class RecordController extends IndoController
         $this->init();
         
         if ( ! \in_array($this->model->getMe(), array(
-            //'Indoraptor\\Models\\Language',
-            //'Indoraptor\\Models\\Translation'
+            //'Indoraptor\\Localization\\Language',
+            //'Indoraptor\\Localization\\Translation'
         )) &&  ! $this->accept()) {
             return $this->error('Not Allowed');
         }
@@ -115,8 +115,8 @@ class RecordController extends IndoController
         $this->init();
         
         if ( ! \in_array($this->model->getMe(), array(
-            //'Indoraptor\\Models\\Language',
-            //'Indoraptor\\Models\\Translation'
+            //'Indoraptor\\Localization\\Language',
+            //'Indoraptor\\Localization\\Translation'
         )) &&  ! $this->accept()) {
             return $this->error('Not Allowed');
         }
