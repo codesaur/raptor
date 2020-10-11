@@ -21,8 +21,6 @@ class RBACController extends RaptorController
     {
         parent::__construct();
         
-        $this->getTranslation('account');
-        
         $this->conn = (new User())->getConnection();        
     }
 

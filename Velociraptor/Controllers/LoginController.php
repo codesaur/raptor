@@ -9,13 +9,6 @@ use Velociraptor\Templates\Boot4\Login;
 
 class LoginController extends RaptorController
 {
-    function __construct()
-    {
-        parent::__construct();
-        
-        $this->getTranslation('account');
-    }
-
     public function frontend()
     {
         single::header()->location(single::app()->webUrl(true));

@@ -8,7 +8,7 @@ class FrontController extends BackController
     function __construct()
     {
         $this->initLanguage();
-        $this->getTranslation(array('default', 'frontend'));
+        $this->getTranslation(array('default', 'user'));
     }
     
     final public function initLanguage()
@@ -62,7 +62,7 @@ class FrontController extends BackController
         }
     }
     
-    final public function dump($var, bool $full = true)
+    final public function vardump($var, bool $full = true)
     {
         if (DEBUG) {
             $debug = \debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 1);

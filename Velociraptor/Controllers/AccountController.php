@@ -11,14 +11,7 @@ use Indoraptor\Describes\AccountDescribe;
 use Velociraptor\Templates\Boot4\Dashboard;
 
 class AccountController extends RaptorController
-{
-    function __construct()
-    {
-        parent::__construct();
-        
-        $this->getTranslation('account');
-    }
-    
+{    
     public function index()
     {
         $view = new Dashboard(single::text('accounts'));
