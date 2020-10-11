@@ -11,14 +11,18 @@
         }
     ],
     "require": {
-        "codesaur/erketu": "^7.0"
+        "codesaur/erketu": "^7.1.4"
     },
     "autoload": {
         "psr-4": {
             "Indoraptor\\": "Indoraptor",
-            "Indoraptor\\Models\\": "Indoraptor/Models",
-            "Indoraptor\\Describes\\": "Indoraptor/Describes",
-            "Indoraptor\\Controllers\\": "Indoraptor/Controllers",
+            "Indoraptor\\Common\\": "Indoraptor/Common",
+            "Indoraptor\\Account\\": "Indoraptor/Account",
+            "Indoraptor\\Content\\": "Indoraptor/Content",
+            "Indoraptor\\File\\": "Indoraptor/File",
+            "Indoraptor\\Helper\\": "Indoraptor/Helper",
+            "Indoraptor\\Localization\\": "Indoraptor/Localization",
+            "Indoraptor\\Logger\\": "Indoraptor/Logger",
             "Velociraptor\\": "Velociraptor",
             "Velociraptor\\Controllers\\": "Velociraptor/Controllers",
             "Velociraptor\\Templates\\": "Velociraptor/Templates",
