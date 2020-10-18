@@ -1,4 +1,4 @@
-<?php namespace Indoraptor\Common;
+<?php namespace Indoraptor;
 
 use codesaur\MultiModel\MultiModel;
 

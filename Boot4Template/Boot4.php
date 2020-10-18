@@ -1,4 +1,4 @@
-<?php namespace Velociraptor\Boot4Template;
+<?php namespace Boot4Template;
 
 use codesaur as single;
 use codesaur\Http\Controller;
@@ -10,10 +10,22 @@ class Boot4 extends IndexTemplate
     function __construct(string $template = null, array $vars = null)
     {
         parent::__construct(\dirname(__FILE__) . '/index.html');
+        
+        $this->addGlobal('language', single::language());
+        $this->addFilter('text', function($string) { return single::text($string); });
 
         if (isset($template)) {
-            $vars['index'] = $this;
-            $this->set('content', new TwigTemplate($template, $vars));
+            $content = new TwigTemplate($template, $vars);
+            $content->set('index', $this);
+            $content->addGlobal('app', single::app());
+            $content->addGlobal('user', single::user());
+            $content->addGlobal('request', single::request());
+            $content->addGlobal('language', single::language());
+            $content->addGlobal('controller', single::controller());
+            $content->addFilter('text', function($string) { return single::text($string); });
+            $content->addFilter('link', function($string, $params = []) { return single::link($string, $params); });            
+            
+            $this->set('content', $content);
         }
     }
 
@@ -83,33 +95,21 @@ class Boot4 extends IndexTemplate
         return new Alert($html, $icon, 'alert-danger');
     }
     
-    public function noPermission($halt = true)
+    public function noPermission($modal = false, $callback = null)
     {
-        $this->addContent($this->alertNoPermission())->render();
-        
-        if ($halt) {
-            exit;
-        }
-        
-        return false;
-    }
-    
-    public function noPermissionModal($halt = false)
-    {
-        (new TwigTemplate(
+        if ($modal) {
+            (new TwigTemplate(
                 \dirname(__FILE__) . '/no-permission-modal.html',
                 array('alert' => $this->alertNoPermission(null, false))))->render();
+        } else {
+            $this->addContent($this->alertNoPermission())->render();
+        }
         
-        if ($halt) {
-            exit;
+        if (isset($callback)) {
+            $callback();
         }
         
         return false;
-    }
-    
-    public function renderTwig(string $templateFileName, array $vars = [])
-    {
-        $this->render(new TwigTemplate($templateFileName, $vars));
     }
     
     public function getFolder() : string

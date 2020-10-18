@@ -1,8 +1,6 @@
 <?php namespace Indoraptor\Content;
 
-use Indoraptor\Common\MultiModel2;
-
-class PagesModel extends MultiModel2
+class PagesModel extends \Indoraptor\MultiModel2
 {
     public function setTables(string $primary, $content = null) : bool
     {

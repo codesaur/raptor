@@ -4,16 +4,17 @@ use codesaur as single;
 use codesaur\HTML\TwigTemplate;
 use codesaur\MultiModel\MultiDescribe;
 
-use Indoraptor\Common\MailerDescribe;
+use Boot4Template\Dashboard;
+
+use Indoraptor\Content\MailerDescribe;
 use Indoraptor\Content\SocialsDescribe;
 use Indoraptor\Content\SettingsDescribe;
 
-use Velociraptor\Common\FileController;
-use Velociraptor\Common\ImageController;
-use Velociraptor\Common\RaptorController;
-use Velociraptor\Boot4Template\Dashboard;
+use Velociraptor\FileController;
+use Velociraptor\ImageController;
+use Velociraptor\DashboardController;
 
-class SettingsController extends RaptorController
+class SettingsController extends DashboardController
 {
     public function index()
     {
@@ -73,15 +74,15 @@ class SettingsController extends RaptorController
         $action = single::link('crud-submit', array('action' => empty($record) ? 'insert' : 'update'))
                 . '?logger=settings&controller=' . \urlencode($this->getMe()) . "&table=$table";
 
-        $view->renderTwig(
+        $view->render(new TwigTemplate(
                 \dirname(__FILE__) . '/settings/settings.html',
-                array('column' => $column, 'action' => $action));
+                array('column' => $column, 'action' => $action)));
     }
     
     public function socials()
     {
         if ( ! single::user()->can(single::user()->organization('alias') . '_website_socials')) {
-            return (new Dashboard())->noPermissionModal();
+            return (new Dashboard())->noPermission(true);
         }
 
         $response = $this->indoget('/settings/socials/' . \urlencode(single::user()->organization('alias')));
@@ -104,7 +105,7 @@ class SettingsController extends RaptorController
     public function mailer()
     {
         if ( ! single::user()->can('system_system_mailer')) {
-            return (new Dashboard())->noPermissionModal();
+            return (new Dashboard())->noPermission(true);
         }
         
         $response = $this->indoget('/settings/mailer');
@@ -138,7 +139,7 @@ class SettingsController extends RaptorController
             if ( ! isset($record['smtp_auth'])) {
                 $record['smtp_auth'] = 0;
             }
-            $model = \urlencode('Indoraptor\\Common\\MailerModel');
+            $model = \urlencode('Indoraptor\\Content\\MailerModel');
         } elseif ($table == 'socials') {
             if ( ! single::user()->can(single::user()->organization('alias') . '_website_socials')) {
                 return false;

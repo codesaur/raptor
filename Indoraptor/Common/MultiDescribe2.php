@@ -1,6 +1,7 @@
-<?php namespace Indoraptor\Common;
+<?php namespace Indoraptor;
 
 use codesaur as single;
+
 use codesaur\MultiModel\MultiDescribe;
 
 class MultiDescribe2 extends MultiDescribe

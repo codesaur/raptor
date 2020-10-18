@@ -1,12 +1,12 @@
-<?php namespace Velociraptor\Common;
+<?php namespace Velociraptor;
 
 use codesaur as single;
-use codesaur\Common\File;
-use codesaur\Common\LogLevel;
+use codesaur\Base\File;
+use codesaur\Base\LogLevel;
 
 defined('_document') || define('_document', \dirname($_SERVER['SCRIPT_FILENAME']));
 
-class FileController extends RaptorController
+class FileController extends DashboardController
 {
     public $file;
     public $table;
@@ -41,7 +41,7 @@ class FileController extends RaptorController
             string $folder, $local = null, $public = null, bool $relative = true)
     {
         $this->local = ($local ?? (_document . '/public')) . "$folder/";
-        $this->public = ($public ?? single::app()->publicUrl($relative)) . "$folder/";
+        $this->public = ($public ?? single::app()->getPublicUrl($relative)) . "$folder/";
     }
     
     public function getPath() : string

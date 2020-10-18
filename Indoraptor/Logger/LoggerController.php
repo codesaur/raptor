@@ -1,8 +1,6 @@
 <?php namespace Indoraptor\Logger;
 
-use Indoraptor\Common\IndoController;
-
-class LoggerController extends IndoController
+class LoggerController extends \Indoraptor\IndoController
 {
     function __construct(bool $single = true)
     {

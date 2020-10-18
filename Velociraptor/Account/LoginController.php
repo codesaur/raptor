@@ -3,16 +3,17 @@
 use codesaur as single;
 use codesaur\Globals\Get;
 use codesaur\Globals\Post;
-use codesaur\Common\LogLevel;
+use codesaur\Base\LogLevel;
 
-use Velociraptor\Boot4Template\Login;
-use Velociraptor\Common\RaptorController;
+use Boot4Template\Login;
 
-class LoginController extends RaptorController
+use Velociraptor\DashboardController;
+
+class LoginController extends DashboardController
 {
     public function frontend()
     {
-        single::header()->location(single::app()->webUrl(false));
+        single::header()->location(single::app()->getWebUrl(false));
     }
 
     public function index()
@@ -35,7 +36,7 @@ class LoginController extends RaptorController
     
     public function getTemplate(array $vars = [])
     {
-        $template = single::app()->getNamespace() . 'Common\\LoginTemplate';
+        $template = single::app()->getNamespace() . 'LoginTemplate';
         return \class_exists($template) ? new $template($vars) : new Login($vars);
     }
     
@@ -60,15 +61,6 @@ class LoginController extends RaptorController
             
             single::session()->set('indo/jwt', $response['data']['account']['jwt']);
             
-//            $image = (new ImageController())->setTable('accounts');
-//            $photo = $image->singlePath($response['data']['account']['id']);
-//            $picture_path = "dashboard/account/{$response['data']['account']['id']}/picture";
-//            if ($photo) {
-//                 single::session()->set($picture_path, $photo);
-//            } elseif (single::session()->check($picture_path)) {
-//                single::session()->release($picture_path);
-//            }
-            
             single::response()->json(array(
                 'type' => 'success', 'message' => 'success', 'url' => single::link('home')));
 
@@ -81,10 +73,12 @@ class LoginController extends RaptorController
                 $this->indoput('/record?model='
                         . \urlencode('Indoraptor\\Account\\AccountModel'),
                         array('record' => array(
-                            'code' => single::flag(),
+                            'code' => single::language()->current(),
                             'id' => $response['data']['account']['id'])));                
-            } elseif ($response['data']['account']['code'] != single::flag()) {
-                single::language()->select($response['data']['account']['code']);
+            } elseif ($response['data']['account']['code'] != single::language()->current()) {
+                if (single::language()->select($response['data']['account']['code'])) {
+                    single::session()->set(single::app()->getNamespace() .'Language', $response['data']['account']['code']);
+                }
             }
         } catch(\Exception $e) {
             if (DEBUG) {
@@ -188,8 +182,8 @@ class LoginController extends RaptorController
             $email = $post->value('codeEmail', FILTER_SANITIZE_EMAIL);
             $password = $post->asPassword($post->value('codePassword'));
             $payload = array(
-                'email' => $email, 'flag' => single::flag(),
-                'username' => $username, 'password' => $password);
+                'username' => $username, 'password' => $password,
+                'email' => $email, 'flag' => single::language()->current());
             $response = $this->indopost('/auth/signup', $payload);
             unset($payload['password']);
         }
@@ -239,7 +233,7 @@ class LoginController extends RaptorController
         }
         
         $payload = array(
-            'email' => $email, 'flag' => single::flag(),
+            'email' => $email, 'flag' => single::language()->current(),
             'login' => single::request()->getHttpHost() . single::link('login'));
         $response = $this->indopost('/auth/forgot', $payload);
         
@@ -288,8 +282,9 @@ class LoginController extends RaptorController
             return single::redirect('home');
         }
         
-        if ($response['data']['flag'] != single::flag()) {
+        if ($response['data']['flag'] != single::language()->current()) {
             if (single::language()->select($response['data']['flag'])) {
+                single::session()->set(single::app()->getNamespace() .'Language', $response['data']['flag']);
                 return single::header()->redirect(single::link('login') . "?forgot=$id");
             }
         }

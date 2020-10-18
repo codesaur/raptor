@@ -2,10 +2,11 @@
 
 use codesaur as single;
 
-use Velociraptor\Common\RaptorController;
-use Velociraptor\Boot4Template\Dashboard;
+use Boot4Template\Dashboard;
 
-class DeveloperController extends RaptorController
+use Velociraptor\DashboardController;
+
+class DeveloperController extends DashboardController
 {
      public function index()
     {
@@ -16,6 +17,6 @@ class DeveloperController extends RaptorController
             $view->noPermission();
         }
         
-        $view->renderTwig(\dirname(__FILE__) . '/developer-index-table.html');
+        $view->render(new TiwigTemplate(\dirname(__FILE__) . '/developer-index-table.html'));
     }
 }

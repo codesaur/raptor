@@ -2,9 +2,7 @@
 
 use codesaur\DataObject\CDO;
 
-use Indoraptor\Common\MultiModel2;
-
-class FileModel extends MultiModel2
+class FileModel extends \Indoraptor\MultiModel2
 {
     function __construct(CDO $conn)
     {

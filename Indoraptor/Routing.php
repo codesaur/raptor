@@ -5,19 +5,19 @@ class Routing extends \codesaur\Http\Routing
     function getBasics() : array
     {
         return array(
-            ['', 'view@Indoraptor\\Common\\IndoController'],
-            ['/status', 'status@Indoraptor\\Common\\IndoController', ['methods' => 'POST']],
-            ['/cdo/query', 'query@Indoraptor\\Common\\IndoController', ['methods' => 'POST']],
-            ['/statement', 'statement@Indoraptor\\Common\\IndoController', ['methods' => 'POST']]
+            ['', 'view@Indoraptor\\IndoController'],
+            ['/status', 'status@Indoraptor\\IndoController', ['methods' => 'POST']],
+            ['/cdo/query', 'query@Indoraptor\\IndoController', ['methods' => 'POST']],
+            ['/statement', 'statement@Indoraptor\\IndoController', ['methods' => 'POST']]
         );
     }
     
     function getAuthRules() : array
     {
         return array(
-            ['/auth/jwt', 'jwt@Indoraptor\\Common\\AuthController', ['methods' => 'POST']],
-            ['/auth/try', 'entry@Indoraptor\\Common\\AuthController', ['methods' => 'POST']],
-            ['/generate/jwt', 'getJWT@Indoraptor\\Common\\AuthController', ['methods' => 'POST']]
+            ['/auth/jwt', 'jwt@Indoraptor\\AuthController', ['methods' => 'POST']],
+            ['/auth/try', 'entry@Indoraptor\\AuthController', ['methods' => 'POST']],
+            ['/generate/jwt', 'getJWT@Indoraptor\\AuthController', ['methods' => 'POST']]
         );
     }
 
@@ -34,10 +34,10 @@ class Routing extends \codesaur\Http\Routing
     function getRecordRules() : array
     {
         return array(
-            ['/record', 'insert@Indoraptor\\Common\\RecordController', ['methods' => 'POST']],
-            ['/record', 'update@Indoraptor\\Common\\RecordController', ['methods' => 'PUT']],
-            ['/record', 'delete@Indoraptor\\Common\\RecordController', ['methods' => 'DELETE']],
-            ['/record/retrieve', 'retrieve@Indoraptor\\Common\\RecordController', ['methods' => 'POST']]
+            ['/record', 'insert@Indoraptor\\RecordController', ['methods' => 'POST']],
+            ['/record', 'update@Indoraptor\\RecordController', ['methods' => 'PUT']],
+            ['/record', 'delete@Indoraptor\\RecordController', ['methods' => 'DELETE']],
+            ['/record/retrieve', 'retrieve@Indoraptor\\RecordController', ['methods' => 'POST']]
         );
     }
     

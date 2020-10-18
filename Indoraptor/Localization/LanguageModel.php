@@ -59,7 +59,8 @@ class LanguageModel extends InitableModel
         $pdostatement = $this->dataobject()->prepare(
                 'SELECT * FROM ' . $this->getTable() .
                 ' WHERE app=' . $this->dataobject()->quote($app) .
-                ' AND is_active=' . ($isactive ? '1' : '0'));
+                ' AND is_active=' . ($isactive ? '1' : '0') .
+                ' ORDER By is_default Desc');
         $pdostatement->execute();
         
         if ($pdostatement->rowCount() > 0) {

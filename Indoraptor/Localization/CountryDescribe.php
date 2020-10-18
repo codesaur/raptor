@@ -2,9 +2,7 @@
 
 use codesaur\DataObject\Column;
 
-use Indoraptor\Common\MultiDescribe2;
-
-class CountryDescribe extends MultiDescribe2
+class CountryDescribe extends \Indoraptor\MultiDescribe2
 {
     function __construct()
     {

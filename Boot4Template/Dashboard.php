@@ -1,4 +1,4 @@
-<?php namespace Velociraptor\Boot4Template;
+<?php namespace Boot4Template;
 
 use codesaur as single;
 
@@ -6,11 +6,6 @@ class Dashboard extends Boot4
 {
     function __construct($title = null, array $vars = [])
     {
-        $photo_path = 'dashboard/account/' . single::user()->account('id') . '/picture';
-        if (single::session()->check($photo_path)) {
-            single::user()->account()['picture'] = single::session()->get($photo_path);
-        }
-        
         parent::__construct(\dirname(__FILE__) . '/content.html', $vars + $this->getMenu());
 
         if (isset($title)) {
@@ -22,8 +17,7 @@ class Dashboard extends Boot4
     {
         $menu = array();
         
-        $controller = single::app()->getNamespace()
-                . 'Common\\MenuController';
+        $controller = single::app()->getNamespace() . 'MenuController';
         if (\class_exists($controller)) {
             $menuController = new $controller();
 

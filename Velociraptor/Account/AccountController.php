@@ -3,15 +3,16 @@
 use codesaur as single;
 use codesaur\Globals\Post;
 use codesaur\HTML\Template;
-use codesaur\Common\LogLevel;
+use codesaur\Base\LogLevel;
 use codesaur\HTML\TwigTemplate;
+
+use Boot4Template\Dashboard;
 
 use Indoraptor\Account\AccountDescribe;
 
-use Velociraptor\Common\RaptorController;
-use Velociraptor\Boot4Template\Dashboard;
+use Velociraptor\DashboardController;
 
-class AccountController extends RaptorController
+class AccountController extends DashboardController
 {    
     public function index()
     {
@@ -22,7 +23,7 @@ class AccountController extends RaptorController
             $modal = \dirname(__FILE__) . "/$table-index-modal.html";
             if ( ! single::user()->can("system_{$table}_index")
                     || ! \file_exists($modal)) {
-                return $view->noPermissionModal();
+                return $view->noPermission(true);
             }
             
             $response = $this->indopost("/record/retrieve?table=$table&model="
@@ -89,7 +90,7 @@ class AccountController extends RaptorController
             'lookup' => $this->getLookup(array('status')),
             'organizations' => $organizations_result['data']['rows'] ?? array());
 
-        $view->renderTwig(\dirname(__FILE__) . '/account-index.html', $vars);
+        $view->render(new TwigTemplate(\dirname(__FILE__) . '/account-index.html', $vars));
     }
     
     public function crud(string $action, $id)
@@ -161,7 +162,7 @@ class AccountController extends RaptorController
                 $delete = array('table' => 'accounts', 'logger' => 'account');
                 $view->addDelete($delete, '#tab-picture', single::text('delete-image-ask'), null, 'strip_file');
                 
-                $view->renderTwig(\dirname(__FILE__) . "/account-$action.html", $vars);
+                $view->render(new TwigTemplate(\dirname(__FILE__) . "/account-$action.html", $vars));
             }
             
             return true;
@@ -170,7 +171,7 @@ class AccountController extends RaptorController
                 \error_log($e->getMessage());
             }
             
-            (new Dashboard())->noPermission(false);
+            (new Dashboard())->noPermission(false, function() { exit; });
             
             
             return false;
@@ -277,13 +278,6 @@ class AccountController extends RaptorController
                 $response['data']['href'] = single::link('home');
             }
 
-//            $image = (new ImageController("/account/$auto_increment"))->setTable('accounts');
-//            $file_record = $image->post('image', $auto_increment, array('type' => getenv('IMAGE_MAIN') ?: 1));
-//
-//            if ($file_record && ($record['id'] ?? -777) == single::user()->account('id')) {
-//                single::session()->set("dashboard/account/{$record['id']}/picture", $file_record['primary']['path']);
-//            }
-
             return $response['data'];
         } catch (\Exception $e) {
             single::response()->json(array(
@@ -299,7 +293,7 @@ class AccountController extends RaptorController
     {
         if (single::request()->getMethod() == 'GET') {
             if ( ! single::user()->can('system_account_organization_set')) {
-                return (new Dashboard())->noPermissionModal();
+                return (new Dashboard())->noPermission(true);
             }
             
             $sql =  'SELECT ou.organization_id ' .
@@ -588,7 +582,7 @@ class AccountController extends RaptorController
             'accounts' => $accounts,
             'lookup' => $this->getLookup(array('status')));        
         
-        $view->renderTwig(\dirname(__FILE__) . '/org-account-index.html', $vars);
+        $view->render(new TwigTemplate(\dirname(__FILE__) . '/org-account-index.html', $vars));
         
         return true;
     }

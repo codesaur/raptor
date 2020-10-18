@@ -1,9 +1,8 @@
 <?php namespace Indoraptor\Localization;
 
 use Indoraptor\Content\LookupModel;
-use Indoraptor\Common\IndoController;
 
-class LanguageController extends IndoController
+class LanguageController extends \Indoraptor\IndoController
 {
     public function index()
     {

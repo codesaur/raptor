@@ -1,18 +1,15 @@
-<?php namespace Velociraptor\Common;
+<?php namespace Velociraptor;
 
 use codesaur as single;
 use codesaur\Http\Route;
 use codesaur\Http\Router;
 use codesaur\Http\Client;
 use codesaur\Http\Request;
+use codesaur\Base\LogLevel;
 use codesaur\Globals\Server;
-use codesaur\Http\Controller;
-use codesaur\Common\LogLevel;
-use codesaur\Common\OutputBuffer;
+use codesaur\Base\OutputBuffer;
 
-use Indoraptor\Common\IndoController;
-
-class FirstController extends Controller
+class Controller extends \codesaur\Http\Controller
 {
     final public function indoget(string $pattern, $payload = [], bool $json = false)
     {
@@ -34,27 +31,14 @@ class FirstController extends Controller
         return $this->indo($pattern, 'DELETE', $json, $payload);
     }
     
-    public function indorouting()
+    final public function indouri($url, bool $relative = false) : string
     {
-        try {
-            return new \Indoraptor\Routing();
-        } catch (\Exception $e) {
-            if (DEBUG) {
-                \error_log($e->getMessage());
-            }
-            
-            return null;
-        }
-    }
-    
-    final public function indouri($url)
-    {
-        return single::app()->webUrl(false) . "/indo/$url";
+        return single::app()->getWebUrl($relative) . "/indo/$url";
     }
 
-    final public function indolink($route, array $params = [])
+    final public function indolink($route, array $params = []) : string
     {
-        $routing = $this->indorouting();
+        $routing = new \Indoraptor\Routing();
         if ($routing) {
             $router = new Router();
             $routing->collect($router);
@@ -62,13 +46,13 @@ class FirstController extends Controller
         }
         
         if (empty($url)) {
-            return 'javascript:;';
+            return 'indo-link-invalid';
         }
         
         return $this->indouri($url[0]);
     }
     
-    final function indo(
+    final public function indo(
             string $pattern, string $method,
             bool $json, $payload, array $header = [])
     {
@@ -76,9 +60,9 @@ class FirstController extends Controller
         $buffer->start();
         
         try {
-            $routing = $this->indorouting();
+            $routing = new \Indoraptor\Routing();
             if ( ! $routing) {
-                throw new \Exception('Indo Routing Not Found');
+                throw new \Exception('Indoraptor routing not found!');
             }
             
             $router = new Router();
@@ -113,16 +97,17 @@ class FirstController extends Controller
             }
             
             $class = new $controller(false);
-            if ( ! $class instanceof IndoController) {
-                throw new \Exception("$controller is not an IndoController!");
+            if ( ! $class instanceof \Indoraptor\IndoController) {
+                throw new \Exception("$controller is not an Indoraptor controller!");
             }            
             if ( ! $class->hasMethod($action) || ! $class->isCallable($action)) {
                 throw new \Exception("Action named $action is not part of $controller!");
             }
             
-            if (single::session()->check('indo/jwt')) {
-                $header['HTTP_JWT'] = single::session()->get('indo/jwt');
+            if (\getenv('INDO_JWT', true)) {
+                $header['HTTP_JWT'] = \getenv('INDO_JWT', true);
             }
+            
             $class->setHeader($header);
             $class->setPayload($payload);
             $class->setParams($params ?? array());
@@ -140,9 +125,38 @@ class FirstController extends Controller
             $buffer->end();
             
             return \json_decode($result, ! $json);
-        }
+        }        
     }
     
+    final function indorequest(string $pattern, string $method, $payload)
+    {
+        try {
+            $header = array();
+            
+            if (\getenv('INDO_JWT', true)) {
+                $header[] = 'JWT:' . \getenv('INDO_JWT', true);
+            }
+            
+            if ($method != 'GET' && ! empty($payload)) {
+                $data = \json_encode($payload);
+                $header[] = 'Content-Type: application/json';
+            } else {
+                $data = '';
+            }
+            
+            $options = array(
+                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_HTTPHEADER     => $header
+            );
+            
+            return (new Client())->request($this->indouri($pattern), $method, $data, $options);
+        } catch (\Exception $e) {
+            return \json_encode(array('error' => array(
+                'code' => $e->getCode(), 'message' => $e->getMessage())));
+        }
+    }
+
     final public function indolog(
             string $reason, $data = null,
             int $level = LogLevel::Basic, 
@@ -154,7 +168,7 @@ class FirstController extends Controller
             $info = array('message' => $data ?? '');
         }
         
-        $info['flag'] = single::flag();
+        $info['flag'] = single::language()->current();
         $info['url'] = $data['url'] ?? single::request()->getUrl();
         $info['method'] = $data['method'] ?? single::request()->getMethod();
         $info['address'] = $data['address'] ?? (new Server())->determineIP();
@@ -177,42 +191,47 @@ class FirstController extends Controller
             $table = single::request()->getParam('logger') ?? 'default';
         }
         
-        $this->indopost("/log/$table", $payload);
+        $this->indo("/log/$table", 'POST', false, $payload);
     }
     
-    final function indorequest(string $pattern, string $method, $payload)
+    final public function changeLanguage($flag)
     {
-        try {
-            $client = new Client();
+        $location = single::request()->getHttpHost()
+                . single::request()->getPathComplete();
+
+        if (single::request()->hasParam('ulang')) {
+            $location .= single::request()->getParam('ulang');
+            foreach (single::request()->getParams() as $key => $value) {
+                if ($key != 'ulang') {
+                    $location .= "&$key=$value";
+                }
+            }
+        }
+
+        if (single::language()->select($flag)) {
+            single::session()->set(single::app()->getNamespace() .'Language', $flag);
             
-            $header = array();
-            
-            if (single::session()->check('indo/jwt')) {
-                $header[] = 'JWT:' . single::session()->get('indo/jwt');
+            if (single::controller() instanceof \codesaur\Http\Controller
+                    && single::controller()->hasMethod('onChangeLanguage')
+                    && single::controller()->isCallable('onChangeLanguage')) {
+                single::controller()->onChangeLanguage($flag);
             }
             
-            if ($method != 'GET' && ! empty($payload)) {
-                $data = \json_encode($payload);
-                $header[] = 'Content-Type: application/json';
-            } else {
-                $data = '';
-            }
-            
-            $options = array(
-                CURLOPT_SSL_VERIFYHOST => false,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_HTTPHEADER     => $header
-            );
-            
-            return $client->request($this->indouri($pattern), $method, $data, $options);
-        } catch (\Exception $e) {
-            return \json_encode(array('error' => array(
-                'code' => $e->getCode(), 'message' => $e->getMessage())));
+            single::header()->redirect($location);
+        } else {
+            single::redirect('home');
         }
     }
-    
-    public function getMailer()
+
+    final public function getTranslation($name, string $flag = null)
     {
-        return (new IndoController())->getMailer();
+        $translations = $this->indopost('/translation/retrieve', array(
+            'table' => $name, 'flag' => $flag ?? single::language()->current()));
+
+        if (isset($translations['data'])) {
+            foreach ($translations['data'] as $name => $text) {
+                single::translation()->append($name, $text);
+            }
+        }
     }
 }

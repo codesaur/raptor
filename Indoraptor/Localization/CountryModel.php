@@ -4,8 +4,8 @@ use codesaur\DataObject\CDO;
 use codesaur\DataObject\Column;
 use codesaur\DataObject\Describe;
 
+use Indoraptor\MultiDescribe2;
 use Indoraptor\Content\LookupModel;
-use Indoraptor\Common\MultiDescribe2;
 
 class CountryModel extends LookupModel
 {

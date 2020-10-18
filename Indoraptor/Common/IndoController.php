@@ -1,26 +1,19 @@
-<?php namespace Indoraptor\Common;
+<?php namespace Indoraptor;
 
 use codesaur as single;
-
+use codesaur\Http\Header;
 use codesaur\Globals\Post;
 use codesaur\Globals\Server;
-
-use codesaur\Http\Header;
-use codesaur\Http\Controller;
-
-use codesaur\DataObject\MySQL;
 use codesaur\DataObject\Table;
-
 use codesaur\MultiModel\MultiModel;
 
 use Firebase\JWT\JWT;
-use PHPMailer\PHPMailer\PHPMailer;
 
 define('INDO_JWT_ALGORITHM', \getenv('INDO_JWT_ALGORITHM') ?: 'HS256');
 define('INDO_JWT_LIFETIME',  \getenv('INDO_JWT_LIFETIME') ?: 2592000);
 define('INDO_JWT_SECRET',    \getenv('INDO_JWT_SECRET') ?: 'codesaur-indoraptor-not-so-secret');
 
-class IndoController extends Controller
+class IndoController extends \codesaur\Http\Controller
 {
     public $conn;
     
@@ -41,29 +34,9 @@ class IndoController extends Controller
             return true;
         }
         
-        $configuration = array(
-            'driver'    => \getenv('DB_DRIVER') ?: 'mysql',
-            'host'      => \getenv('DB_HOST') ?: 'localhost',
-            'username'  => \getenv('DB_USERNAME') ?: 'root',
-            'password'  => \getenv('DB_PASSWORD') ?: '',
-            'name'      => \getenv('DB_NAME') ?: 'indoraptor',
-            'engine'    => \getenv('DB_ENGINE') ?: 'InnoDB',
-            'charset'   => \getenv('DB_CHARSET') ?: 'utf8',
-            'collation' => \getenv('DB_COLLATION') ?: 'utf8_unicode_ci',
-            'options'   => array(
-                \PDO::ATTR_ERRMODE     => DEBUG ?
-                \PDO::ERRMODE_EXCEPTION : \PDO::ERRMODE_WARNING,
-                \PDO::ATTR_PERSISTENT  => \getenv('DB_PERSISTENT') == 'true'
-            )
-        );
+        $this->conn = single::helper()->getPDO();
         
-        $this->conn = new MySQL($configuration);
-        
-        if ($this->conn->alive()) {
-            if (\getenv('TIME_ZONE_UTC')) {
-                $this->conn->exec('SET time_zone = ' . $this->conn->quote(\getenv('TIME_ZONE_UTC')));
-            }
-        } elseif ($halt) {
+        if ( ! $this->conn->alive() && $halt) {
             return $this->error('CDO: Invalid configuration!', 700);
         }
         
@@ -156,8 +129,8 @@ class IndoController extends Controller
             $server = new Server();
             if ($server->has('HTTP_JWT')) {
                 return \is_array($this->validate($server->raw('HTTP_JWT')));
-            } elseif (single::session()->check('indo/jwt')) {
-                return \is_array($this->validate(single::session()->get('indo/jwt')));
+            } elseif (\getenv('INDO_JWT', true)) {
+                return \is_array($this->validate(\getenv('INDO_JWT', true)));
             }
         } else {
             if (isset($this->_header['HTTP_JWT'])) {
@@ -323,41 +296,8 @@ class IndoController extends Controller
         $this->success($result);
     }
     
-    public function getMailer()
-    {
-        $model = new MailerModel($this->conn);
-        $rows = $model->getRows();
-        $record = \end($rows);
-        if (empty($record)) {
-            return null;
-        }
-
-        $mailer = new PHPMailer(false);
-        if (((int) $record['is_smtp']) == 1) {
-           $mailer->IsSMTP(); 
-        }
-        $mailer->CharSet = $record['charset'];
-        $mailer->SMTPAuth = (bool)((int) $record['smtp_auth']);
-        $mailer->SMTPSecure = $record['smtp_secure'];
-        $mailer->Host = $record['host'];
-        $mailer->Port = $record['port'];            
-        $mailer->Username = $record['username'];
-        $mailer->Password = $record['password'];
-        $mailer->SetFrom($record['email'], $record['name']);
-        $mailer->AddReplyTo($record['email'], $record['name']);
-        $mailer->SMTPOptions = array(
-            'ssl' => array(
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-            )
-        );
-
-        return $mailer;
-    }
-    
     final public function view()
     {
-        single::header()->redirect(single::app()->webUrl(false) . '/dashboard/indoraptor');
+        single::header()->redirect(single::app()->getWebUrl(false) . '/dashboard/indoraptor');
     }
 }

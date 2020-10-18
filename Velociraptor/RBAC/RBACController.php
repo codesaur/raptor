@@ -2,19 +2,19 @@
 
 use codesaur as single;
 use codesaur\Globals\Post;
-use codesaur\Common\LogLevel;
+use codesaur\Base\LogLevel;
 use codesaur\HTML\TwigTemplate;
 
-use codesaur\RBAC\User;
 use codesaur\RBAC\Roles;
 use codesaur\RBAC\Permissions;
 use codesaur\RBAC\RolePermission;
 
-use Velociraptor\Boot4Template\Card;
-use Velociraptor\Boot4Template\Dashboard;
-use Velociraptor\Common\RaptorController;
+use Boot4Template\Card;
+use Boot4Template\Dashboard;
 
-class RBACController extends RaptorController
+use Velociraptor\DashboardController;
+
+class RBACController extends DashboardController
 {
     public $conn;
     
@@ -22,7 +22,7 @@ class RBACController extends RaptorController
     {
         parent::__construct();
         
-        $this->conn = (new User())->getConnection();        
+        $this->conn = single::helper()->getPDO();        
     }
 
     public function index()
@@ -97,7 +97,7 @@ class RBACController extends RaptorController
                         single::user()->can("{$org_alias}_rbac_user_role")) {
                     $thing = "{$org_alias}_rbac_user_role";
                 } else {
-                    return (new Dashboard())->noPermissionModal();
+                    return (new Dashboard())->noPermission(true);
                 }
             }
             

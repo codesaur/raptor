@@ -5,13 +5,14 @@ use codesaur\Globals\Post;
 use codesaur\HTML\TwigTemplate;
 use codesaur\HTML\HTML5 as html;
 
+use Boot4Template\Card;
+use Boot4Template\Dashboard;
+
 use Indoraptor\Content\PagesDescribe;
 
-use Velociraptor\Boot4Template\Card;
-use Velociraptor\Boot4Template\Dashboard;
-use Velociraptor\Common\RaptorController;
+use Velociraptor\DashboardController;
 
-class PagesController extends RaptorController
+class PagesController extends DashboardController
 {
     public function index()
     {
@@ -56,7 +57,7 @@ class PagesController extends RaptorController
             }
             
             if ( ! single::user()->can(single::user()->organization('alias') . "_pages_$action")) {
-                (new Dashboard())->noPermission(false);
+                (new Dashboard())->noPermission(false, function() { exit; });
                 throw new \Exception("No permission for an [$action]!");
             }
 
@@ -86,7 +87,7 @@ class PagesController extends RaptorController
                     "FROM {$table}_pages as p INNER JOIN {$table}_pages_content as c ON p.id = c.t_id " .
                     "WHERE c.code = :code AND p.type = 'menu' AND p.is_active = 1 ORDER By parent_id, position, id";
             $result_pages = $this->indopost('/statement', array('sql' => $query_pages,
-                'bind' => array(':code' => array('variable' => single::flag()))));
+                'bind' => array(':code' => array('variable' => single::language()->current()))));
             
             $parents = array();
             $rows_parents = $result_pages['data'] ?? array();
@@ -120,7 +121,7 @@ class PagesController extends RaptorController
                 'velociraptor_common' => \dirname(__FILE__) . '/../Common',
                 'column' => $column, 'lookup' => $lookup, 'parents' => $parents);
 
-            $view->renderTwig(\dirname(__FILE__) . '/pages/crud-action-pages.html', $vars);
+            $view->render(new TwigTemplate(\dirname(__FILE__) . '/pages/crud-action-pages.html', $vars));
             
             return true;
         } catch (\Exception $e) {
@@ -205,7 +206,7 @@ class PagesController extends RaptorController
                 
                 $row[] = $record['id'] ;
                 
-                $row[] = html::img(['src' =>  'https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-image-' . (single::flag() == 'mn' ? 'mn' : 'en') . '.gif']);                
+                $row[] = html::img(['src' =>  'https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-image-' . (single::language()->current() == 'mn' ? 'mn' : 'en') . '.gif']);                
                 
                 $titles = $status = '';
                 

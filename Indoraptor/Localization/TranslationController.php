@@ -1,8 +1,6 @@
 <?php namespace Indoraptor\Localization;
 
-use Indoraptor\Common\IndoController;
-
-class TranslationController extends IndoController
+class TranslationController extends \Indoraptor\IndoController
 {
     public $text = array();
     
@@ -43,7 +41,7 @@ class TranslationController extends IndoController
                 $clean = \preg_replace('/[^A-Za-z0-9_-]/', '', $table);
                 
                 if ( ! \in_array($clean, $table_names)) {
-                    $initial = new \Indoraptor\Common\Initial();
+                    $initial = new \Indoraptor\Initial();
                     if ( ! \method_exists($initial, 'translation_' . $clean . '_key')) {
                         continue;
                     }

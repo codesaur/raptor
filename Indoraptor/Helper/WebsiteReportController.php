@@ -1,8 +1,6 @@
 <?php namespace Indoraptor\Helper;
 
-use Indoraptor\Common\IndoController;
-
-class WebsiteReportController extends IndoController
+class WebsiteReportController extends \Indoraptor\IndoController
 {
     function __construct()
     {

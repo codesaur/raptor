@@ -5,13 +5,14 @@ use codesaur\Globals\Post;
 use codesaur\HTML\TwigTemplate;
 use codesaur\HTML\HTML5 as html;
 
+use Boot4Template\Card;
+use Boot4Template\Dashboard;
+
+use Velociraptor\DashboardController;
+
 use Indoraptor\Content\ContentDescribe;
 
-use Velociraptor\Boot4Template\Card;
-use Velociraptor\Boot4Template\Dashboard;
-use Velociraptor\Common\RaptorController;
-
-class TemplatesController extends RaptorController
+class TemplatesController extends DashboardController
 {
     public function index()
     {
@@ -55,7 +56,7 @@ class TemplatesController extends RaptorController
             }
             
             if ( ! single::user()->can("system_template_$action")) {
-                (new Dashboard())->noPermission(false);
+                (new Dashboard())->noPermission(false, function() { exit; });
                 throw new \Exception("No permission for an [$action]!");
             }
             
@@ -95,7 +96,7 @@ class TemplatesController extends RaptorController
                 'lookup' => $lookup,
                 'crud' => $crud, 'action' => $action, 'column' => $column);
 
-            $view->renderTwig(\dirname(__FILE__) . '/template/crud-action.html', $vars);
+            $view->render(new TwigTemplate(\dirname(__FILE__) . '/template/crud-action.html', $vars));
             
             return true;
         } catch (\Exception $e) {

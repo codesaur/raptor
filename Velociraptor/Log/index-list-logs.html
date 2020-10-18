@@ -14,17 +14,17 @@
             <div class="tab-pane{% if name == 'dashboard' %} active{% endif %}" id="log_{{ name }}" style="width:100%;height:74vh;min-height:400px;overflow-y:auto;overflow-x:hidden;">
                 <ul class="list-group">
                 {% for item in logs[name] %}
-                    {% if item['level'] == constant('codesaur\\Common\\LogLevel::Basic') %}
+                    {% if item['level'] == constant('codesaur\\Base\\LogLevel::Basic') %}
                         {% set type='light' %}
-                    {%  elseif item['level'] == constant('codesaur\\Common\\LogLevel::Security') %}
+                    {%  elseif item['level'] == constant('codesaur\\Base\\LogLevel::Security') %}
                         {% set type='primary' %}
-                    {%  elseif item['level'] == constant('codesaur\\Common\\LogLevel::Error') %}
+                    {%  elseif item['level'] == constant('codesaur\\Base\\LogLevel::Error') %}
                         {% set type='danger' %}
-                    {%  elseif item['level'] == constant('codesaur\\Common\\LogLevel::Record') %}
+                    {%  elseif item['level'] == constant('codesaur\\Base\\LogLevel::Record') %}
                         {% set type='warning' %}
-                    {%  elseif item['level'] == constant('codesaur\\Common\\LogLevel::Endpoint') %}
+                    {%  elseif item['level'] == constant('codesaur\\Base\\LogLevel::Endpoint') %}
                         {% set type='info' %}
-                    {%  elseif item['level'] == constant('codesaur\\Common\\LogLevel::View') %}
+                    {%  elseif item['level'] == constant('codesaur\\Base\\LogLevel::View') %}
                         {% set type='secondary' %}
                     {%  else %}
                         {% set type='dark' %}

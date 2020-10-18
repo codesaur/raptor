@@ -11,20 +11,20 @@
         }
     ],
     "require": {
-        "codesaur/erketu": "^7.1.5"
+        "codesaur/erketu": "^7.2.4",
+        "firebase/php-jwt": "^5.0"
     },
     "autoload": {
         "psr-4": {
-            "Indoraptor\\": "Indoraptor",
-            "Indoraptor\\Common\\": "Indoraptor/Common",
+            "Indoraptor\\": ["Indoraptor", "Indoraptor/Common"],
             "Indoraptor\\Account\\": "Indoraptor/Account",
             "Indoraptor\\Content\\": "Indoraptor/Content",
             "Indoraptor\\File\\": "Indoraptor/File",
             "Indoraptor\\Helper\\": "Indoraptor/Helper",
             "Indoraptor\\Localization\\": "Indoraptor/Localization",
             "Indoraptor\\Logger\\": "Indoraptor/Logger",
-            "Velociraptor\\": "Velociraptor",
-            "Velociraptor\\Common\\": "Velociraptor/Common",
+            "Indoraptor\\RBAC\\": "Indoraptor/RBAC",
+            "Velociraptor\\": ["Velociraptor", "Velociraptor/Common"],
             "Velociraptor\\Account\\": "Velociraptor/Account",
             "Velociraptor\\Content\\": "Velociraptor/Content",
             "Velociraptor\\Helper\\": "Velociraptor/Helper",
@@ -33,7 +33,7 @@
             "Velociraptor\\Organization\\": "Velociraptor/Organization",
             "Velociraptor\\RBAC\\": "Velociraptor/RBAC",
             "Velociraptor\\Report\\": "Velociraptor/Report",
-            "Velociraptor\\Boot4Template\\": "Velociraptor/Boot4Template"
+            "Boot4Template\\": "Boot4Template"
         }
     },
     "license": "MIT",

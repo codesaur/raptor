@@ -1,8 +1,6 @@
 <?php namespace Indoraptor\Content;
 
-use Indoraptor\Common\IndoController;
-
-class ContentController extends IndoController
+class ContentController extends \Indoraptor\IndoController
 {
     function __construct(bool $single = true)
     {

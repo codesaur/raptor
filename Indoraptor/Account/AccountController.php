@@ -3,10 +3,12 @@
 use codesaur as single;
 use codesaur\HTML\Template;
 
+use Indoraptor\Content\MailerModel;
 use Indoraptor\Content\ContentModel;
-use Indoraptor\Common\IndoController;
 
-class AccountController extends IndoController
+use PHPMailer\PHPMailer\PHPMailer;
+
+class AccountController extends \Indoraptor\IndoController
 {
     public function signup()
     {
@@ -135,7 +137,7 @@ class AccountController extends IndoController
             $template = new Template();
             $template->set('email', $payload->email);
             $template->source($templates['full'][$flag]);
-            $login_link = $payload->login ?? (single::app()->webUrl(false) . '/dashboard/login');
+            $login_link = $payload->login ?? (single::app()->getWebUrl(false) . '/dashboard/login');
             $template->set('link', "$login_link?forgot=$useid");
 
             $mailer->MsgHTML($template->output());
@@ -215,5 +217,15 @@ class AccountController extends IndoController
         unset($recorda['updated_by']);            
 
         $this->success($recorda);
+    }
+    
+    public function getMailer() : ?PHPMailer
+    {
+        $this->connect();
+        
+        $model = new MailerModel($this->conn);
+        $rows = $model->getRows();
+        
+        return single::helper()->getPHPMailer(\end($rows));        
     }
 }

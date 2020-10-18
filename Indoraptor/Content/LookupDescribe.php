@@ -2,9 +2,7 @@
 
 use codesaur\DataObject\Column;
 
-use Indoraptor\Common\MultiDescribe2;
-
-class LookupDescribe extends MultiDescribe2
+class LookupDescribe extends \Indoraptor\MultiDescribe2
 {
     function __construct()
     {

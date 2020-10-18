@@ -1,4 +1,4 @@
-<?php namespace Indoraptor\Common;
+<?php namespace Indoraptor\Content;
 
 use codesaur\DataObject\CDO;
 use codesaur\DataObject\Model;

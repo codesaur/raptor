@@ -12,16 +12,16 @@ class Routing extends \codesaur\Http\Routing
             return $this->redirectLogin($route);
         }
         
-        $controller = new Common\FirstController();
-        $response = $controller->indopost('/auth/jwt', array(
-            'jwt' => single::session()->get('indo/jwt')));
+        $controller = new Controller();
+        $response = $controller->indopost('/auth/jwt',
+                array('jwt' => single::session()->get('indo/jwt')));
 
         if ( ! isset($response['data']['account']['id'])
                 || ! isset($response['data']['organization']['alias'])) {
             return $this->redirectLogin($route);
         }
 
-        $rbac = new User();
+        $rbac = new User(single::helper()->getPDO());
         if ( ! $rbac->init(
                 $response['data']['account']['id'],
                 $response['data']['organization']['alias'])) {
@@ -31,12 +31,6 @@ class Routing extends \codesaur\Http\Routing
         $response['data']['rbac'] = $rbac;
         
         single::user()->login($response['data']);
-        
-        if ( ! isset($route->name) ||
-                ! \in_array($route->name, array(
-                    'entry', 'logout', 'language', 'organization'))) {
-            single::session()->lock();
-        }
         
         return $route;
     }
@@ -73,8 +67,8 @@ class Routing extends \codesaur\Http\Routing
             ['/web/report/mounthly', 'webReportMounthly@Velociraptor\\Report\\ReportController', ['name' => 'web-report-mounthly']],
             ['/web/google/analytics', 'webGoogleAnalytics@Velociraptor\\Report\\ReportController', ['name' => 'web-google-analytics']],
             ['/language/:language', 'changeLanguage@Velociraptor\\Account\\LoginController', ['name' => 'language', 'filters' => ['language' => '(\w+)']]],
-            ['/crud/:action', 'act@Velociraptor\\Common\\CRUDController', ['methods' => 'GET,POST,PUT,DELETE', 'name' => 'crud', 'filters' => ['action' => '(\w+)']]],
-            ['/crud/submit/:action', 'submit@Velociraptor\\Common\\CRUDController', ['methods' => 'POST', 'name' => 'crud-submit', 'filters' => ['action' => '(\w+)']]]
+            ['/crud/:action', 'act@Velociraptor\\CRUDController', ['methods' => 'GET,POST,PUT,DELETE', 'name' => 'crud', 'filters' => ['action' => '(\w+)']]],
+            ['/crud/submit/:action', 'submit@Velociraptor\\CRUDController', ['methods' => 'POST', 'name' => 'crud-submit', 'filters' => ['action' => '(\w+)']]]
         );
     }
     

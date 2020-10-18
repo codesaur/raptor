@@ -3,9 +3,7 @@
 use codesaur\DataObject\CDO;
 use codesaur\DataObject\Model;
 
-use Indoraptor\Common\MultiModel2;
-
-class TranslationModel extends MultiModel2
+class TranslationModel extends \Indoraptor\MultiModel2
 {
     function __construct(CDO $conn)
     {

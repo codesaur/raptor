@@ -1,11 +1,13 @@
 <?php namespace Velociraptor\Report;
 
 use codesaur as single;
+use codesaur\HTML\TwigTemplate;
 
-use Velociraptor\Common\RaptorController;
-use Velociraptor\Boot4Template\Dashboard;
+use Boot4Template\Dashboard;
 
-class ReportController extends RaptorController
+use Velociraptor\DashboardController;
+
+class ReportController extends DashboardController
 {
     public $orgAlias;
     
@@ -35,7 +37,7 @@ class ReportController extends RaptorController
             $view->addToolbar(array('text' => 'google-analytics'), 'flaticon-analytics', 'btn-warning shadow-sm', single::link('web-google-analytics'));
         }
         
-        $view->renderTwig(\dirname(__FILE__) . '/web-report.html');
+        $view->render(new TwigTemplate(\dirname(__FILE__) . '/web-report.html'));
     }
     
     public function webGoogleAnalytics()
@@ -55,8 +57,8 @@ class ReportController extends RaptorController
             $view->addToolbar(array('text' => 'website-mounthly-report'), 'flaticon-calendar-with-a-clock-time-tools', 'btn-info shadow-sm', single::link('web-report-monthly'));
         }
         
-        $view->renderTwig(
+        $view->render(new TwigTemplate(
                 \dirname(__FILE__) . '/web-google-analytics.html',
-                array('GOOGLE_CLIENT_ID' => \getenv('GOOGLE_CLIENT_ID')));
+                array('GOOGLE_CLIENT_ID' => \getenv('GOOGLE_CLIENT_ID'))));
     }
 }

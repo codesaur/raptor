@@ -1,17 +1,15 @@
-<?php namespace Velociraptor\Common;
+<?php namespace Velociraptor;
 
 use codesaur as single;
-use codesaur\Common\Base;
-use codesaur\Common\LogLevel;
+use codesaur\Base\Base;
+use codesaur\Base\LogLevel;
 
-use Velociraptor\Boot4Template\Dashboard;
+use Boot4Template\Dashboard;
 
-abstract class RaptorController extends ParentController
+abstract class DashboardController extends Controller
 {
     function __construct()
     {
-        parent::__construct();
-        
         $this->getTranslation('dashboard');
     }
     
@@ -63,7 +61,7 @@ abstract class RaptorController extends ParentController
             $this->indoput('/record?model='
                     . \urlencode('Indoraptor\\Account\\AccountModel'),
                     array('record' =>
-                        array('id' => single::user()->account('id'), 'code' => single::flag())));
+                        array('id' => single::user()->account('id'), 'code' => single::language()->current())));
         }
     }
     
@@ -75,7 +73,7 @@ abstract class RaptorController extends ParentController
     final public function getLookup($table)
     {
         $lookup = $this->indopost('/lookup',
-                array('table' => $table, 'flag' => single::flag()));
+                array('table' => $table, 'flag' => single::language()->current()));
         
         return $lookup['data'] ?? array();
     }

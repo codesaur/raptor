@@ -1,4 +1,4 @@
-<?php namespace Velociraptor\Boot4Template;
+<?php namespace Boot4Template;
 
 use codesaur\HTML\TwigTemplate;
 

@@ -1,10 +1,10 @@
-<?php namespace Velociraptor\Common;
+<?php namespace Velociraptor;
 
 use codesaur as single;
-use codesaur\Common\Base;
+use codesaur\Base\Base;
 use codesaur\Globals\Post;
 use codesaur\Globals\Server;
-use codesaur\Common\LogLevel;
+use codesaur\Base\LogLevel;
 use codesaur\HTML\TwigTemplate;
 use codesaur\DataObject\Describe;
 use codesaur\MultiModel\MultiDescribe;
@@ -15,7 +15,7 @@ use codesaur\MultiModel\MultiDescribe;
 // [U]pdate or edit/modify existing entries
 // [D]elete/deactivate/remove existing entries
 
-class CRUDController extends RaptorController
+class CRUDController extends DashboardController
 {
     public $id    = null;
     public $table = null;

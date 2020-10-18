@@ -5,14 +5,16 @@ use codesaur\Globals\Post;
 use codesaur\HTML\TwigTemplate;
 use codesaur\HTML\HTML5 as html;
 
-use Velociraptor\Boot4Template\Card;
-use Velociraptor\Boot4Template\Dashboard;
-use Velociraptor\Common\RaptorController;
+use Boot4Template\Card;
+use Boot4Template\Dashboard;
 
-use Indoraptor\Common\Initial;
+use Velociraptor\DashboardController;
+
+use Indoraptor\Initial;
+
 use Indoraptor\Localization\TranslationDescribe;
 
-class TranslationsController extends RaptorController
+class TranslationsController extends DashboardController
 {
     public function index()
     {
@@ -87,7 +89,7 @@ class TranslationsController extends RaptorController
             }
 
             if ( ! single::user()->can("system_translation_$action")) {
-                return (new Dashboard())->noPermissionModal();
+                return (new Dashboard())->noPermission(true);
             }
 
             $crud = single::link('crud-submit', array('action' => $action))

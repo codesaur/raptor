@@ -1,9 +1,6 @@
 <?php namespace Indoraptor\Content;
 
-use Indoraptor\Common\MailerModel;
-use Indoraptor\Common\IndoController;
-
-class SettingsController extends IndoController
+class SettingsController extends \Indoraptor\IndoController
 {
     function __construct(bool $single = true)
     {

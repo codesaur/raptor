@@ -2,10 +2,11 @@
 
 use codesaur as single;
 
-use Velociraptor\Boot4Template\Boot4;
-use Velociraptor\Common\RaptorController;
+use Boot4Template\Boot4;
 
-class HelperController extends RaptorController
+use Velociraptor\DashboardController;
+
+class HelperController extends DashboardController
 {
     public function index()
     {

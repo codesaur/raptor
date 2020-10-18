@@ -1,10 +1,9 @@
-<?php namespace Velociraptor\Common;
+<?php namespace Velociraptor;
 
 use codesaur as single;
 use codesaur\HTML\Template;
-use codesaur\Http\Controller;
 
-class ErrorController extends Controller
+class ErrorController extends \codesaur\Http\Controller
 {
     public function error(string $message, int $status)
     {

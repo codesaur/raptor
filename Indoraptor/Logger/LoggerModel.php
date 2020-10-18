@@ -1,7 +1,7 @@
 <?php namespace Indoraptor\Logger;
 
+use codesaur\Base\LogLevel;
 use codesaur\DataObject\CDO;
-use codesaur\Common\LogLevel;
 use codesaur\DataObject\Model;
 use codesaur\DataObject\Column;
 use codesaur\DataObject\Describe;

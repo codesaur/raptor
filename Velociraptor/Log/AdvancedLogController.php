@@ -3,10 +3,11 @@
 use codesaur as single;
 use codesaur\HTML\TwigTemplate;
 
-use Velociraptor\Common\RaptorController;
-use Velociraptor\Boot4Template\Dashboard;
+use Boot4Template\Dashboard;
 
-class AdvancedLogController extends RaptorController
+use Velociraptor\DashboardController;
+
+class AdvancedLogController extends DashboardController
 {
     public function index()
     {
@@ -27,7 +28,7 @@ class AdvancedLogController extends RaptorController
             $vars['logs'][$name] = $this->indoget("/log/$name?limit=100")['data'] ?? array();
         }
         
-        $view->renderTwig(\dirname(__FILE__) . '/index-list-logs.html', $vars);
+        $view->render(new TwigTemplate(\dirname(__FILE__) . '/index-list-logs.html', $vars));
     }
     
     public function crud(string $action, $id, $table)
@@ -38,7 +39,7 @@ class AdvancedLogController extends RaptorController
             }
             
             if ( ! single::user()->can('system_log_index')) {
-                return (new Dashboard())->noPermissionModal();
+                return (new Dashboard())->noPermission(true);
             }
             
             $logdata = $this->indoget("/log/$table/$id");

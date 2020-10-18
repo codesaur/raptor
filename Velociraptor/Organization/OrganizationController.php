@@ -1,20 +1,20 @@
 <?php namespace Velociraptor\Organization;
 
 use codesaur as single;
-use codesaur\Common\File;
+use codesaur\Base\File;
 use codesaur\Globals\Post;
 use codesaur\HTML\TwigTemplate;
 use codesaur\HTML\HTML5 as html;
 
-use Velociraptor\Boot4Template\Card;
-use Velociraptor\Boot4Template\Dashboard;
+use Boot4Template\Card;
+use Boot4Template\Dashboard;
 
-use Velociraptor\Common\FileController;
-use Velociraptor\Common\RaptorController;
+use Velociraptor\FileController;
+use Velociraptor\DashboardController;
 
 use Indoraptor\Account\OrganizationDescribe;
 
-class OrganizationController extends RaptorController
+class OrganizationController extends DashboardController
 {
     public function index()
     {
@@ -50,7 +50,7 @@ class OrganizationController extends RaptorController
             }
             
             if ( ! single::user()->can("system_org_$action")) {
-                return (new Dashboard())->noPermissionModal();
+                return (new Dashboard())->noPermission(true);
             }
 
             $query = '?logger=organization&controller=' . \urlencode($this->getMe());

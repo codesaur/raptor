@@ -2,17 +2,18 @@
 
 use codesaur as single;
 use codesaur\Globals\Post;
-use codesaur\Common\LogLevel;
+use codesaur\Base\LogLevel;
 use codesaur\HTML\TwigTemplate;
 use codesaur\HTML\HTML5 as html;
 
-use Velociraptor\Boot4Template\Card;
-use Velociraptor\Boot4Template\Dashboard;
-use Velociraptor\Common\RaptorController;
+use Boot4Template\Card;
+use Boot4Template\Dashboard;
+
+use Velociraptor\DashboardController;
 
 use Indoraptor\Localization\LanguageDescribe;
 
-class LanguagesController extends RaptorController
+class LanguagesController extends DashboardController
 {   
     public function index()
     {
@@ -59,7 +60,7 @@ class LanguagesController extends RaptorController
             }
             
             if ( ! single::user()->can("system_language_$action")) {
-                return (new Dashboard())->noPermissionModal();   
+                return (new Dashboard())->noPermission(true);   
             }
             
             $query = "?logger=localization&table=$table&controller=" . \urlencode($this->getMe());
@@ -69,7 +70,7 @@ class LanguagesController extends RaptorController
                 $languages = $this->indoget('/language');
                 $countries = $this->indopost(
                         '/record/retrieve?model=' . \urlencode('Indoraptor\\Localization\\CountryModel'),
-                        array('condition' => array('WHERE' => "c.language='" . single::flag() . "'")));
+                        array('condition' => array('WHERE' => "c.language='" . single::language()->current() . "'")));
             } elseif (\in_array($action, array('update', 'retrieve')) && isset($id)) {
                 $response = $this->indopost('/record/retrieve?model='
                         . \urlencode('Indoraptor\\Localization\\LanguageModel'), array('id' => $id));
