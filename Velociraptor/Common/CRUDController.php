@@ -204,7 +204,6 @@ class CRUDController extends DashboardController
         }
 
         $template = new TwigTemplate(\dirname(__FILE__) . '/initial-code-modal.html');
-        $template->addFilter('text', function($string) { return single::text($string); });
         $template->set('title', $controller ?? '');
         $template->set('generator', single::about());
         $template->set('time', \date('Y-m-d H:i:s'));
