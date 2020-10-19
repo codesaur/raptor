@@ -1,10 +1,9 @@
 <?php namespace Velociraptor\Log;
 
 use codesaur as single;
-use codesaur\HTML\TwigTemplate;
 
-use Boot4Template\Dashboard;
-
+use Velociraptor\TwigTemplate;
+use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 class AdvancedLogController extends DashboardController

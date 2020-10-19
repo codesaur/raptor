@@ -3,15 +3,14 @@
 use codesaur as single;
 use codesaur\Globals\Post;
 use codesaur\Base\LogLevel;
-use codesaur\HTML\TwigTemplate;
 
 use codesaur\RBAC\Roles;
 use codesaur\RBAC\Permissions;
 use codesaur\RBAC\RolePermission;
 
-use Boot4Template\Card;
-use Boot4Template\Dashboard;
-
+use Velociraptor\Boot4\Card;
+use Velociraptor\TwigTemplate;
+use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 class RBACController extends DashboardController
@@ -20,8 +19,6 @@ class RBACController extends DashboardController
     
     function __construct()
     {
-        parent::__construct();
-        
         $this->conn = single::helper()->getPDO();        
     }
 

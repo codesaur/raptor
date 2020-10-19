@@ -19,8 +19,6 @@ class FileController extends DashboardController
     function __construct(
             string $folder = '/files', int $allows = 0, $overwrite = false, $sizelimit = false)
     {
-        parent::__construct();
-        
         $this->file = new File();
         
         $this->setFolder($folder);

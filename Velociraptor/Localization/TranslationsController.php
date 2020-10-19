@@ -2,15 +2,12 @@
 
 use codesaur as single;
 use codesaur\Globals\Post;
-use codesaur\HTML\TwigTemplate;
 use codesaur\HTML\HTML5 as html;
 
-use Boot4Template\Card;
-use Boot4Template\Dashboard;
-
+use Velociraptor\Boot4\Card;
+use Velociraptor\TwigTemplate;
+use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
-
-use Indoraptor\Initial;
 
 use Indoraptor\Localization\TranslationDescribe;
 
@@ -30,7 +27,7 @@ class TranslationsController extends DashboardController
         
         $translation = $this->indoget('/translation', [], true);
         if (isset($translation->data->names)) {
-            $initial = new Initial();
+            $initial = new \Indoraptor\Initial();
             $methods = \get_class_methods($initial);
             
             $systems = array();

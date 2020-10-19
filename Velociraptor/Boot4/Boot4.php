@@ -1,30 +1,20 @@
-<?php namespace Boot4Template;
+<?php namespace Velociraptor\Boot4;
 
 use codesaur as single;
 use codesaur\Http\Controller;
-use codesaur\HTML\TwigTemplate;
-use codesaur\HTML\IndexTemplate;
+
+use Velociraptor\TwigTemplate;
+use Velociraptor\IndexTemplate;
 
 class Boot4 extends IndexTemplate
 {
     function __construct(string $template = null, array $vars = null)
     {
         parent::__construct(\dirname(__FILE__) . '/index.html');
-        
-        $this->addGlobal('language', single::language());
-        $this->addFilter('text', function($string) { return single::text($string); });
 
         if (isset($template)) {
             $content = new TwigTemplate($template, $vars);
-            $content->set('index', $this);
-            $content->addGlobal('app', single::app());
-            $content->addGlobal('user', single::user());
-            $content->addGlobal('request', single::request());
-            $content->addGlobal('language', single::language());
-            $content->addGlobal('controller', single::controller());
-            $content->addFilter('text', function($string) { return single::text($string); });
-            $content->addFilter('link', function($string, $params = []) { return single::link($string, $params); });            
-            
+            $content->setIndex($this);
             $this->set('content', $content);
         }
     }
@@ -55,8 +45,6 @@ class Boot4 extends IndexTemplate
             $question = null, $action = null,
             $crud = 'delete', $method = null, $selector = null)
     {
-        $this->plugin('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/scripts/delete.js');
-
         $options = \json_encode(array(
             'data'         => $data,
             'selector'     => $selector ?? '.delete',
@@ -71,8 +59,11 @@ class Boot4 extends IndexTemplate
                 'url'      => $action ?? single::link('crud', array('action' => $crud))
             )
         ));
+        
+        $delete_script = '<script defer src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/scripts/delete.js" type="text/javascript"></script>';
+        $delete_script .= "<script type=\"text/javascript\">document.addEventListener('DOMContentLoaded', function() \{$('$container').Delete($options);});</script>";
 
-        $this->javascript("$('$container').Delete($options);");
+        $this->addContent($delete_script);
     }
     
     public function render($content = null)

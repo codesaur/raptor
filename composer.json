@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "codesaur/erketu": "^7.2.4",
+        "codesaur/erketu": "^7.2.6",
         "firebase/php-jwt": "^5.0"
     },
     "autoload": {
@@ -33,7 +33,7 @@
             "Velociraptor\\Organization\\": "Velociraptor/Organization",
             "Velociraptor\\RBAC\\": "Velociraptor/RBAC",
             "Velociraptor\\Report\\": "Velociraptor/Report",
-            "Boot4Template\\": "Boot4Template"
+            "Velociraptor\\Boot4\\": "Velociraptor/Boot4"
         }
     },
     "license": "MIT",

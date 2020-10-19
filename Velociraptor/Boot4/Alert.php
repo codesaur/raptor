@@ -1,6 +1,6 @@
-<?php namespace Boot4Template;
+<?php namespace Velociraptor\Boot4;
 
-use codesaur\HTML\TwigTemplate;
+use Velociraptor\TwigTemplate;
 
 class Alert extends TwigTemplate
 {

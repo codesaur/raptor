@@ -1,18 +1,17 @@
 <?php namespace Velociraptor\Content;
 
 use codesaur as single;
-use codesaur\HTML\TwigTemplate;
 use codesaur\MultiModel\MultiDescribe;
 
-use Boot4Template\Dashboard;
+use Velociraptor\TwigTemplate;
+use Velociraptor\FileController;
+use Velociraptor\ImageController;
+use Velociraptor\Boot4\Dashboard;
+use Velociraptor\DashboardController;
 
 use Indoraptor\Content\MailerDescribe;
 use Indoraptor\Content\SocialsDescribe;
 use Indoraptor\Content\SettingsDescribe;
-
-use Velociraptor\FileController;
-use Velociraptor\ImageController;
-use Velociraptor\DashboardController;
 
 class SettingsController extends DashboardController
 {

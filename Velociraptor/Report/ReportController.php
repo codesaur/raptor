@@ -1,10 +1,9 @@
 <?php namespace Velociraptor\Report;
 
 use codesaur as single;
-use codesaur\HTML\TwigTemplate;
 
-use Boot4Template\Dashboard;
-
+use Velociraptor\TwigTemplate;
+use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 class ReportController extends DashboardController
@@ -13,8 +12,6 @@ class ReportController extends DashboardController
     
     function __construct()
     {
-        parent::__construct();
-        
         $this->orgAlias = (string) single::user()->organization('alias');
     }
     

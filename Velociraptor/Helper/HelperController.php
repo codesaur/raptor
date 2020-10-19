@@ -2,8 +2,7 @@
 
 use codesaur as single;
 
-use Boot4Template\Boot4;
-
+use Velociraptor\Boot4\Boot4;
 use Velociraptor\DashboardController;
 
 class HelperController extends DashboardController

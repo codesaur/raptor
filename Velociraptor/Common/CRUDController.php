@@ -3,9 +3,8 @@
 use codesaur as single;
 use codesaur\Base\Base;
 use codesaur\Globals\Post;
-use codesaur\Globals\Server;
 use codesaur\Base\LogLevel;
-use codesaur\HTML\TwigTemplate;
+use codesaur\Globals\Server;
 use codesaur\DataObject\Describe;
 use codesaur\MultiModel\MultiDescribe;
 
@@ -22,9 +21,7 @@ class CRUDController extends DashboardController
     public $model = null;
     
     function __construct()
-    {
-        parent::__construct();
-        
+    {        
         $post = new Post();
         
         if ( ! single::request()->hasParam('logger')) {
@@ -207,6 +204,7 @@ class CRUDController extends DashboardController
         }
 
         $template = new TwigTemplate(\dirname(__FILE__) . '/initial-code-modal.html');
+        $template->addFilter('text', function($string) { return single::text($string); });
         $template->set('title', $controller ?? '');
         $template->set('generator', single::about());
         $template->set('time', \date('Y-m-d H:i:s'));

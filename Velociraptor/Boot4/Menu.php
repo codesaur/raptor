@@ -1,4 +1,4 @@
-<?php namespace Boot4Template;
+<?php namespace Velociraptor\Boot4;
 
 use codesaur as single;
 

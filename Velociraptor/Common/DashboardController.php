@@ -4,15 +4,10 @@ use codesaur as single;
 use codesaur\Base\Base;
 use codesaur\Base\LogLevel;
 
-use Boot4Template\Dashboard;
+use Velociraptor\Boot4\Dashboard;
 
 abstract class DashboardController extends Controller
 {
-    function __construct()
-    {
-        $this->getTranslation('dashboard');
-    }
-    
     public function index()
     {
         $method_alias =  'index_' . ((string) single::user()->organization('alias'));

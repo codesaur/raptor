@@ -5,8 +5,7 @@ use codesaur\Globals\Get;
 use codesaur\Globals\Post;
 use codesaur\Base\LogLevel;
 
-use Boot4Template\Login;
-
+use Velociraptor\Boot4\Login;
 use Velociraptor\DashboardController;
 
 class LoginController extends DashboardController

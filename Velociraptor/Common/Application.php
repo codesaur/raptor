@@ -35,7 +35,11 @@ class Application extends \codesaur\Base\Application
                 }
             }
             
-            $class->getTranslation(array('default', 'user'));
+            $translation_names = array('default', 'user');
+            if ($class instanceof DashboardController) {
+                $translation_names[] = 'dashboard';
+            }            
+            $class->getTranslation($translation_names);
         }
 
         if ( ! ($class instanceof Account\LoginController)) {

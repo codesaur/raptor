@@ -2,15 +2,14 @@
 
 use codesaur as single;
 use codesaur\Globals\Post;
-use codesaur\HTML\TwigTemplate;
 use codesaur\HTML\HTML5 as html;
 
-use Boot4Template\Card;
-use Boot4Template\Dashboard;
+use Velociraptor\Boot4\Card;
+use Velociraptor\TwigTemplate;
+use Velociraptor\Boot4\Dashboard;
+use Velociraptor\DashboardController;
 
 use Indoraptor\Content\PagesDescribe;
-
-use Velociraptor\DashboardController;
 
 class PagesController extends DashboardController
 {

@@ -2,8 +2,8 @@
 
 use codesaur as single;
 
-use Boot4Template\Dashboard;
-
+use Velociraptor\TwigTemplate;
+use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 class DeveloperController extends DashboardController
@@ -17,6 +17,6 @@ class DeveloperController extends DashboardController
             $view->noPermission();
         }
         
-        $view->render(new TiwigTemplate(\dirname(__FILE__) . '/developer-index-table.html'));
+        $view->render(new TwigTemplate(\dirname(__FILE__) . '/developer-index-table.html'));
     }
 }

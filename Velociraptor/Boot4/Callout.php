@@ -1,6 +1,6 @@
-<?php namespace Boot4Template;
+<?php namespace Velociraptor\Boot4;
 
-use codesaur\HTML\TwigTemplate;
+use Velociraptor\TwigTemplate;
 
 class Callout extends TwigTemplate
 {
@@ -22,5 +22,5 @@ class Callout extends TwigTemplate
         }
         
         parent::__construct(\dirname(__FILE__) . '/callout.html', $vars);
-    }    
+    }
 }

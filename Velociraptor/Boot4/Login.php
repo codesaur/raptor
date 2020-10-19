@@ -1,4 +1,4 @@
-<?php namespace Boot4Template;
+<?php namespace Velociraptor\Boot4;
 
 class Login extends Boot4
 {
