@@ -1,7 +1,6 @@
 <?php namespace Velociraptor\Boot4;
 
 use codesaur as single;
-use codesaur\Http\Controller;
 
 use Velociraptor\TwigTemplate;
 use Velociraptor\IndexTemplate;
@@ -13,9 +12,7 @@ class Boot4 extends IndexTemplate
         parent::__construct(\dirname(__FILE__) . '/index.html');
 
         if (isset($template)) {
-            $content = new TwigTemplate($template, $vars);
-            $content->setIndex($this);
-            $this->set('content', $content);
+            $this->set('content', new TwigTemplate($template, $vars));
         }
     }
 
@@ -64,16 +61,6 @@ class Boot4 extends IndexTemplate
         $delete_script .= '<script>document.addEventListener("DOMContentLoaded",function(){$("' . $container . '").Delete(' . $options . ');});</script>';
 
         $this->addContent($delete_script);
-    }
-    
-    public function render($content = null)
-    {
-        parent::render($content);
-        
-        if (single::controller() instanceof Controller
-                && single::controller()->hasMethod('log')) {
-            single::controller()->log('request', single::controller()->getMe() . ' rendering ' . $this->getMe());
-        }
     }
     
     public function alertNoPermission($icon = 'flaticon-security', $reload = true)

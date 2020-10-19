@@ -1,5 +1,7 @@
 <?php namespace Velociraptor;
 
+use codesaur\Http\Controller;
+
 class IndexTemplate extends TwigTemplate
 {
     function __construct(string $template = null, array $vars = null)
@@ -26,6 +28,11 @@ class IndexTemplate extends TwigTemplate
         
         $this->set('content', $this->stringify($this->get('content')));
         
+        if (single::controller() instanceof Controller
+                && single::controller()->hasMethod('log')) {
+            single::controller()->log('request', single::controller()->getMe() . ' rendering ' . $this->getMe());
+        }
+        
         parent::render();
     }
     
@@ -36,8 +43,6 @@ class IndexTemplate extends TwigTemplate
 
     public function addContent($content)
     {
-        $this->setContentIndex($content);
-        
         if ($this->hasContent()) {
             $this->get('content')->enhance('content', $this->stringify($content));
         } else {
@@ -50,18 +55,9 @@ class IndexTemplate extends TwigTemplate
     public function setContentVar(string $key, $value)
     {
         if ($this->hasContent()) {
-            $this->get('content')->setIndex($this);
+            $this->get('content')->set($key, $value);
         } else {
             $this->set($key, $value);
-        }
-    }
-    
-    public function setContentIndex($content)
-    {
-        if ($content instanceof TwigTemplate) {
-            $content->setIndex($this);
-            
-            return $this->setContentIndex($content->get('content'));
         }
     }
 }

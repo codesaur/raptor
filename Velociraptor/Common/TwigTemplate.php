@@ -18,9 +18,4 @@ class TwigTemplate extends \codesaur\HTML\TemplateTwig
         $this->addFilter('text', function($string) { return single::text($string); });
         $this->addFilter('link', function($string, $params = []) { return single::link($string, $params); });
     }
-    
-    public function setIndex($index_template)
-    {
-        $this->set('index', $index_template);
-    }
 }

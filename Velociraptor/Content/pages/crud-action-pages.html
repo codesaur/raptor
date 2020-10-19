@@ -1,4 +1,4 @@
-{{ index.plugin('https://cdn.ckeditor.com/ckeditor5/22.0.0/classic/ckeditor.js') }}
+{{ assets_script('https://cdn.ckeditor.com/ckeditor5/22.0.0/classic/ckeditor.js') }}
 
 <form class="needs-validation" id="page_{{ action }}" action="{{ crud }}" method="POST" enctype="multipart/form-data" novalidate>
     <div class="card shadow border-primary mb-4">
@@ -325,7 +325,7 @@
     </div>
 </form>
 <!-- begin: TwigTemplate deer twig gesen function baihgui tul doorh code iig zasah shaardlagatai -->
-{{ index.twigZASNA(velociraptor_common ~ '/plupload-images.html') }}
+{{ twigZASNA(velociraptor_common ~ '/plupload-images.html') }}
  <!-- :end -->
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {

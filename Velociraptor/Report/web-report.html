@@ -57,13 +57,13 @@
     {% endfor %}
 </div>
 
-{{ index.stylesheet('https://www.amcharts.com/lib/3/plugins/export/export.css') }}
-{{ index.plugin('https://www.amcharts.com/lib/3/amcharts.js') }}
-{{ index.plugin('https://www.amcharts.com/lib/3/serial.js') }}
-{{ index.plugin('https://www.amcharts.com/lib/3/amstock.js') }}
-{{ index.plugin('https://www.amcharts.com/lib/3/themes/light.js') }}
-{{ index.plugin('https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js') }}
-{{ index.plugin('https://www.amcharts.com/lib/3/plugins/export/export.min.js') }}
+{{ assets_stylesheet('https://www.amcharts.com/lib/3/plugins/export/export.css') }}
+{{ assets_script('https://www.amcharts.com/lib/3/amcharts.js') }}
+{{ assets_script('https://www.amcharts.com/lib/3/serial.js') }}
+{{ assets_script('https://www.amcharts.com/lib/3/amstock.js') }}
+{{ assets_script('https://www.amcharts.com/lib/3/themes/light.js') }}
+{{ assets_script('https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js') }}
+{{ assets_script('https://www.amcharts.com/lib/3/plugins/export/export.min.js') }}
 
 <div class="card shadow-sm border-success mb-4">
     <div class="card-header bg-success">
