@@ -30,7 +30,7 @@ class LoginController extends DashboardController
                 array('table' => 'templates', '_keyword_' => array('tos', 'pp')));
         $vars = $templates['data'] ?? array();        
 
-        ($this->getTemplate($vars))->render();
+        $this->getTemplate($vars)->render();
     }
     
     public function getTemplate(array $vars = [])
