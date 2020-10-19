@@ -1,5 +1,6 @@
 <?php namespace Velociraptor;
 
+use codesaur as single;
 use codesaur\Http\Controller;
 
 class IndexTemplate extends TwigTemplate
