@@ -60,8 +60,8 @@ class Boot4 extends IndexTemplate
             )
         ));
         
-        $delete_script = '<script defer src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/scripts/delete.js" type="text/javascript"></script>';
-        $delete_script .= "<script type=\"text/javascript\">document.addEventListener('DOMContentLoaded', function() \{$('$container').Delete($options);});</script>";
+        $delete_script = '<script defer src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/scripts/delete.js"></script>';
+        $delete_script .= '<script>document.addEventListener("DOMContentLoaded",function(){$("' . $container . '").Delete(' . $options . ');});</script>';
 
         $this->addContent($delete_script);
     }
