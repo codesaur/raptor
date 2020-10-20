@@ -34,7 +34,7 @@ class Routing extends \codesaur\Http\Routing
         
         if  ( ! ($route instanceof Route) ||
                 ! \in_array($route->getName(), array(
-                    'login', 'entry', 'login-set-password',' logout', 'language', 'organization'))) {
+                    'login', 'entry', 'login-set-password', 'logout', 'language', 'organization'))) {
             single::session()->lock();
         }
         
