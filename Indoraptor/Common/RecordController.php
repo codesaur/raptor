@@ -13,16 +13,21 @@ class RecordController extends IndoController
         parent::__construct($single);
         
         $this->connect();
-
-        $this->model = $this->grabmodel(true);
+    }
+    
+    function init()
+    {
+        $this->model = $this->grabmodel(true);        
         $this->payload = $this->payload(true);
     }
         
     public function insert()
     {
+        $this->init();
+        
         if ( ! \in_array($this->model->getMe(), array(
-            //'Indoraptor\\Localization\\Language',
-            //'Indoraptor\\Localization\\Translation'
+            //'Indoraptor\\Localization\\LanguageModel',
+            //'Indoraptor\\Localization\\TranslationModel'
         )) &&  ! $this->accept()) {
             return $this->error('Not Allowed');
         }
@@ -49,9 +54,11 @@ class RecordController extends IndoController
     
     public function update()
     {
+        $this->init();
+        
         if ( ! \in_array($this->model->getMe(), array(
-            //'Indoraptor\\Localization\\Language',
-            //'Indoraptor\\Localization\\Translation'
+            //'Indoraptor\\Localization\\LanguageModel',
+            //'Indoraptor\\Localization\\TranslationModel'
         )) &&  ! $this->accept()) {
             return $this->error('Not Allowed');
         }
@@ -78,6 +85,8 @@ class RecordController extends IndoController
     
     public function delete()
     {
+        $this->init();
+        
         if ( ! $this->accept()) {
             return $this->error('Not Allowed');
         }
@@ -103,9 +112,11 @@ class RecordController extends IndoController
     
     public function retrieve()
     {
+        $this->init();
+        
         if ( ! \in_array($this->model->getMe(), array(
-            //'Indoraptor\\Localization\\Language',
-            //'Indoraptor\\Localization\\Translation'
+            //'Indoraptor\\Localization\\LanguageModel',
+            //'Indoraptor\\Localization\\TranslationModel'
         )) &&  ! $this->accept()) {
             return $this->error('Not Allowed');
         }

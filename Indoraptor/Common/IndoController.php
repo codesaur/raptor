@@ -36,7 +36,7 @@ class IndoController extends \codesaur\Http\Controller
         
         $this->conn = single::helper()->getPDO();
         
-        if ( ! $this->conn->alive() && $halt) {
+        if ($halt && ! $this->conn->alive()) {
             return $this->error('CDO: Invalid configuration!', 700);
         }
         
