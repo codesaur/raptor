@@ -41,10 +41,6 @@ class Application extends \codesaur\Base\Application
             }            
             $class->getTranslation($translation_names);
         }
-
-        if ( ! ($class instanceof Account\LoginController)) {
-            $this->session->Lock();
-        }
         
         parent::execute($class, $action, $args);
     }
