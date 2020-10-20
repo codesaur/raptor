@@ -226,7 +226,7 @@ class Controller extends \codesaur\Http\Controller
 
         if (isset($translations['data'])) {
             foreach ($translations['data'] as $name => $text) {
-                single::translation()->append($name, $text);
+                single::translation()->create($name, $text);
             }
         }
     }
