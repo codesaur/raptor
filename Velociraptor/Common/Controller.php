@@ -96,7 +96,11 @@ class Controller extends \codesaur\Http\Controller
                 throw new \Exception("$controller is not available!");
             }
             
-            $class = new $controller(false);
+            if (\getenv('INDO_JWT', true)) {
+                $header['HTTP_JWT'] = \getenv('INDO_JWT', true);
+            }
+            
+            $class = new $controller(false, $header, $params ?? array(), $payload);
             if ( ! $class instanceof \Indoraptor\IndoController) {
                 throw new \Exception("$controller is not an Indoraptor controller!");
             }            
@@ -104,14 +108,6 @@ class Controller extends \codesaur\Http\Controller
                 throw new \Exception("Action named $action is not part of $controller!");
             }
             
-            if (\getenv('INDO_JWT', true)) {
-                $header['HTTP_JWT'] = \getenv('INDO_JWT', true);
-            }
-            
-            $class->setHeader($header);
-            $class->setPayload($payload);
-            $class->setParams($params ?? array());
-
             if (empty($args)) {
                 $class->$action();
             } else {

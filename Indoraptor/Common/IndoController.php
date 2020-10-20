@@ -23,9 +23,13 @@ class IndoController extends \codesaur\Http\Controller
 
     protected $single;
     
-    function __construct(bool $single = true)
+    function __construct(bool $single = true, array $header = [], array $params = [], array $payload = [])
     {
         $this->single = $single;
+        
+        $this->setHeader($header);
+        $this->setParams($params);
+        $this->setPayload($payload);
     }
 
     final function connect($halt = true)

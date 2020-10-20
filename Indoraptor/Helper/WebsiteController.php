@@ -2,9 +2,9 @@
 
 class WebsiteController extends \Indoraptor\IndoController
 {
-    function __construct(bool $single = true)
+    function __construct(bool $single = true, array $header = [], array $params = [], array $payload = [])
     {
-        parent::__construct($single);
+        parent::__construct($single, $header, $params, $payload);
         
         if ($single && ! $this->accept()) {
             return $this->error('Not Allowed');
