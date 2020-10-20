@@ -32,7 +32,7 @@ class Routing extends \codesaur\Http\Routing
         
         single::user()->login($response['data']);
         
-        if ( ! isset($route->getName()) ||
+        if  ( ! ($route instanceof Route) ||
                 ! \in_array($route->getName(), array(
                     'login', 'entry', 'login-set-password',' logout', 'language', 'organization'))) {
             single::session()->lock();
