@@ -41,7 +41,7 @@ class ContentController extends \Indoraptor\IndoController
         if ($this->accept()) {
             $payload = $this->payload(true);
             if ( ! $this->isEmpty($payload['table'] ?? null)) {
-                $model = new Lookup($this->conn);
+                $model = new LookupModel($this->conn);
                 $tables = \is_array($payload['table']) ? $payload['table'] : array($payload['table']);
                 foreach ($tables as $table) {
                     $rows = $model->retrieve($table, $payload['flag'] ?? null);
