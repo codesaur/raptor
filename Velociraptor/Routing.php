@@ -32,9 +32,7 @@ class Routing extends \codesaur\Http\Routing
         
         single::user()->login($response['data']);
         
-        if  ( ! ($route instanceof Route) ||
-                ! \in_array($route->getName(), array(
-                    'login', 'entry', 'login-set-password', 'logout', 'language', 'organization'))) {
+        if ( ! $this->isRequireSession($route)) {
             single::session()->lock();
         }
         
@@ -62,6 +60,25 @@ class Routing extends \codesaur\Http\Routing
         return single::redirect('login');
     }
     
+    function isRequireSession($route) : bool
+    {
+        if ( ! ($route instanceof Route)) {
+            return false;
+        }
+        
+        if ($route->getName() == 'language') {
+            return true;
+        }
+        
+        foreach ($this->getLoginRules() as $rule) {
+            if ($route->getPattern() == $rule[0]) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     final function getBasicRules() : array
     {
         return array(
@@ -86,7 +103,8 @@ class Routing extends \codesaur\Http\Routing
             ['/login/try', 'entry@Velociraptor\\Account\\LoginController', ['methods' => 'POST', 'name' => 'entry']],
             ['/login/signup', 'signup@Velociraptor\\Account\\LoginController', ['methods' => 'POST', 'name' => 'signup']],
             ['/login/set/password', 'setPassword@Velociraptor\\Account\\LoginController', ['methods' => 'POST', 'name' => 'login-set-password']],
-            ['/login/request/password', 'requestPassword@Velociraptor\\Account\\LoginController', ['methods' => 'POST', 'name' => 'login-request']]
+            ['/login/request/password', 'requestPassword@Velociraptor\\Account\\LoginController', ['methods' => 'POST', 'name' => 'login-request']],
+            ['/login/organization/:id', 'selectOrganization@Velociraptor\\Account\\LoginController', ['name' => 'organization', 'filters' => ['id' => '(\d+)']]]
         );
     }
     
@@ -94,7 +112,6 @@ class Routing extends \codesaur\Http\Routing
     {
         return array(
             ['/account/accept', 'approve@Velociraptor\\Account\\AccountController', ['name' => 'account-accept', 'methods' => 'POST']],
-            ['/organization/:id', 'selectOrganization@Velociraptor\\Account\\LoginController', ['name' => 'organization', 'filters' => ['id' => '(\d+)']]],
             ['/account/:id/organization/set', 'organizationSet@Velociraptor\\Account\\AccountController', ['name' => 'account-organization-set', 'filters' => ['id' => '(\d+)'], 'methods' => 'GET,POST']]
         );
     }
