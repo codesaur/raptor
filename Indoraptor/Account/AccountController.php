@@ -216,6 +216,6 @@ class AccountController extends \Indoraptor\IndoController
         $model = new MailerModel($this->conn);
         $rows = $model->getRows();
         
-        return single::helper()->getPHPMailer(\end($rows));
+        return single::app()->getPHPMailer(\end($rows));
     }
 }
