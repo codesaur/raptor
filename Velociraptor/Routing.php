@@ -62,7 +62,7 @@ class Routing extends \codesaur\Http\Routing
     
     function isRequireSession($route) : bool
     {
-        if ( ! ($route instanceof Route)) {
+        if ( ! $route instanceof Route) {
             return false;
         }
         

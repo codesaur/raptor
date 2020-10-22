@@ -2,13 +2,6 @@
 
 class LoggerController extends \Indoraptor\IndoController
 {
-    function __construct(bool $single = true, array $header = [], array $params = [], array $payload = [])
-    {
-        parent::__construct($single, $header, $params, $payload);
-        
-        $this->connect();
-    }
-    
     public function index($table, $id = null)
     {
         if ($this->accept()) {

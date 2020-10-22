@@ -2,15 +2,6 @@
 
 class WebsiteReportController extends \Indoraptor\IndoController
 {
-    function __construct(bool $single = true, array $header = [], array $params = [], array $payload = [])
-    {
-        parent::__construct($single, $header, $params, $payload);
-        
-        if ( ! $this->connect(false)) {
-            return $this->error('Not Connected!');
-        }
-    }
-    
     public function total()
     {
         $stats = \array_fill(0, 6, array());

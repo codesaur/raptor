@@ -100,13 +100,22 @@ class Controller extends \codesaur\Http\Controller
                 $header['HTTP_JWT'] = \getenv('INDO_JWT', true);
             }
             
-            $class = new $controller(false, $header, $params ?? array(), $payload);
+            $class = new $controller(true);
             if ( ! $class instanceof \Indoraptor\IndoController) {
                 throw new \Exception("$controller is not an Indoraptor controller!");
             }            
+
+            if ( ! $class->isConnected()) {
+                throw new \Exception('Not connected!');
+            }
+
             if ( ! $class->hasMethod($action) || ! $class->isCallable($action)) {
                 throw new \Exception("Action named $action is not part of $controller!");
             }
+            
+            $this->setHeader($header);
+            $this->setPayload($payload);
+            $this->setParams($params ?? array());
             
             if (empty($args)) {
                 $class->$action();

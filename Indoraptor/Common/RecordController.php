@@ -5,42 +5,31 @@ use codesaur\MultiModel\MultiModel;
 
 class RecordController extends IndoController
 {
-    public $model;
-    public $payload;
-    
-    function __construct(bool $single = true, array $header = [], array $params = [], array $payload = [])
-    {
-        parent::__construct($single, $header, $params, $payload);
-        
-        $this->connect();
-        
-        $this->model = $this->grabmodel(true);        
-        $this->payload = $this->payload(true);
-    }
-        
     public function insert()
     {
-        if ( ! \in_array($this->model->getMe(), array(
+        $model = $this->grabmodel(true);        
+        if ( ! \in_array($model->getMe(), array(
             //'Indoraptor\\Localization\\LanguageModel',
             //'Indoraptor\\Localization\\TranslationModel'
         )) &&  ! $this->accept()) {
             return $this->error('Not Allowed');
         }
         
-        if ($this->payload['record']) {
-            if ($this->model instanceof MultiModel) {
-                $id = $this->model->inserts($this->payload['record']['primary'], $this->payload['record']['content']);
+        $payload = $payload(true);
+        if ($payload['record']) {
+            if ($model instanceof MultiModel) {
+                $id = $model->inserts($payload['record']['primary'], $payload['record']['content']);
             } else {
-                $id = $this->model->insert($this->payload['record']);
+                $id = $model->insert($payload['record']);
             }
         }
 
         if ($id ?? false) {
             $this->success(array(
                 'id'    => $id,
-                'model' => $this->model->getMe(),
-                'table' => $this->model->getTable(),
-                'clean' => $this->model->getTableClean()                
+                'model' => $model->getMe(),
+                'table' => $model->getTable(),
+                'clean' => $model->getTableClean()                
             ));
         } else {
             return $this->error('Not Found');
@@ -49,27 +38,29 @@ class RecordController extends IndoController
     
     public function update()
     {
-        if ( ! \in_array($this->model->getMe(), array(
+        $model = $this->grabmodel(true);        
+        if ( ! \in_array($model->getMe(), array(
             //'Indoraptor\\Localization\\LanguageModel',
             //'Indoraptor\\Localization\\TranslationModel'
         )) &&  ! $this->accept()) {
             return $this->error('Not Allowed');
         }
         
-        if ($this->payload['record']) {
-            if ($this->model instanceof MultiModel) {
-                $id = $this->model->updates($this->payload['record']['primary'], $this->payload['record']['content']);
-            } elseif ($this->model instanceof Table) {
-                $id = $this->model->update($this->payload['record']);
+        $payload = $payload(true);
+        if ($payload['record']) {
+            if ($model instanceof MultiModel) {
+                $id = $model->updates($payload['record']['primary'], $payload['record']['content']);
+            } elseif ($model instanceof Table) {
+                $id = $model->update($payload['record']);
             }
         }
 
         if ($id ?? false) {
             $this->success(array(
                 'id'    => $id,
-                'model' => $this->model->getMe(),
-                'table' => $this->model->getTable(),
-                'clean' => $this->model->getTableClean()                
+                'model' => $model->getMe(),
+                'table' => $model->getTable(),
+                'clean' => $model->getTableClean()                
             ));
         } else {
             return $this->error('Not Found');
@@ -82,18 +73,20 @@ class RecordController extends IndoController
             return $this->error('Not Allowed');
         }
         
-        if (isset($this->payload['id']) &&
-                $this->model->getDescribe()->hasColumn($this->model->primary)) {
-            $idColumn = $this->model->getDescribe()->getColumn($this->model->primary);
-            $idColumn->setValue($this->payload['id']);
+        $model = $this->grabmodel(true);        
+        $payload = $payload(true);
+        if (isset($payload['id']) &&
+                $model->getDescribe()->hasColumn($model->primary)) {
+            $idColumn = $model->getDescribe()->getColumn($model->primary);
+            $idColumn->setValue($payload['id']);
 
             if ($this->callFunc(array(
-                $this->model, $this->payload['callBack'] ?? 'delete'), array($idColumn))) {
+                $model, $payload['callBack'] ?? 'delete'), array($idColumn))) {
                 return $this->success(array(
-                    'id'    => $this->payload['id'],
-                    'model' => $this->model->getMe(),
-                    'table' => $this->model->getTable(),
-                    'clean' => $this->model->getTableClean()
+                    'id'    => $payload['id'],
+                    'model' => $model->getMe(),
+                    'table' => $model->getTable(),
+                    'clean' => $model->getTableClean()
                 ));
             }
         }
@@ -103,7 +96,8 @@ class RecordController extends IndoController
     
     public function retrieve()
     {
-        if ( ! \in_array($this->model->getMe(), array(
+        $model = $this->grabmodel(true);
+        if ( ! \in_array($model->getMe(), array(
             //'Indoraptor\\Localization\\LanguageModel',
             //'Indoraptor\\Localization\\TranslationModel'
         )) &&  ! $this->accept()) {
@@ -111,24 +105,26 @@ class RecordController extends IndoController
         }
         
         $data = array();
-        if (isset($this->payload['id'])) {
-            if ($this->model instanceof MultiModel) {
-                $data['record'] = $this->model->getByID($this->payload['id'], $this->payload['flag'] ?? null);
+
+        $payload = $payload(true);
+        if (isset($payload['id'])) {
+            if ($model instanceof MultiModel) {
+                $data['record'] = $model->getByID($payload['id'], $payload['flag'] ?? null);
             } else {
-                $data['record'] = $this->model->getByID($this->payload['id']);
+                $data['record'] = $model->getByID($payload['id']);
             }
         } else {
-            if ($this->model->getDescribe()->hasColumn('is_active')) {
-                if (\strpos($this->payload['condition']['WHERE'] ?? '', 'is_active') === false) {
-                    $is_active = $this->model instanceof MultiModel ? 'p.is_active=1' : 'is_active=1';
-                    if (isset($this->payload['condition']['WHERE'])) {
-                        $this->payload['condition']['WHERE'] .= " AND $is_active";
+            if ($model->getDescribe()->hasColumn('is_active')) {
+                if (\strpos($payload['condition']['WHERE'] ?? '', 'is_active') === false) {
+                    $is_active = $model instanceof MultiModel ? 'p.is_active=1' : 'is_active=1';
+                    if (isset($payload['condition']['WHERE'])) {
+                        $payload['condition']['WHERE'] .= " AND $is_active";
                     } else {
-                        $this->payload['condition']['WHERE'] = $is_active;
+                        $payload['condition']['WHERE'] = $is_active;
                     }
                 }
             }
-            $data['rows'] = $this->model->getRows($this->payload['condition'] ?? array());
+            $data['rows'] = $model->getRows($payload['condition'] ?? array());
         }
         
         if ((isset($data['record']) && empty($data['record']))
@@ -136,9 +132,9 @@ class RecordController extends IndoController
             return $this->error('Not Found');
         }
 
-        $data['model'] = $this->model->getMe();
-        $data['table'] = $this->model->getTable();
-        $data['clean'] = $this->model->getTableClean();
+        $data['model'] = $model->getMe();
+        $data['table'] = $model->getTable();
+        $data['clean'] = $model->getTableClean();
         
         return $this->success($data);
     }

@@ -17,7 +17,7 @@ class Routing extends \codesaur\Http\Routing
         return array(
             ['/auth/jwt', 'jwt@Indoraptor\\AuthController', ['methods' => 'POST']],
             ['/auth/try', 'entry@Indoraptor\\AuthController', ['methods' => 'POST']],
-            ['/generate/jwt', 'getJWT@Indoraptor\\AuthController', ['methods' => 'POST']]
+            ['/auth/jwt/org', 'jwtOrganization@Indoraptor\\AuthController', ['methods' => 'POST']]
         );
     }
 

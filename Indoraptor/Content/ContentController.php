@@ -2,13 +2,6 @@
 
 class ContentController extends \Indoraptor\IndoController
 {
-    function __construct(bool $single = true, array $header = [], array $params = [], array $payload = [])
-    {
-        parent::__construct($single, $header, $params, $payload);
-        
-        $this->connect();
-    }
-    
     public function index()
     {
         $payload = $this->payload(true);

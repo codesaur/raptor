@@ -6,8 +6,6 @@ class LanguageController extends \Indoraptor\IndoController
 {
     public function index()
     {
-        $this->connect();
-        
         $from = $this->getParam('from');
         $model = new LanguageModel($this->conn);
         $record = $model->retrieve($from ?? 'common');
@@ -21,8 +19,6 @@ class LanguageController extends \Indoraptor\IndoController
     
     public function copyTranslation()
     {
-        $this->connect();
-        
         if ($this->accept()) {
             $payload = $this->payload(true);
             $a = $payload['from'] ?? false;

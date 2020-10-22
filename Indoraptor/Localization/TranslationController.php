@@ -4,11 +4,9 @@ class TranslationController extends \Indoraptor\IndoController
 {
     public $text = array();
     
-    function __construct(bool $single = true, array $header = [], array $params = [], array $payload = [])
+    function __construct(bool $internal = false)
     {
-        parent::__construct($single, $header, $params, $payload);
-        
-        $this->connect();
+        parent::__construct($internal);
         
         $this->model = new TranslationModel($this->conn);
     }

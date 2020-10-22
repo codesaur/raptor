@@ -146,7 +146,7 @@ class LoginController extends DashboardController
                     'organization_id' => (int)$id,
                     'account_id' => (int)$account_id);
                 
-                $jwt_result = $this->indopost('/generate/jwt', $jwt_info);
+                $jwt_result = $this->indopost('/auth/jwt/org', $jwt_info);
                 
                 if (isset($jwt_result['jwt']) && ! $this->isEmpty($jwt_result['jwt'])) {
                     single::session()->set('indo/jwt', $jwt_result['jwt']);

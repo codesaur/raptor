@@ -20,46 +20,38 @@ class IndoController extends \codesaur\Http\Controller
     private $_header;
     private $_params;
     private $_payload;
-
-    protected $single;
     
-    function __construct(bool $single = true, array $header = [], array $params = [], array $payload = [])
+    private $_is_internal = false;
+    
+    function __construct(bool $internal = false)
     {
-        $this->single = $single;
+        $this->_is_internal = $internal;
         
-        $this->setHeader($header);
-        $this->setParams($params);
-        $this->setPayload($payload);
+        $this->conn = single::helper()->getPDO();        
+        if ( ! $this->conn->alive()) {
+            $this->error('CDO: Not connected!', 700);
+        }
     }
-
-    final function connect($halt = true)
+    
+    final public function isConnected()
     {
-        if (isset($this->conn)) {
-            return true;
-        }
-        
-        $this->conn = single::helper()->getPDO();
-        
-        if ($halt && ! $this->conn->alive()) {
-            return $this->error('CDO: Invalid configuration!', 700);
-        }
-        
         return $this->conn->alive();
     }
 
     final function respond($content, int $status = Header::HTTP_OK)
     {
-        if ($this->single) {
-            \header('Content-Type: application/json');
-            
-            if ($status >= 400 && $status < 600)  {
-                \header("Status: Error $status", true, $status);
-            }
-            
-            exit(\json_encode($content));
+        if ($this->_is_internal) {
+            echo \json_encode($content);
+            return;
         }
         
-        echo \json_encode($content);
+        \header('Content-Type: application/json');
+
+        if ($status >= 400 && $status < 600)  {
+            \header("Status: Error $status", true, $status);
+        }
+
+        exit(\json_encode($content));
     }
     
     final public function success($data)
@@ -100,7 +92,7 @@ class IndoController extends \codesaur\Http\Controller
         
         return JWT::encode($payload, $key, $alg);
     }
-
+    
     final public function validate($jwt, $secret = null, $algs = null)
     {
         $result = $this->decode($jwt,
@@ -129,16 +121,16 @@ class IndoController extends \codesaur\Http\Controller
     
     final public function accept()
     {
-        if ($this->single) {
+        if ($this->_is_internal) {
+            if (isset($this->_header['HTTP_JWT'])) {
+                return \is_array($this->validate($this->_header['HTTP_JWT']));
+            }
+        } else {
             $server = new Server();
             if ($server->has('HTTP_JWT')) {
                 return \is_array($this->validate($server->raw('HTTP_JWT')));
             } elseif (\getenv('INDO_JWT', true)) {
                 return \is_array($this->validate(\getenv('INDO_JWT', true)));
-            }
-        } else {
-            if (isset($this->_header['HTTP_JWT'])) {
-                return \is_array($this->validate($this->_header['HTTP_JWT']));
             }
         }
         
@@ -147,11 +139,11 @@ class IndoController extends \codesaur\Http\Controller
     
     final public function payload(bool $assoc = false, int $depth = 512, int $options = 0)
     {
-        if ($this->single) {
-            return single::header()->getEntityBodyJson($assoc, $depth, $options);
-        } else {
+        if ($this->_is_internal) {
             return \json_decode($this->_payload, $assoc, $depth, $options);
         }
+        
+        return single::header()->getEntityBodyJson($assoc, $depth, $options);
     }
     
     final public function query()
@@ -159,8 +151,6 @@ class IndoController extends \codesaur\Http\Controller
         if ($this->accept()) {
             $payload = $this->payload();
             if (isset($payload->sql)) {
-                $this->connect();
-                
                 $pdostmt = $this->conn->prepare($payload->sql);
                 $pdostmt->execute();
                 $result = $pdostmt->fetch(\PDO::FETCH_ASSOC);
@@ -178,8 +168,6 @@ class IndoController extends \codesaur\Http\Controller
         if ($this->accept()) {
             $payload = $this->payload();
             if (isset($payload->table)) {
-                $this->connect();
-                
                 $result = $this->conn->status($payload->table);
                 if ($result) {
                     return $this->success($result);
@@ -192,15 +180,11 @@ class IndoController extends \codesaur\Http\Controller
     
     final public function getParam(string $param)
     {
-        if ($this->single) {
-            if (single::request()->hasParam($param)) {
-                return single::request()->getParam($param);
-            }
-        } elseif (isset($this->_params[$param])) {
-            return $this->_params[$param];
+        if ($this->_is_internal) {
+            return $this->_params[$param] ?? null;
         }
         
-        return null;
+        return single::request()->getParam($param);
     }
 
     public function grab(string $param, $arg = null)
@@ -215,7 +199,11 @@ class IndoController extends \codesaur\Http\Controller
     
     public function grabtable()
     {
-        if ($this->single) {
+        if ($this->_is_internal) {
+            if (isset($this->_params['table'])) {
+                return \str_replace(' ', '', $this->_params['table']);
+            }
+        } else {
             $post = new Post();
             if ($post->has('alias')) {
                 return $post->value('alias', FILTER_SANITIZE_STRING);
@@ -223,8 +211,6 @@ class IndoController extends \codesaur\Http\Controller
             if (single::request()->hasParam('table')) {
                 return \str_replace(' ', '', single::request()->getParam('table'));
             }
-        } elseif (isset($this->_params['table'])) {
-            return \str_replace(' ', '', $this->_params['table']);
         }
         
         return null;
@@ -254,8 +240,6 @@ class IndoController extends \codesaur\Http\Controller
         if ( ! $this->accept()) {
             return $this->error('Not Allowed');
         }
-        
-        $this->connect();
         
         $model = $this->grabmodel();
         $payload = $this->payload(true);

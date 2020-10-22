@@ -1,22 +1,13 @@
 <?php namespace Indoraptor\Helper;
 
 class WebsiteController extends \Indoraptor\IndoController
-{
-    function __construct(bool $single = true, array $header = [], array $params = [], array $payload = [])
-    {
-        parent::__construct($single, $header, $params, $payload);
-        
-        if ($single && ! $this->accept()) {
-            return $this->error('Not Allowed');
-        }
-
-        if ( ! $this->connect(false)) {
-            return $this->error('Not Connected!');
-        }
-    }
-    
+{    
     public function general($alias, $flag)
     {
+        if ( ! $this->accept()) {
+            return $this->error('Not Allowed');
+        }
+        
         $data = array();
         
         try {
@@ -107,6 +98,10 @@ class WebsiteController extends \Indoraptor\IndoController
     
     public function menu($alias, $flag)
     {
+        if ( ! $this->accept()) {
+            return $this->error('Not Allowed');
+        }
+        
         $data = array();
         
         try {
@@ -136,6 +131,10 @@ class WebsiteController extends \Indoraptor\IndoController
     
     public function page($alias, $flag, $id)
     {
+        if ( ! $this->accept()) {
+            return $this->error('Not Allowed');
+        }
+
         try {
             $query_menu = 'SELECT id,parent_id,title,short,full ' .
                     "FROM {$alias}_pages as p INNER JOIN {$alias}_pages_content as c ON p.id = c.t_id " .

@@ -12,8 +12,6 @@ class AccountController extends \Indoraptor\IndoController
 {
     public function signup()
     {
-        $this->connect();
-        
         $response = array();
         try {
             $payload = $this->payload();
@@ -82,8 +80,6 @@ class AccountController extends \Indoraptor\IndoController
     
     public function forgot()
     {
-        $this->connect();
-        
         $response = array();
         try {
             $payload = $this->payload();
@@ -156,8 +152,6 @@ class AccountController extends \Indoraptor\IndoController
     
     public function getForgot()
     {
-        $this->connect();
-        
         $payload = $this->payload();
         
         if (isset($payload->use)) {
@@ -174,8 +168,6 @@ class AccountController extends \Indoraptor\IndoController
     
     public function setPassword()
     {
-        $this->connect();
-        
         $payload = $this->payload();
         if ( ! isset($payload->use_id) || empty($payload->use_id)
                 || ! isset($payload->account) || empty($payload->account)
@@ -221,8 +213,6 @@ class AccountController extends \Indoraptor\IndoController
     
     public function getMailer() : ?PHPMailer
     {
-        $this->connect();
-        
         $model = new MailerModel($this->conn);
         $rows = $model->getRows();
         

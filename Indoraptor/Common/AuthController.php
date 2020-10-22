@@ -10,8 +10,6 @@ class AuthController extends IndoController
 {
     public function entry()
     {
-        $this->connect();
-        
         try {
             $payload = $this->payload();
             if ( ! isset($payload->username) || empty($payload->username) ||
@@ -55,8 +53,6 @@ class AuthController extends IndoController
     
     public function jwt()
     {
-        $this->connect();
-        
         try {
             $payload = $this->payload();
             if ( ! isset($payload->jwt)) {
@@ -81,7 +77,7 @@ class AuthController extends IndoController
             $org_model = new OrganizationModel($this->conn);
             $organization = $org_model->getByID($validation['organization_id'] ?? 1);
             if ( ! isset($organization['id'])) {
-                throw new \Exception('Account does not belong to an organization!');
+                throw new \Exception('Organization not found!');
             }
             
             $response['organizations'] = $this->getAccountOrganizations($account['id']);
@@ -110,65 +106,85 @@ class AuthController extends IndoController
         }
     }
     
-    final public function getJWT()
+    final public function jwtOrganization()
     {
-        if ($this->single
-                || ! $this->accept()) {
-            $this->error('Not allowed!');
-        }
-        
-        $payload = $this->payload(true);
-        
-        if (isset($payload['account_id']) && \is_int($payload['account_id']) &&
-                isset($payload['organization_id']) && \is_int($payload['organization_id'])) {
+        try {
+            $current_login = $this->accept();
+            if ( ! $current_login) {
+                throw new \Exception('Not allowed!');
+            }
+
+            $payload = $this->payload();
+            if ( ! (isset($payload->account_id) && \is_int($payload->account_id))
+                    ||  ! (isset($payload->organization_id) && \is_int($payload->organization_id))) {
+                throw new \Exception('Invalid request!');            
+            }
+            
+            $model = new AccountModel($this->conn);
+            $account = $model->getByID($current_login['account_id']);
+            if ( ! isset($account['id'])
+                    || $account['id'] != $payload->account_id) {
+                throw new \Exception('Invalid account!');
+            }
+            
+            $org_model = new OrganizationModel($this->conn);
+            $organization = $org_model->getByID($payload->organization_id);
+            if ( ! isset($organization['id'])) {
+                throw new \Exception('Invalid organization!');
+            }
+            
+            $org_user_model = new OrganizationUserModel($this->conn);
+            $user = $org_user_model->retrieve($organization['id'], $account['id']);
+            if ( ! isset($user['id'])) {
+                throw new \Exception('Account does not belong to an organization!');
+            }
+
             $account_org_jwt = array(
-                'account_id' => $payload['account_id'],
-                'organization_id' => $payload['organization_id']);
+                'account_id' => $account['id'],
+                'organization_id' => $organization['id']);
             return $this->respond(array('jwt' => $this->generate($account_org_jwt)));
+        } catch(\Exception $e) {
+            return $this->error($e->getMessage());
         }
-        
-        $this->error('Invalid request!');
     }
     
     public function getLastLoginOrg($account_id)
     {
-        if ($this->connect(false)) {
-            $org_user_model = new OrganizationUserModel($this->conn);
+        $org_user_model = new OrganizationUserModel($this->conn);
             
-            $last_org_query =
-                'SELECT info ' .
-                'FROM dashboard_log ' .
-                "WHERE created_by = :id AND reason = 'organization' AND level = 2 " .
-                'ORDER By id Desc ' .
-                'LIMIT 1';
+        $last_org_query =
+            'SELECT info ' .
+            'FROM dashboard_log ' .
+            "WHERE created_by = :id AND reason = 'organization' AND level = 2 " .
+            'ORDER By id Desc ' .
+            'LIMIT 1';
 
-            $stmt = $org_user_model->dataobject()->prepare($last_org_query);
-            $stmt->bindParam(':id', $account_id, \PDO::PARAM_INT);
-            $stmt->execute();
+        $stmt = $org_user_model->dataobject()->prepare($last_org_query);
+        $stmt->bindParam(':id', $account_id, \PDO::PARAM_INT);
+        $stmt->execute();
 
-            if ($stmt->rowCount() == 1) {
-                $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-                if (isset($result['info'])) {
-                    $info = \json_decode($result['info'], true);
+        if ($stmt->rowCount() == 1) {
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (isset($result['info'])) {
+                $info = \json_decode($result['info'], true);
 
-                    $org_id = $info['enter']['id'] ?? null;
-                    $account_id = $info['jwt-info']['account_id'] ?? null;
+                $org_id = $info['enter']['id'] ?? null;
+                $account_id = $info['jwt-info']['account_id'] ?? null;
 
-                    if (isset($org_id) && isset($account_id)) {                        
-                        $org_user_query =
-                                'SELECT * ' .
-                                "FROM {$org_user_model->getTable()} " .
-                                "WHERE organization_id = :org AND account_id = :account AND status = 1 AND is_active = 1 " .
-                                'ORDER By id Desc ' .
-                                'LIMIT 1';
-                        $stmt = $org_user_model->dataobject()->prepare($org_user_query);
-                        $stmt->bindParam(':org', $org_id, \PDO::PARAM_INT);
-                        $stmt->bindParam(':account', $account_id, \PDO::PARAM_INT);
-                        $stmt->execute();
+                if (isset($org_id) && isset($account_id)) {                        
+                    $org_user_query =
+                            'SELECT * ' .
+                            "FROM {$org_user_model->getTable()} " .
+                            "WHERE organization_id = :org AND account_id = :account AND status = 1 AND is_active = 1 " .
+                            'ORDER By id Desc ' .
+                            'LIMIT 1';
+                    $stmt = $org_user_model->dataobject()->prepare($org_user_query);
+                    $stmt->bindParam(':org', $org_id, \PDO::PARAM_INT);
+                    $stmt->bindParam(':account', $account_id, \PDO::PARAM_INT);
+                    $stmt->execute();
 
-                        if ($stmt->rowCount() == 1) {
-                            return $org_id;
-                        }
+                    if ($stmt->rowCount() == 1) {
+                        return $org_id;
                     }
                 }
             }
@@ -181,19 +197,17 @@ class AuthController extends IndoController
     {
         $orgs = array();
         
-        if ($this->connect(false)) {
-            $org_model = new OrganizationModel($this->conn);
-            $org_user_model = new OrganizationUserModel($this->conn);            
-            $stmt = $org_user_model->dataobject()->prepare('SELECT t2.id, t2.name, t2.logo, t2.alias, t2.external ' .
-                    "FROM {$org_user_model->getTable()} as t1 JOIN {$org_model->getTable()} as t2 ON t1.organization_id = t2.id " .
-                    "WHERE t1.account_id = :id AND t1.organization_id != 1 AND t1.is_active = 1 AND t1.status = 1 AND t2.is_active = 1 ORDER By t2.name");            
-            $stmt->bindParam(':id', $account_id, \PDO::PARAM_INT);
-            $stmt->execute();
+        $org_model = new OrganizationModel($this->conn);
+        $org_user_model = new OrganizationUserModel($this->conn);            
+        $stmt = $org_user_model->dataobject()->prepare('SELECT t2.id, t2.name, t2.logo, t2.alias, t2.external ' .
+                "FROM {$org_user_model->getTable()} as t1 JOIN {$org_model->getTable()} as t2 ON t1.organization_id = t2.id " .
+                "WHERE t1.account_id = :id AND t1.organization_id != 1 AND t1.is_active = 1 AND t1.status = 1 AND t2.is_active = 1 ORDER By t2.name");            
+        $stmt->bindParam(':id', $account_id, \PDO::PARAM_INT);
+        $stmt->execute();
 
-            if ($stmt->rowCount()) {
-                while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                    $orgs[] = $row;
-                }
+        if ($stmt->rowCount()) {
+            while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $orgs[] = $row;
             }
         }
         

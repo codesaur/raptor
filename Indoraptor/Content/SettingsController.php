@@ -2,13 +2,6 @@
 
 class SettingsController extends \Indoraptor\IndoController
 {
-    function __construct(bool $single = true, array $header = [], array $params = [], array $payload = [])
-    {
-        parent::__construct($single, $header, $params, $payload);
-        
-        $this->connect();
-    }
-        
     public function settings($alias)
     {
         if ( ! $this->accept()) {
