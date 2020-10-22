@@ -15,7 +15,7 @@ class RecordController extends IndoController
             return $this->error('Not Allowed');
         }
         
-        $payload = $payload(true);
+        $payload = $this->payload(true);
         if ($payload['record']) {
             if ($model instanceof MultiModel) {
                 $id = $model->inserts($payload['record']['primary'], $payload['record']['content']);
@@ -46,7 +46,7 @@ class RecordController extends IndoController
             return $this->error('Not Allowed');
         }
         
-        $payload = $payload(true);
+        $payload = $this->payload(true);
         if ($payload['record']) {
             if ($model instanceof MultiModel) {
                 $id = $model->updates($payload['record']['primary'], $payload['record']['content']);
@@ -74,7 +74,7 @@ class RecordController extends IndoController
         }
         
         $model = $this->grabmodel(true);        
-        $payload = $payload(true);
+        $payload = $this->payload(true);
         if (isset($payload['id']) &&
                 $model->getDescribe()->hasColumn($model->primary)) {
             $idColumn = $model->getDescribe()->getColumn($model->primary);
@@ -106,7 +106,7 @@ class RecordController extends IndoController
         
         $data = array();
 
-        $payload = $payload(true);
+        $payload = $this->payload(true);
         if (isset($payload['id'])) {
             if ($model instanceof MultiModel) {
                 $data['record'] = $model->getByID($payload['id'], $payload['flag'] ?? null);
