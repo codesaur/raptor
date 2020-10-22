@@ -113,9 +113,9 @@ class Controller extends \codesaur\Http\Controller
                 throw new \Exception("Action named $action is not part of $controller!");
             }
             
-            $this->setHeader($header);
-            $this->setPayload($payload);
-            $this->setParams($params ?? array());
+            $class->setHeader($header);
+            $class->setPayload($payload);
+            $class->setParams($params ?? array());
             
             if (empty($args)) {
                 $class->$action();
