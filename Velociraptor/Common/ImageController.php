@@ -22,9 +22,9 @@ class ImageController extends FileController
     
     public function single($record, string $flag = '')
     {
-        $data = $this->getLast($record, \getenv('IMAGE_MAIN') ?: 1, $flag);
+        $data = $this->getLast($record, \getenv('IMAGE_MAIN', true) ?: 1, $flag);
         if ( ! $data) {
-            return $this->getLast($record, \getenv('IMAGE_BASE') ?: 5, $flag);
+            return $this->getLast($record, \getenv('IMAGE_BASE', true) ?: 5, $flag);
         }
         
         return $data;

@@ -4,9 +4,9 @@ use codesaur as single;
 use codesaur\Globals\Post;
 use codesaur\Base\LogLevel;
 
-use codesaur\RBAC\Roles;
-use codesaur\RBAC\Permissions;
-use codesaur\RBAC\RolePermission;
+use codesaur\RBAC\RolesDescribe;
+use codesaur\RBAC\PermissionsDescribe;
+use codesaur\RBAC\RolePermissionDescribe;
 
 use Velociraptor\Boot4\Card;
 use Velociraptor\TwigTemplate;
@@ -15,14 +15,7 @@ use Velociraptor\DashboardController;
 
 class RBACController extends DashboardController
 {
-    public $conn;
-    
-    function __construct()
-    {
-        $this->conn = single::helper()->getPDO();        
-    }
-
-    public function index()
+   public function index()
     {
         if ($this->orgIndex()) {
             return;
@@ -102,10 +95,10 @@ class RBACController extends DashboardController
             
             switch ($thing) {
                 case 'role': {
-                    $vars['column'] = (new Roles($this->conn))->getDescribe()->getTwigColumns($response['data']['record'] ?? array());
+                    $vars['column'] = (new RolesDescribe())->getTwigColumns($response['data']['record'] ?? array());
                 } break;
                 case 'permission': {
-                    $vars['column'] = (new Permissions($this->conn))->getDescribe()->getTwigColumns($response['data']['record'] ?? array());
+                    $vars['column'] = (new PermissionsDescribe())->getTwigColumns($response['data']['record'] ?? array());
                     $modules = $this->indopost('/statement',
                             array(
                                 'sql' => 'SELECT DISTINCT module FROM rbac_permissions WHERE alias=:alias AND is_active=1',
@@ -247,7 +240,7 @@ class RBACController extends DashboardController
     
     function submit_role(string $action)
     {
-        $record = (new Roles($this->conn))->getDescribe()->getPostValues();
+        $record = (new RolesDescribe())->getPostValues();
         
         if ($action == 'update'
                 && ! isset($record['id'])) {
@@ -268,7 +261,7 @@ class RBACController extends DashboardController
     
     function submit_permission(string $action)
     {
-        $record = (new Permissions($this->conn))->getDescribe()->getPostValues();
+        $record = (new PermissionsDescribe())->getPostValues();
         
         if ($action == 'update'
                 && ! isset($record['id'])) {
@@ -289,7 +282,7 @@ class RBACController extends DashboardController
     
     function submit_role_permission(string $action)
     {
-        $record = (new RolePermission($this->conn))->getDescribe()->getPostValues();
+        $record = (new RolePermissionDescribe())->getPostValues();
         
         if ( ! isset($record['alias']) ||
                 ! isset($record['role_id']) ||

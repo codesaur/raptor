@@ -1,7 +1,6 @@
 <?php namespace Velociraptor;
 
 use codesaur as single;
-use codesaur\RBAC\User;
 use codesaur\Http\Route;
 
 class Routing extends \codesaur\Http\Routing
@@ -12,25 +11,16 @@ class Routing extends \codesaur\Http\Routing
             return $this->redirectLogin($route);
         }
         
-        $controller = new Controller();
-        $response = $controller->indopost('/auth/jwt',
+        $response = (new Controller())->indopost('/auth/jwt',
                 array('jwt' => single::session()->get('indo/jwt')));
 
-        if ( ! isset($response['data']['account']['id'])
+        if ( ! isset($response['data']['rbac'])
+                || ! isset($response['data']['account']['id'])
                 || ! isset($response['data']['organization']['alias'])) {
             return $this->redirectLogin($route);
         }
-
-        $rbac = new User(single::helper()->getPDO());
-        if ( ! $rbac->init(
-                $response['data']['account']['id'],
-                $response['data']['organization']['alias'])) {
-            return $this->redirectLogin($route);
-        }
         
-        $response['data']['rbac'] = $rbac;
-        
-        single::user()->login($response['data']);
+        single::user()->login($response['data']['account'], $response['data']['organization'], $response['data']['rbac']);
         
         if ( ! $this->isRequireSession($route)) {
             single::session()->lock();

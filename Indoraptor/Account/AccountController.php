@@ -3,10 +3,7 @@
 use codesaur as single;
 use codesaur\HTML\Template;
 
-use Indoraptor\Content\MailerModel;
 use Indoraptor\Content\ContentModel;
-
-use PHPMailer\PHPMailer\PHPMailer;
 
 class AccountController extends \Indoraptor\IndoController
 {
@@ -34,11 +31,6 @@ class AccountController extends \Indoraptor\IndoController
                 throw new \Exception('username');
             }
             
-            $mailer = $this->getMailer();
-            if ( ! $mailer) {
-                throw new \Exception('mailer');
-            }
-            
             $content = new ContentModel($this->conn);
             $content->setTables('templates');
             $templates = $content->getByKeyword('request-new-account');
@@ -64,10 +56,7 @@ class AccountController extends \Indoraptor\IndoController
             $template->set('username', $payload->username);
             $template->source($templates['full'][$payload->flag]);
             
-            $mailer->MsgHTML($template->output());
-            $mailer->Subject = $templates['title'][$payload->flag];
-            $mailer->AddAddress($payload->email, $payload->username);
-            $mailer->Send();
+            $this->sendEmail($payload->email, $payload->username, $templates['title'][$payload->flag], $template->output());
         } catch(\Exception $e) {
             if (DEBUG) {
                 \error_log($e->getMessage());
@@ -101,11 +90,6 @@ class AccountController extends \Indoraptor\IndoController
                 throw new \Exception('inactive');
             }
             
-            $mailer = $this->getMailer();
-            if ( ! $mailer) {
-                throw new \Exception('mailer');
-            }
-            
             $content = new ContentModel($this->conn);
             $content->setTables('templates');
             $templates = $content->getByKeyword('forgotten-password-reset');
@@ -135,11 +119,9 @@ class AccountController extends \Indoraptor\IndoController
             $template->source($templates['full'][$flag]);
             $login_link = $payload->login ?? (single::app()->getWebUrl(false) . '/dashboard/login');
             $template->set('link', "$login_link?forgot=$useid");
-
-            $mailer->MsgHTML($template->output());
-            $mailer->Subject = $templates['title'][$flag];
-            $mailer->AddAddress($payload->email, $record['first_name'] . ' ' . \mb_substr($record['last_name'], 0, 1, 'UTF-8'));
-            $mailer->Send();
+            
+            $receiver = $record['first_name'] . ' ' . \mb_substr($record['last_name'], 0, 1, 'UTF-8');
+            $this->sendEmail($payload->email, $receiver, $templates['title'][$flag], $template->output());
         } catch(\Exception $e) {
             if (DEBUG) {
                 \error_log($e->getMessage());
@@ -209,13 +191,5 @@ class AccountController extends \Indoraptor\IndoController
         unset($recorda['updated_by']);            
 
         $this->success($recorda);
-    }
-    
-    public function getMailer() : ?PHPMailer
-    {
-        $model = new MailerModel($this->conn);
-        $rows = $model->getRows();
-        
-        return single::app()->getPHPMailer(\end($rows));
     }
 }

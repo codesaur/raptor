@@ -133,6 +133,8 @@ class LoginController extends DashboardController
         
         if ($account_id && $id && single::user()->isLogin()
                 && $id != single::user()->organization('id')) {
+            $current_org_id = single::user()->organization('id');
+            
             $organizations_result = $this->indopost('/statement', array(
                 'sql' =>
                 'SELECT t2.id, t2.name, t2.logo, t2.alias ' .
@@ -157,9 +159,7 @@ class LoginController extends DashboardController
                             'message' =>
                             'Хэрэглэгч ' . single::user()->account('first_name') . ' ' .
                             single::user()->account('last_name') . ' нэвтэрсэн байгууллага сонгов.',
-                            'jwt-info' => $jwt_info,
-                            'enter' => $organizations_result['data'][0],
-                            'leave' => single::user()->organization()
+                            'jwt-info' => $jwt_info, 'enter' => $id, 'leave' => $current_org_id
                         ),
                         LogLevel::Security
                     );
@@ -204,6 +204,7 @@ class LoginController extends DashboardController
                     $log = array('message' => "Шинээр $username нэртэй [$email] хаягтай хэрэглэгч үүсгэх хүсэлт ирүүлсэн боловч, уг мэдээллээр урьд нь хүсэлт өгч байсныг бүртгэсэн байсан учир дахин хүсэлт бүртгэхээс татгалзав.", 'error' => 'newbie');
                 } break;
                 case 'payload': $notice = single::text('invalid-request'); break;
+                default: $notice = $response['data']['error']; break;
             }
         } elseif (isset($response['data']['id'])) {
             $success = true;

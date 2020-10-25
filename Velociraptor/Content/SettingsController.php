@@ -64,11 +64,11 @@ class SettingsController extends DashboardController
             $column['alias']['value'] = single::user()->organization('alias');
         }
         
-        $column += $image->getAsTwigMultiColumn('full', $auto_increment, \getenv('IMAGE_MAIN') ?: 1);
-        $column += $image->getAsTwigMultiColumn('short', $auto_increment, \getenv('IMAGE_LOGO_SMALL') ?: 2);
-        $column += $image->getAsTwigColumn('apple_touch', $auto_increment, \getenv('IMAGE_APPLE_TOUCH') ?: 6);
-        $column += $image->getAsTwigColumn('ico_png', $auto_increment, \getenv('IMAGE_ICO_PNG') ?: 7);
-        $column += $image->getAsTwigColumn('background', $auto_increment, \getenv('IMAGE_BACKGROUND') ?: 8);
+        $column += $image->getAsTwigMultiColumn('full', $auto_increment, \getenv('IMAGE_MAIN', true) ?: 1);
+        $column += $image->getAsTwigMultiColumn('short', $auto_increment, \getenv('IMAGE_LOGO_SMALL', true) ?: 2);
+        $column += $image->getAsTwigColumn('apple_touch', $auto_increment, \getenv('IMAGE_APPLE_TOUCH', true) ?: 6);
+        $column += $image->getAsTwigColumn('ico_png', $auto_increment, \getenv('IMAGE_ICO_PNG', true) ?: 7);
+        $column += $image->getAsTwigColumn('background', $auto_increment, \getenv('IMAGE_BACKGROUND', true) ?: 8);
         
         $action = single::link('crud-submit', array('action' => empty($record) ? 'insert' : 'update'))
                 . '?logger=settings&controller=' . \urlencode($this->getMe()) . "&table=$table";
@@ -184,11 +184,11 @@ class SettingsController extends DashboardController
                 }
                 
                 $image = (new ImageController("/$table/$auto_increment"))->setTable($table);
-                $image->post_multi('full', $auto_increment, array('type' => \getenv('IMAGE_MAIN') ?: 1));
-                $image->post_multi('short', $auto_increment, array('type' => \getenv('IMAGE_LOGO_SMALL') ?: 2));
-                $image->post('apple_touch', $auto_increment, array('type' => \getenv('IMAGE_APPLE_TOUCH') ?: 6));
-                $image->post('ico_png', $auto_increment, array('type' => \getenv('IMAGE_ICO_PNG') ?: 7));
-                $image->post('background', $auto_increment, array('type' => \getenv('IMAGE_BACKGROUND') ?: 8));
+                $image->post_multi('full', $auto_increment, array('type' => \getenv('IMAGE_MAIN', true) ?: 1));
+                $image->post_multi('short', $auto_increment, array('type' => \getenv('IMAGE_LOGO_SMALL', true) ?: 2));
+                $image->post('apple_touch', $auto_increment, array('type' => \getenv('IMAGE_APPLE_TOUCH', true) ?: 6));
+                $image->post('ico_png', $auto_increment, array('type' => \getenv('IMAGE_ICO_PNG', true) ?: 7));
+                $image->post('background', $auto_increment, array('type' => \getenv('IMAGE_BACKGROUND', true) ?: 8));
             }
             
             if (isset($record['favico'])

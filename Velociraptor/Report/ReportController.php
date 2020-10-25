@@ -56,6 +56,6 @@ class ReportController extends DashboardController
         
         $view->render(new TwigTemplate(
                 \dirname(__FILE__) . '/web-google-analytics.html',
-                array('GOOGLE_CLIENT_ID' => \getenv('GOOGLE_CLIENT_ID'))));
+                array('GOOGLE_CLIENT_ID' => \getenv('GOOGLE_CLIENT_ID', true))));
     }
 }

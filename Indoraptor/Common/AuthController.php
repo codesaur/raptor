@@ -1,6 +1,7 @@
 <?php namespace Indoraptor;
 
 use codesaur\Globals\Post;
+use codesaur\RBAC\RBACUser;
 
 use Indoraptor\Account\AccountModel;
 use Indoraptor\Account\OrganizationModel;
@@ -99,6 +100,16 @@ class AuthController extends IndoController
             } else {
                 $response['organization']['user'] = $user;
             }
+            
+            $rbac = new RBACUser();
+            if ( ! $rbac->init(
+                    $this->conn, 
+                    $response['account']['id'],
+                    $response['organization']['alias'])) {
+                throw new \Exception('RBAC user not set!');
+            }
+            
+            $response['rbac'] = $rbac;
 
             return $this->success($response);
         } catch(\Exception $e) {

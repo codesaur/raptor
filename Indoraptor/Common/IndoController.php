@@ -4,14 +4,15 @@ use codesaur as single;
 use codesaur\Http\Header;
 use codesaur\Globals\Post;
 use codesaur\Globals\Server;
+use codesaur\DataObject\MySQL;
 use codesaur\DataObject\Table;
 use codesaur\MultiModel\MultiModel;
 
 use Firebase\JWT\JWT;
 
-define('INDO_JWT_ALGORITHM', \getenv('INDO_JWT_ALGORITHM') ?: 'HS256');
-define('INDO_JWT_LIFETIME',  \getenv('INDO_JWT_LIFETIME') ?: 2592000);
-define('INDO_JWT_SECRET',    \getenv('INDO_JWT_SECRET') ?: 'codesaur-indoraptor-not-so-secret');
+define('INDO_JWT_ALGORITHM', \getenv('INDO_JWT_ALGORITHM', true) ?: 'HS256');
+define('INDO_JWT_LIFETIME',  \getenv('INDO_JWT_LIFETIME', true) ?: 2592000);
+define('INDO_JWT_SECRET',    \getenv('INDO_JWT_SECRET', true) ?: 'codesaur-indoraptor-not-so-secret');
 
 class IndoController extends \codesaur\Http\Controller
 {
@@ -21,14 +22,35 @@ class IndoController extends \codesaur\Http\Controller
     private $_params;
     private $_payload;
     
-    private $_is_internal = false;
+    private $_is_internal;
     
     function __construct(bool $internal = false)
     {
         $this->_is_internal = $internal;
         
-        $this->conn = single::helper()->getPDO();        
-        if ( ! $this->conn->alive()) {
+        $configuration = array(
+            'driver'    => \getenv('DB_DRIVER', true) ?: 'mysql',
+            'host'      => \getenv('DB_HOST', true) ?: 'localhost',
+            'username'  => \getenv('DB_USERNAME', true) ?: 'root',
+            'password'  => \getenv('DB_PASSWORD', true) ?: '',
+            'name'      => \getenv('DB_NAME', true) ?: 'indoraptor',
+            'engine'    => \getenv('DB_ENGINE', true) ?: 'InnoDB',
+            'charset'   => \getenv('DB_CHARSET', true) ?: 'utf8',
+            'collation' => \getenv('DB_COLLATION', true) ?: 'utf8_unicode_ci',
+            'options'   => array(
+                \PDO::ATTR_ERRMODE     => DEBUG ?
+                \PDO::ERRMODE_EXCEPTION : \PDO::ERRMODE_WARNING,
+                \PDO::ATTR_PERSISTENT  => \getenv('DB_PERSISTENT', true) == 'true'
+            )
+        );
+        
+        $this->conn = new MySQL($configuration);
+        
+        if ($this->conn->alive()) {
+            if (\getenv('TIME_ZONE_UTC', true)) {
+                $this->conn->exec('SET time_zone = ' . $this->conn->quote(\getenv('TIME_ZONE_UTC', true)));
+            }
+        } else {
             $this->error('CDO: Not connected!', 700);
         }
     }
@@ -282,6 +304,72 @@ class IndoController extends \codesaur\Http\Controller
         }
 
         $this->success($result);
+    }
+
+    public function email()
+    {
+        if ( ! $this->accept()) {
+            return $this->error('Not Allowed');
+        }
+        
+        $payload = $this->payload(true);
+        if ( ! isset($payload['to'])
+                || ! isset($payload['subject'])
+                || ! isset($payload['message'])) {
+            return $this->error('Invalid Request');
+        }
+        
+        try {
+            $this->sendEmail($payload['to'], $payload['name'] ?? '', $payload['subject'], $payload['message']);
+            $this->success(array('message' => 'Email successfully sent to destination'));
+        } catch (\Exception $ex) {
+            $this->error($ex->getMessage());
+        }
+    }
+    
+    public function sendEmail($to, $name, $subject, $message)
+    {
+        if (\getenv('MAIL_SENDER', true)) {
+            $mail = new \codesaur\Base\Mail();
+            $mail->sender = \getenv('MAIL_SENDER', true);
+            $mail->to = $to;
+            $mail->message($message);
+            $mail->subject = $subject;
+            $mail->send();
+        } else {
+            $model = new Content\MailerModel($this->conn);
+            $rows = $model->getRows();
+            $record = \end($rows);
+
+            if (empty($record)
+                    || ! isset($record['charset']) || ! isset($record['host']) || ! isset($record['port'])
+                    || ! isset($record['is_smtp']) || ! isset($record['smtp_auth']) || ! isset($record['smtp_secure'])
+                    || ! isset($record['username']) || ! isset($record['password']) || ! isset($record['email'])
+                    || ! isset($record['name'])) {
+                throw new \Exception('mailer');
+            }
+
+            $mailer = new \PHPMailer\PHPMailer\PHPMailer(DEBUG ? true : null);
+            if (((int) $record['is_smtp']) == 1) {
+               $mailer->IsSMTP(); 
+            }
+            $mailer->CharSet = $record['charset'];
+            $mailer->SMTPAuth = (bool)((int) $record['smtp_auth']);
+            $mailer->SMTPSecure = $record['smtp_secure'];
+            $mailer->Host = $record['host'];
+            $mailer->Port = $record['port'];
+            $mailer->Username = $record['username'];
+            $mailer->Password = $record['password'];
+            $mailer->SetFrom($record['email'], $record['name']);
+            $mailer->AddReplyTo($record['email'], $record['name']);
+            $mailer->SMTPOptions = array('ssl' => array(
+                'verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true));
+            
+            $mailer->MsgHTML($message);
+            $mailer->Subject = $subject;
+            $mailer->AddAddress($to, $name);
+            $mailer->Send();
+        }
     }
     
     final public function view()

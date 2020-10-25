@@ -48,35 +48,35 @@ class WebsiteController extends \Indoraptor\IndoController
                 $stmt_files->bindParam(':code', $flag, \PDO::PARAM_STR, 6);
                 $stmt_files->bindParam(':id', $data['id'], \PDO::PARAM_INT);
 
-                $type1 = \getenv('IMAGE_MAIN') ?: 1;
+                $type1 = \getenv('IMAGE_MAIN', true) ?: 1;
                 $stmt_files->bindParam(':type', $type1, \PDO::PARAM_INT);
                 $stmt_files->execute();
                 if ($stmt_files->rowCount() == 1) {
                     $data['logo'] = $stmt_files->fetch(\PDO::FETCH_ASSOC)['image'];
                 }
 
-                $type2 = \getenv('IMAGE_LOGO_SMALL') ?: 2;
+                $type2 = \getenv('IMAGE_LOGO_SMALL', true) ?: 2;
                 $stmt_files->bindParam(':type', $type2, \PDO::PARAM_INT);
                 $stmt_files->execute();
                 if ($stmt_files->rowCount() == 1) {
                     $data['logo-small'] = $stmt_files->fetch(\PDO::FETCH_ASSOC)['image'];
                 }
 
-                $type6 = \getenv('IMAGE_APPLE_TOUCH') ?: 6;
+                $type6 = \getenv('IMAGE_APPLE_TOUCH', true) ?: 6;
                 $stmt_files->bindParam(':type', $type6, \PDO::PARAM_INT);
                 $stmt_files->execute();
                 if ($stmt_files->rowCount() == 1) {
                     $data['apple-touch-icon'] = $stmt_files->fetch(\PDO::FETCH_ASSOC)['image'];
                 }
 
-                $type7 = \getenv('IMAGE_ICO_PNG') ?: 7;
+                $type7 = \getenv('IMAGE_ICO_PNG', true) ?: 7;
                 $stmt_files->bindParam(':type', $type7, \PDO::PARAM_INT);
                 $stmt_files->execute();
                 if ($stmt_files->rowCount() == 1) {
                     $data['ico-png'] = $stmt_files->fetch(\PDO::FETCH_ASSOC)['image'];
                 }
 
-                $type8 = \getenv('IMAGE_BACKGROUND') ?: 8;
+                $type8 = \getenv('IMAGE_BACKGROUND', true) ?: 8;
                 $stmt_files->bindParam(':type', $type8, \PDO::PARAM_INT);
                 $stmt_files->execute();
                 if ($stmt_files->rowCount() == 1) {
