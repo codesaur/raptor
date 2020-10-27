@@ -16,7 +16,7 @@ class AuthController extends IndoController
         try {
             $translation = new TranslationModel($this->conn);
             $translation->setTables('dashboard');
-            $text = $translation->retrieve(single::language()->current());
+            $text = $translation->retrieve($this->getAppLanguageCode());
             
             $payload = $this->payload();
             if ( ! isset($payload->username) || empty($payload->username) ||
@@ -73,8 +73,10 @@ class AuthController extends IndoController
 
             $model = new AccountModel($this->conn);
             $account = $model->getByID($validation['account_id']);
-            if ( ! isset($account['id'])) {
-                throw new \Exception('Account not found!');
+            if (isset($account['id'])) {
+                $account['id'] = (int) $account['id'];
+            } else {
+                throw new \Exception('Account not found!');                
             }
 
             unset($account['password']);
@@ -98,7 +100,7 @@ class AuthController extends IndoController
                 }
             }
             
-            if (empty($response['organizations'])) {
+            if (empty($organizations)) {
                 throw new \Exception('User doesn\'t belong to an organization!');
             } elseif ( ! isset($organizations[0])) {
                $organizations[0] = $organizations[1];

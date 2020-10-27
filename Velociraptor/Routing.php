@@ -12,14 +12,14 @@ class Routing extends \codesaur\Http\Routing
         }
         
         $response = (new IndoClient())->internal(
-                '/auth/jwt', 'POST', true,
+                '/auth/jwt', 'POST', false,
                 array('jwt' => single::session()->get('indo/jwt')));
-
+        
         if ( ! single::user()->login(
-                $response->data->account ?? array(),
-                $response->data->organizations ?? array(),
-                $response->data->role_permissions ?? array())) {
-            return $this->redirectLogin($route, $response->error->message ?? null);
+                $response['data']['account'] ?? array(),
+                $response['data']['organizations'] ?? array(),
+                $response['data']['role_permissions'] ?? array())) {
+            return $this->redirectLogin($route, $response['error']['message'] ?? null);
         }
         
         if ( ! $this->isRequireSession($route)) {
@@ -50,7 +50,7 @@ class Routing extends \codesaur\Http\Routing
         $url = single::request()->getPathComplete();
         $url .= single::router()->generate('login', array())[0];
         if (isset($message)) {
-            $url .= '?message=' . \urlencode($message);
+            $url .= '?message=' . \urlencode($message) . '&message_type=danger';
         }
         
         single::header()->redirect($url);

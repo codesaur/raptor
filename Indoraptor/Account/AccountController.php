@@ -16,11 +16,12 @@ class AccountController extends \Indoraptor\IndoController
         try {
             $response = array();
             
+            $payload = $this->payload();
+
             $translation = new TranslationModel($this->conn);
             $translation->setTables('dashboard');
-            $text = $translation->retrieve(single::language()->current());
+            $text = $translation->retrieve($payload->flag ?? $this->getAppLanguageCode());
 
-            $payload = $this->payload();
             if ($this->isEmpty($payload->email ?? null) || $this->isEmpty($payload->username ?? null) ||
                     $this->isEmpty($payload->password ?? null) || $this->isEmpty($payload->flag ?? null)) {
                 throw new \Exception($text['invalid-request'] ?? 'Request is not valid!');
@@ -69,7 +70,7 @@ class AccountController extends \Indoraptor\IndoController
             $template->set('username', $payload->username);
             $template->source($templates['full'][$payload->flag]);
             
-            $this->sendEmail($payload->email, $payload->username, $templates['title'][$payload->flag], $template->output());
+            $this->sendEmail($payload->email, $payload->username, $templates['title'][$payload->flag], $template->output(), $payload->flag);
             
             $response['message'] = $text['to-complete-registration-check-email'] ?? 'Thank you. To complete your registration please check your email.';
             $log = array('id' => $id, 'message' => "Шинээр $payload->username нэртэй [$payload->email] хаягтай хэрэглэгч үүсгэх хүсэлт ирүүлснийг хүлээн авч амжилттай бүртгэв.");
@@ -105,12 +106,13 @@ class AccountController extends \Indoraptor\IndoController
         try {
             $response = array();
 
-            $translation = new TranslationModel($this->conn);
-            $translation->setTables('dashboard');
-            $text = $translation->retrieve(single::language()->current());
-
             $payload = $this->payload();
             $flag = $payload->flag ?? 'en';            
+     
+            $translation = new TranslationModel($this->conn);
+            $translation->setTables('dashboard');
+            $text = $translation->retrieve($flag);
+
             if ( ! isset($payload->email)) {
                 throw new \Exception($text['invalid-request'] ?? 'Request is not valid!');
             }
@@ -161,7 +163,7 @@ class AccountController extends \Indoraptor\IndoController
             $template->set('link', "$login_link?forgot=$useid");
             
             $receiver = $record['first_name'] . ' ' . \mb_substr($record['last_name'], 0, 1, 'UTF-8');
-            $this->sendEmail($payload->email, $receiver, $templates['title'][$flag], $template->output());
+            $this->sendEmail($payload->email, $receiver, $templates['title'][$flag], $template->output(), $flag);
             
             $response['message'] = $text['reset-email-sent'] ?? 'Нууц үгийг шинэчлэх зааврыг амжилттай илгээлээ.<br />Та заасан имейл хаягаа шалгаж зааврын дагуу нууц үгээ шинэчлэнэ үү!';
             $log = array('forgot' => $response['forgot'], 'message' => "Хэрэглэгч {$response['forgot']['first_name']} {$response['forgot']['last_name']} [$payload->email] нь нууц үгийг шинээр тааруулах хүсэлт илгээснийг зөвшөөрлөө.");

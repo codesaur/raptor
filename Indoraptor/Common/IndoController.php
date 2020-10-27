@@ -320,14 +320,14 @@ class IndoController extends \codesaur\Http\Controller
         }
         
         try {
-            $this->sendEmail($payload['to'], $payload['name'] ?? '', $payload['subject'], $payload['message']);
+            $this->sendEmail($payload['to'], $payload['name'] ?? '', $payload['subject'], $payload['message'], $payload['flag'] ?? $this->getAppLanguageCode());
             $this->success(array('message' => 'Email successfully sent to destination'));
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());
         }
     }
     
-    public function sendEmail($to, $name, $subject, $message)
+    public function sendEmail($to, $name, $subject, $message, $flag = 'en')
     {
         if (\getenv('MAIL_SENDER', true)) {
             $mail = new \codesaur\Base\Mail();
@@ -348,7 +348,7 @@ class IndoController extends \codesaur\Http\Controller
                     || ! isset($record['is_smtp']) || ! isset($record['smtp_auth']) || ! isset($record['smtp_secure'])) {
                 $translation = new Localization\TranslationModel($this->conn);
                 $translation->setTables('dashboard');
-                $text = $translation->retrieve(single::language()->current());
+                $text = $translation->retrieve($flag);
                 throw new \Exception($text['emailer-not-set'] ?? 'Email carrier not found!');
             }
 
@@ -373,6 +373,20 @@ class IndoController extends \codesaur\Http\Controller
             $mailer->AddAddress($to, $name);
             $mailer->Send();
         }
+    }
+    
+    final public function getAppLanguageCode()
+    {
+        if (single::language()->current()) {
+            return single::language()->current();
+        }
+        
+        $session_path = single::app()->getNamespace() . 'Language';
+        if (isset($_SESSION[$session_path])) {
+            return $_SESSION[$session_path];
+        }
+        
+        return 'en';
     }
     
     final public function view()
