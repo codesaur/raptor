@@ -82,6 +82,10 @@ class AccountController extends \Indoraptor\IndoController
         } finally {            
             if ( ! empty($log)) {
                 $log['address'] = (new Server())->determineIP();
+                $log['payload'] = array(
+                    'code' => $payload->flag ?? '',
+                    'email' => $payload->email ?? '',
+                    'username' => $payload->username ?? '');
                 
                 $logger = new LoggerModel($this->conn);
                 $logger->setTable('account');
@@ -89,11 +93,7 @@ class AccountController extends \Indoraptor\IndoController
                     'type' => 9,
                     'level'  => LogLevel::Security,
                     'info'   => \json_encode($log),
-                    'reason' => 'request-new-account',
-                    'payload' => array(
-                        'code' => $payload->flag ?? '',
-                        'email' => $payload->email ?? '',
-                        'username' => $payload->username ?? '')
+                    'reason' => 'request-new-account'
                 ));
             }
             
@@ -175,6 +175,7 @@ class AccountController extends \Indoraptor\IndoController
         } finally {
             if ( ! empty($log)) {
                 $log['address'] = (new Server())->determineIP();
+                $log['payload'] = array('code' => $payload->flag ?? '', 'email' => $payload->email ?? '');
                 
                 $logger = new LoggerModel($this->conn);
                 $logger->setTable('account');
@@ -182,10 +183,7 @@ class AccountController extends \Indoraptor\IndoController
                     'type' => 9,
                     'level'  => LogLevel::Security,
                     'info'   => \json_encode($log),
-                    'reason' => 'request-password',
-                    'payload' => array(
-                        'code' => $flag,
-                        'email' => $payload->email ?? '')
+                    'reason' => 'request-password'
                 ));
             }
             
