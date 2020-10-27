@@ -1,6 +1,5 @@
 <?php namespace Indoraptor;
 
-use codesaur as single;
 use codesaur\Globals\Post;
 use codesaur\RBAC\RBACUser;
 

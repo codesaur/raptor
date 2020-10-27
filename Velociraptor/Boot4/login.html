@@ -103,12 +103,17 @@
         };
         
         function displaySignIn() {
-            $('#signup_form').addClass('d-none');
-            $('#forgot_form').addClass('d-none');
+            formSignUp.addClass('d-none');
+            formForgot.addClass('d-none');
             
-            $('#login_form').removeClass('d-none');
-            
+            formLogin.removeClass('d-none');            
             formLogin.addClass('animated flipInX');
+        }
+        
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        if (urlParams && urlParams.get('message')) {
+            showMessage(formLogin, urlParams.get('message_type') ?? 'warning', urlParams.get('message'));
         }
 
         jQuery.validator.addMethod('passwordMatch', function(value, element) {
@@ -181,11 +186,10 @@
         $('#forget_password').click(function(e) {
             e.preventDefault();
             
-            $('#login_form').addClass('d-none');
-            $('#signup_form').addClass('d-none');
+            formLogin.addClass('d-none');
+            formSignUp.addClass('d-none');
             
-            $('#forgot_form').removeClass('d-none');
-            
+            formForgot.removeClass('d-none');            
             formForgot.addClass('animated flipInX');
         });
 
@@ -198,11 +202,10 @@
         $('#signup').click(function(e) {
             e.preventDefault();
             
-            $('#login_form').addClass('d-none');
-            $('#forgot_form').addClass('d-none');
+            formLogin.addClass('d-none');
+            formForgot.addClass('d-none');
             
-            $('#signup_form').removeClass('d-none');
-            
+            formSignUp.removeClass('d-none');            
             formSignUp.addClass('animated flipInX');
         });
 

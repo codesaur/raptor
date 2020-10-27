@@ -107,7 +107,7 @@ class AccountController extends \Indoraptor\IndoController
             $response = array();
 
             $payload = $this->payload();
-            $flag = $payload->flag ?? 'en';            
+            $flag = $payload->flag ?? $this->getAppLanguageCode();            
      
             $translation = new TranslationModel($this->conn);
             $translation->setTables('dashboard');
@@ -184,7 +184,7 @@ class AccountController extends \Indoraptor\IndoController
                     'info'   => \json_encode($log),
                     'reason' => 'request-password',
                     'payload' => array(
-                        'code' => $payload->flag ?? 'en',
+                        'code' => $flag,
                         'email' => $payload->email ?? '')
                 ));
             }
