@@ -333,7 +333,7 @@ class IndoController extends \codesaur\Http\Controller
             $mail = new \codesaur\Base\Mail();
             $mail->sender = \getenv('MAIL_SENDER', true);
             $mail->to = $to;
-            $mail->message($message);
+            $mail->message = $message;
             $mail->subject = $subject;
             $mail->send();
         } else {

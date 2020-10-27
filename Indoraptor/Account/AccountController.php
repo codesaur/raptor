@@ -63,8 +63,6 @@ class AccountController extends \Indoraptor\IndoController
                 throw new \Exception($text['account-request-exists'] ?? 'It looks like information belongs to an existing request.');
             }
             
-            $response['id'] = $id;
-            
             $template = new Template();
             $template->set('email', $payload->email);
             $template->set('username', $payload->username);
@@ -72,6 +70,7 @@ class AccountController extends \Indoraptor\IndoController
             
             $this->sendEmail($payload->email, $payload->username, $templates['title'][$payload->flag], $template->output(), $payload->flag);
             
+            $response['id'] = $id;
             $response['message'] = $text['to-complete-registration-check-email'] ?? 'Thank you. To complete your registration please check your email.';
             $log = array('id' => $id, 'message' => "Шинээр $payload->username нэртэй [$payload->email] хаягтай хэрэглэгч үүсгэх хүсэлт ирүүлснийг хүлээн авч амжилттай бүртгэв.");
         } catch (\Exception $e) {
@@ -141,8 +140,8 @@ class AccountController extends \Indoraptor\IndoController
             }
 
             $useid = \uniqid('use');                        
-            $forgot = new ForgotModel($this->conn);
-            $response['forgot'] = array(
+            $forgotModel = new ForgotModel($this->conn);
+            $forgot = array(
                 'flag'       => $flag,
                 'use_id'     => $useid,
                 'account'    => $record['id'],
@@ -152,7 +151,7 @@ class AccountController extends \Indoraptor\IndoController
                 'first_name' => $record['first_name']
             );
 
-            if ( ! $forgot->insert($response['forgot'])) {
+            if ( ! $forgotModel->insert($forgot)) {
                 throw new \Exception($text['record-insert-error'] ?? 'Error occurred while inserting record.');
             }
             
@@ -165,6 +164,7 @@ class AccountController extends \Indoraptor\IndoController
             $receiver = $record['first_name'] . ' ' . \mb_substr($record['last_name'], 0, 1, 'UTF-8');
             $this->sendEmail($payload->email, $receiver, $templates['title'][$flag], $template->output(), $flag);
             
+            $response['forgot'] = $forgot;
             $response['message'] = $text['reset-email-sent'] ?? 'Нууц үгийг шинэчлэх зааврыг амжилттай илгээлээ.<br />Та заасан имейл хаягаа шалгаж зааврын дагуу нууц үгээ шинэчлэнэ үү!';
             $log = array('forgot' => $response['forgot'], 'message' => "Хэрэглэгч {$response['forgot']['first_name']} {$response['forgot']['last_name']} [$payload->email] нь нууц үгийг шинээр тааруулах хүсэлт илгээснийг зөвшөөрлөө.");
         } catch (\Exception $e) {
