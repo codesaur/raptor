@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "codesaur/erketu": "^7.4.9",
+        "codesaur/erketu": "^8.1.2",
         "firebase/php-jwt": "^5.2.0",
         "phpmailer/phpmailer": "^6.0"
     },

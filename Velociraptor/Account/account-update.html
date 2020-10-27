@@ -83,7 +83,7 @@
                                     <a style="position:absolute;top:7px;left:24px;"
                                        files_id="{{ column['image']['files_id'] }}"
                                        class="delete btn btn-outline-danger btn-icon btn-pill" 
-                                       {% if user.data()['account']['id'] == column['id']['value'] %}on-success="cleanProfileImg();"{% endif %} 
+                                       {% if user.account('id') == column['id']['value'] %}on-success="cleanProfileImg();"{% endif %} 
                                        href="{{ column['id']['value'] }}" pre-img="image_current"><i class="la la-trash"></i></a>
                                 {% endif %}
                                 </div>

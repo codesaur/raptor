@@ -20,8 +20,8 @@ class CRUDController extends DashboardController
     public $table = null;
     public $model = null;
     
-    function __construct()
-    {        
+    public function __construct()
+    {
         $post = new Post();
         
         if ( ! single::request()->hasParam('logger')) {

@@ -1,16 +1,24 @@
 <?php namespace Velociraptor;
 
 use codesaur as single;
-use codesaur\Http\Route;
-use codesaur\Http\Router;
-use codesaur\Http\Client;
-use codesaur\Http\Request;
 use codesaur\Base\LogLevel;
 use codesaur\Globals\Server;
-use codesaur\Base\OutputBuffer;
 
 class Controller extends \codesaur\Http\Controller
 {
+    public $indo_client;
+    
+    final public function indo(
+            string $pattern, string $method,
+            bool $json, $payload, array $header = [])
+    {
+        if ( ! isset($this->indo_client)) {
+            $this->indo_client = new IndoClient();
+        }
+        
+        $this->indo_client->internal($pattern, $method, $json, $payload, $header);
+    }
+    
     final public function indoget(string $pattern, $payload = [], bool $json = false)
     {
         return $this->indo($pattern, 'GET', $json, $payload);
@@ -29,137 +37,6 @@ class Controller extends \codesaur\Http\Controller
     final public function indodelete(string $pattern, $payload = [], bool $json = false)
     {
         return $this->indo($pattern, 'DELETE', $json, $payload);
-    }
-    
-    final public function indouri($url, bool $relative = false) : string
-    {
-        return single::app()->getWebUrl($relative) . "/indo/$url";
-    }
-
-    final public function indolink($route, array $params = []) : string
-    {
-        $routing = new \Indoraptor\Routing();
-        if ($routing) {
-            $router = new Router();
-            $routing->collect($router);
-            $url = $router->generate($route, $params);
-        }
-        
-        if (empty($url)) {
-            return 'indo-link-invalid';
-        }
-        
-        return $this->indouri($url[0]);
-    }
-    
-    final public function indo(
-            string $pattern, string $method,
-            bool $json, $payload, array $header = [])
-    {
-        $buffer = new OutputBuffer();
-        $buffer->start();
-        
-        try {
-            $routing = new \Indoraptor\Routing();
-            if ( ! $routing) {
-                throw new \Exception('Indoraptor routing not found!');
-            }
-            
-            $router = new Router();
-            $routing->collect($router);
-            $pos = \strpos($pattern, '?');
-            if ($pos !== false) {
-                $url = \substr($pattern, 0, $pos);
-                $query = \substr($pattern, $pos + 1);
-                
-                $values = [];
-                \parse_str($query, $values);
-                
-                $request = new Request();
-                foreach ($values as $key => $value) {
-                    $request->recursionParams($key, $value);
-                }
-                $params = $request->getParams();
-            } else {
-                $url = $pattern;
-            }
-            
-            $route = $router->match($url, $method);
-            if ( ! $route instanceof Route) {
-                throw new \Exception('Unknown route!');
-            }
-            
-            $action = $route->getAction();
-            $args = $route->getParameters();
-            $controller = $route->getController();
-            if ( ! \class_exists($controller)) {
-                throw new \Exception("$controller is not available!");
-            }
-            
-            if (\getenv('INDO_JWT', true)) {
-                $header['HTTP_JWT'] = \getenv('INDO_JWT', true);
-            }
-            
-            $class = new $controller(true);
-            if ( ! $class instanceof \Indoraptor\IndoController) {
-                throw new \Exception("$controller is not an Indoraptor controller!");
-            }            
-
-            if ( ! $class->isConnected()) {
-                throw new \Exception('Not connected!');
-            }
-
-            if ( ! $class->hasMethod($action) || ! $class->isCallable($action)) {
-                throw new \Exception("Action named $action is not part of $controller!");
-            }
-            
-            $class->setHeader($header);
-            $class->setPayload($payload);
-            $class->setParams($params ?? array());
-            
-            if (empty($args)) {
-                $class->$action();
-            } else {
-                $this->callFuncArray(array($class, $action), $args);
-            }
-        } catch (\Exception $e) {
-            echo \json_encode(array('error' => array(
-                'code' => 404, 'message' => $e->getMessage())));
-        } finally {
-            $result = $buffer->getContents();
-            $buffer->end();
-            
-            return \json_decode($result, ! $json);
-        }        
-    }
-    
-    final function indorequest(string $pattern, string $method, $payload)
-    {
-        try {
-            $header = array();
-            
-            if (\getenv('INDO_JWT', true)) {
-                $header[] = 'JWT:' . \getenv('INDO_JWT', true);
-            }
-            
-            if ($method != 'GET' && ! empty($payload)) {
-                $data = \json_encode($payload);
-                $header[] = 'Content-Type: application/json';
-            } else {
-                $data = '';
-            }
-            
-            $options = array(
-                CURLOPT_SSL_VERIFYHOST => false,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_HTTPHEADER     => $header
-            );
-            
-            return (new Client())->request($this->indouri($pattern), $method, $data, $options);
-        } catch (\Exception $e) {
-            return \json_encode(array('error' => array(
-                'code' => $e->getCode(), 'message' => $e->getMessage())));
-        }
     }
 
     final public function indolog(
@@ -187,8 +64,8 @@ class Controller extends \codesaur\Http\Controller
         if (isset($type)) { $payload['type'] = $type; }        
         if (isset($time)) { $payload['created_at'] = $time; }
 
-        if (single::user()->isLogin() &&
-                single::user()->has('account', 'id')) {
+        if (single::user()->isLogin()
+                && single::user()->account('id') != null) {
             $payload['created_by'] = (int) single::user()->account('id');
         }
         
@@ -196,7 +73,7 @@ class Controller extends \codesaur\Http\Controller
             $table = single::request()->getParam('logger') ?? 'default';
         }
         
-        $this->indo("/log/$table", 'POST', false, $payload);
+        $this->indopost("/log/$table", $payload);
     }
     
     final public function changeLanguage($flag)

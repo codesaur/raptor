@@ -341,12 +341,15 @@ class IndoController extends \codesaur\Http\Controller
             $rows = $model->getRows();
             $record = \end($rows);
 
-            if (empty($record)
-                    || ! isset($record['charset']) || ! isset($record['host']) || ! isset($record['port'])
-                    || ! isset($record['is_smtp']) || ! isset($record['smtp_auth']) || ! isset($record['smtp_secure'])
-                    || ! isset($record['username']) || ! isset($record['password']) || ! isset($record['email'])
-                    || ! isset($record['name'])) {
-                throw new \Exception('mailer');
+            if (empty($record) || ! isset($record['charset'])
+                    || ! isset($record['host']) || ! isset($record['port'])
+                    || ! isset($record['email']) || ! isset($record['name'])
+                    || ! isset($record['username']) || ! isset($record['password'])
+                    || ! isset($record['is_smtp']) || ! isset($record['smtp_auth']) || ! isset($record['smtp_secure'])) {
+                $translation = new Localization\TranslationModel($this->conn);
+                $translation->setTables('dashboard');
+                $text = $translation->retrieve(single::language()->current());
+                throw new \Exception($text['emailer-not-set'] ?? 'Email carrier not found!');
             }
 
             $mailer = new \PHPMailer\PHPMailer\PHPMailer(DEBUG ? true : null);

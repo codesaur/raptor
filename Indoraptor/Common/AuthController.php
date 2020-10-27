@@ -1,21 +1,27 @@
 <?php namespace Indoraptor;
 
+use codesaur as single;
 use codesaur\Globals\Post;
 use codesaur\RBAC\RBACUser;
 
 use Indoraptor\Account\AccountModel;
 use Indoraptor\Account\OrganizationModel;
 use Indoraptor\Account\OrganizationUserModel;
+use Indoraptor\Localization\TranslationModel;
 
 class AuthController extends IndoController
 {
     public function entry()
     {
         try {
+            $translation = new TranslationModel($this->conn);
+            $translation->setTables('dashboard');
+            $text = $translation->retrieve(single::language()->current());
+            
             $payload = $this->payload();
             if ( ! isset($payload->username) || empty($payload->username) ||
                     ! isset($payload->password) || empty($payload->password)) {
-                throw new \Exception('invalid request');
+                throw new \Exception($text['invalid-request'] ?? 'Request is not valid!');
             }
             
             $model = new AccountModel($this->conn);
@@ -24,15 +30,15 @@ class AuthController extends IndoController
             $stmt->bindParam(':usr', $payload->username, \PDO::PARAM_STR, $model->getDescribe()->getColumn('username')->getLength());
             $stmt->execute();
             if ($stmt->rowCount() != 1) {
-                throw new \Exception('account not found');
+                throw new \Exception($text['error-incorrect-credentials'] ?? 'Invalid username or password');
             }
 
             $account = $stmt->fetch(\PDO::FETCH_ASSOC);
             if ( ! (new Post())->asPassword($payload->password, $account['password'])) {
-                throw new \Exception('invalid password');
-            }            
+                throw new \Exception($text['error-incorrect-credentials'] ?? 'Invalid username or password');
+            }
             if (((int) $account['status']) == 0) {
-                throw new \Exception('inactive user');
+                throw new \Exception($text['error-account-inactive'] ?? 'User is not active');
             }
             
             unset($account['password']);
@@ -47,7 +53,7 @@ class AuthController extends IndoController
             $account['jwt'] = $this->generate($login_info);
             
             return $this->success(array('account' => $account));
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->error($e->getMessage());
         }
     }
@@ -73,46 +79,43 @@ class AuthController extends IndoController
 
             unset($account['password']);
 
-            $response = array('account' => $account);
-
-            $org_model = new OrganizationModel($this->conn);
-            $organization = $org_model->getByID($validation['organization_id'] ?? 1);
-            if ( ! isset($organization['id'])) {
-                throw new \Exception('Organization not found!');
-            }
+            $response = array('account' => $account);     
             
-            $response['organizations'] = $this->getAccountOrganizations($account['id']);
+            $org_model = new OrganizationModel($this->conn);
+            $org_user_model = new OrganizationUserModel($this->conn);            
+            $stmt = $org_user_model->dataobject()->prepare('SELECT t2.id, t2.name, t2.logo, t2.alias, t2.external ' .
+                    "FROM {$org_user_model->getTable()} as t1 JOIN {$org_model->getTable()} as t2 ON t1.organization_id = t2.id " .
+                    "WHERE t1.account_id = :id AND t1.is_active = 1 AND t1.status = 1 AND t2.is_active = 1 ORDER By t2.name");            
+            $stmt->bindParam(':id', $account['id'], \PDO::PARAM_INT);
+            $stmt->execute();
 
-            if ( ! empty($response['organizations'])) {
-                if (\count($response['organizations']) == 1) {
-                    if ($response['organizations'][0]['id'] != $organization['id']) {
-                        $organization = $org_model->getByID((int) $response['organizations'][0]['id']);
-                    }
+            $index = 0;
+            $organizations = array();
+            $current = $validation['organization_id'] ?? 1;
+            if ($stmt->rowCount()) {
+                while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                    $organizations[$row['id'] == $current ? 0 : $index++] = $row;
                 }
             }
-
-            $response['organization'] = $organization;
-
-            $org_user_model = new OrganizationUserModel($this->conn);
-            $user = $org_user_model->retrieve($organization['id'], $account['id']);
-            if ( ! isset($user['id'])) {
-                throw new \Exception('Can\'t get organization user information!');
-            } else {
-                $response['organization']['user'] = $user;
+            
+            if (empty($response['organizations'])) {
+                throw new \Exception('User doesn\'t belong to an organization!');
+            } elseif ( ! isset($organizations[0])) {
+               $organizations[0] = $organizations[1];
+               unset($organizations[1]);
             }
+
+            $response['organizations'] = $organizations;
             
             $rbac = new RBACUser();
-            if ( ! $rbac->init(
-                    $this->conn, 
-                    $response['account']['id'],
-                    $response['organization']['alias'])) {
+            if ( ! $rbac->init($this->conn, $account['id'], $organizations[0]['alias'])) {
                 throw new \Exception('RBAC user not set!');
             }
             
-            $response['rbac'] = $rbac;
+            $response['role_permissions'] = $rbac;
 
             return $this->success($response);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->error($e->getMessage());
         }
     }
@@ -154,7 +157,7 @@ class AuthController extends IndoController
                 'account_id' => $account['id'],
                 'organization_id' => $organization['id']);
             return $this->respond(array('jwt' => $this->generate($account_org_jwt)));
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->error($e->getMessage());
         }
     }
@@ -202,26 +205,5 @@ class AuthController extends IndoController
         }
         
         return null;
-    }
-    
-    public function getAccountOrganizations($account_id) : array
-    {
-        $orgs = array();
-        
-        $org_model = new OrganizationModel($this->conn);
-        $org_user_model = new OrganizationUserModel($this->conn);            
-        $stmt = $org_user_model->dataobject()->prepare('SELECT t2.id, t2.name, t2.logo, t2.alias, t2.external ' .
-                "FROM {$org_user_model->getTable()} as t1 JOIN {$org_model->getTable()} as t2 ON t1.organization_id = t2.id " .
-                "WHERE t1.account_id = :id AND t1.organization_id != 1 AND t1.is_active = 1 AND t1.status = 1 AND t2.is_active = 1 ORDER By t2.name");            
-        $stmt->bindParam(':id', $account_id, \PDO::PARAM_INT);
-        $stmt->execute();
-
-        if ($stmt->rowCount()) {
-            while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                $orgs[] = $row;
-            }
-        }
-        
-        return $orgs;
     }
 }

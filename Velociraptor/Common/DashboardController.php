@@ -52,7 +52,7 @@ abstract class DashboardController extends Controller
     public function onChangeLanguage()
     {
         if (single::user()->isLogin()
-                && single::user()->has('account', 'id')) {
+                && single::user()->account('id') != null) {
             $this->indoput('/record?model='
                     . \urlencode('Indoraptor\\Account\\AccountModel'),
                     array('record' =>

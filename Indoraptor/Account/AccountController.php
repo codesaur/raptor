@@ -1,20 +1,29 @@
 <?php namespace Indoraptor\Account;
 
 use codesaur as single;
+use codesaur\Base\LogLevel;
 use codesaur\HTML\Template;
+use codesaur\Globals\Server;
 
+use Indoraptor\Logger\LoggerModel;
 use Indoraptor\Content\ContentModel;
+use Indoraptor\Localization\TranslationModel;
 
 class AccountController extends \Indoraptor\IndoController
 {
     public function signup()
     {
-        $response = array();
         try {
+            $response = array();
+            
+            $translation = new TranslationModel($this->conn);
+            $translation->setTables('dashboard');
+            $text = $translation->retrieve(single::language()->current());
+
             $payload = $this->payload();
             if ($this->isEmpty($payload->email ?? null) || $this->isEmpty($payload->username ?? null) ||
                     $this->isEmpty($payload->password ?? null) || $this->isEmpty($payload->flag ?? null)) {
-                throw new \Exception('payload');
+                throw new \Exception($text['invalid-request'] ?? 'Request is not valid!');
             }
             
             $model = new AccountModel($this->conn);
@@ -22,13 +31,16 @@ class AccountController extends \Indoraptor\IndoController
             $stmt->bindParam(':eml', $payload->email, \PDO::PARAM_STR, $model->getDescribe()->getColumn('email')->getLength());
             $stmt->execute();
             if ($stmt->rowCount() == 1) {
-                throw new \Exception('email');
-            }            
+                $log = array('error' => 'email', 'message' => "Бүртгэлтэй [$payload->email] хаягаар шинэ хэрэглэгч үүсгэх хүсэлт ирүүллээ. Татгалзав.");
+                throw new \Exception($text['account-email-exists'] ?? 'It looks like email address belongs to an existing account.');
+            }
+            
             $pstmt = $model->dataobject()->prepare("SELECT * FROM {$model->getTable()} WHERE username=:usr");
             $pstmt->bindParam(':usr', $payload->username, \PDO::PARAM_STR, $model->getDescribe()->getColumn('username')->getLength());
             $pstmt->execute();
             if ($pstmt->rowCount() == 1) {
-                throw new \Exception('username');
+                $log = array('error' => 'username', 'message' => "Бүртгэлтэй [$payload->username] хэрэглэгчийн нэрээр шинэ хэрэглэгч үүсгэх хүсэлт ирүүллээ. Татгалзав.");
+                throw new \Exception($text['account-exists'] ?? 'It looks like information belongs to an existing account.');
             }
             
             $content = new ContentModel($this->conn);
@@ -36,7 +48,7 @@ class AccountController extends \Indoraptor\IndoController
             $templates = $content->getByKeyword('request-new-account');
             if ( ! isset($templates['full'][$payload->flag]) ||
                     ! isset($templates['title'][$payload->flag])) {
-                throw new \Exception('template');
+                throw new \Exception($text['email-template-not-set'] ?? 'Email template not found!');
             }
             
             $model->setTable('newbie');
@@ -46,7 +58,8 @@ class AccountController extends \Indoraptor\IndoController
                 'password' => $payload->password,
                 'code' => $payload->flag));
             if ( ! $id) {
-                throw new \Exception('newbie');
+                $log = array('error' => 'newbie', 'message' => "Шинээр $payload->username нэртэй [$payload->email] хаягтай хэрэглэгч үүсгэх хүсэлт ирүүлсэн боловч, уг мэдээллээр урьд нь хүсэлт өгч байсныг бүртгэсэн байсан учир дахин хүсэлт бүртгэхээс татгалзав.");
+                throw new \Exception($text['account-request-exists'] ?? 'It looks like information belongs to an existing request.');
             }
             
             $response['id'] = $id;
@@ -57,24 +70,49 @@ class AccountController extends \Indoraptor\IndoController
             $template->source($templates['full'][$payload->flag]);
             
             $this->sendEmail($payload->email, $payload->username, $templates['title'][$payload->flag], $template->output());
-        } catch(\Exception $e) {
+            
+            $response['message'] = $text['to-complete-registration-check-email'] ?? 'Thank you. To complete your registration please check your email.';
+            $log = array('id' => $id, 'message' => "Шинээр $payload->username нэртэй [$payload->email] хаягтай хэрэглэгч үүсгэх хүсэлт ирүүлснийг хүлээн авч амжилттай бүртгэв.");
+        } catch (\Exception $e) {
             if (DEBUG) {
                 \error_log($e->getMessage());
             }
-            $response['error'] = $e->getMessage();
-        } finally {
+            $response['message'] = $e->getMessage();
+        } finally {            
+            if ( ! empty($log)) {
+                $log['address'] = (new Server())->determineIP();
+                
+                $logger = new LoggerModel($this->conn);
+                $logger->setTable('account');
+                $logger->insert(array(
+                    'type' => 9,
+                    'level'  => LogLevel::Security,
+                    'info'   => \json_encode($log),
+                    'reason' => 'request-new-account',
+                    'payload' => array(
+                        'code' => $payload->flag ?? '',
+                        'email' => $payload->email ?? '',
+                        'username' => $payload->username ?? '')
+                ));
+            }
+            
             $this->success($response);
         }
     }
     
     public function forgot()
     {
-        $response = array();
         try {
+            $response = array();
+
+            $translation = new TranslationModel($this->conn);
+            $translation->setTables('dashboard');
+            $text = $translation->retrieve(single::language()->current());
+
             $payload = $this->payload();
             $flag = $payload->flag ?? 'en';            
             if ( ! isset($payload->email)) {
-                throw new \Exception('invalid');
+                throw new \Exception($text['invalid-request'] ?? 'Request is not valid!');
             }
             
             $model = new AccountModel($this->conn);
@@ -82,12 +120,14 @@ class AccountController extends \Indoraptor\IndoController
             $stmt->bindParam(':eml', $payload->email, \PDO::PARAM_STR, $model->getDescribe()->getColumn('email')->getLength());
             $stmt->execute();
             if ($stmt->rowCount() != 1) {
-                throw new \Exception('account');
+                $log = array('error' => 'account', 'message' => "Бүртгэлгүй [$payload->email] хаяг дээр нууц үг шинээр тааруулах хүсэлт илгээхийг оролдлоо. Татгалзав.");
+                throw new \Exception($text['account-did-not-exists'] ?? 'No account with that email address exists.');
             }
             
             $record = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (((int) $record['is_active']) == 0) {
-                throw new \Exception('inactive');
+                $log = array('error' => 'inactive', 'message' => "Эрх нь нээгдээгүй хэрэглэгч [$payload->email] нууц үг шинэчлэх хүсэлт илгээх оролдлого хийв. Татгалзав.");
+                throw new \Exception($text['error-account-inactive'] ?? 'User is not active');
             }
             
             $content = new ContentModel($this->conn);
@@ -95,7 +135,7 @@ class AccountController extends \Indoraptor\IndoController
             $templates = $content->getByKeyword('forgotten-password-reset');
             if ( ! isset($templates['full'][$flag]) ||
                     ! isset($templates['title'][$flag])) {
-                throw new \Exception('template');
+                throw new \Exception($text['email-template-not-set'] ?? 'Email template not found!');
             }
 
             $useid = \uniqid('use');                        
@@ -111,7 +151,7 @@ class AccountController extends \Indoraptor\IndoController
             );
 
             if ( ! $forgot->insert($response['forgot'])) {
-                throw new \Exception('forgot');
+                throw new \Exception($text['record-insert-error'] ?? 'Error occurred while inserting record.');
             }
             
             $template = new Template();
@@ -122,12 +162,31 @@ class AccountController extends \Indoraptor\IndoController
             
             $receiver = $record['first_name'] . ' ' . \mb_substr($record['last_name'], 0, 1, 'UTF-8');
             $this->sendEmail($payload->email, $receiver, $templates['title'][$flag], $template->output());
-        } catch(\Exception $e) {
+            
+            $response['message'] = $text['reset-email-sent'] ?? 'Нууц үгийг шинэчлэх зааврыг амжилттай илгээлээ.<br />Та заасан имейл хаягаа шалгаж зааврын дагуу нууц үгээ шинэчлэнэ үү!';
+            $log = array('forgot' => $response['forgot'], 'message' => "Хэрэглэгч {$response['forgot']['first_name']} {$response['forgot']['last_name']} [$payload->email] нь нууц үгийг шинээр тааруулах хүсэлт илгээснийг зөвшөөрлөө.");
+        } catch (\Exception $e) {
             if (DEBUG) {
                 \error_log($e->getMessage());
             }
-            $response['error'] = $e->getMessage();
+            $response['message'] = $e->getMessage();
         } finally {
+            if ( ! empty($log)) {
+                $log['address'] = (new Server())->determineIP();
+                
+                $logger = new LoggerModel($this->conn);
+                $logger->setTable('account');
+                $logger->insert(array(
+                    'type' => 9,
+                    'level'  => LogLevel::Security,
+                    'info'   => \json_encode($log),
+                    'reason' => 'request-password',
+                    'payload' => array(
+                        'code' => $payload->flag ?? 'en',
+                        'email' => $payload->email ?? '')
+                ));
+            }
+            
             $this->success($response);
         }
     }

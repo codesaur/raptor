@@ -11,16 +11,16 @@ class Routing extends \codesaur\Http\Routing
             return $this->redirectLogin($route);
         }
         
-        $response = (new Controller())->indopost('/auth/jwt',
+        $response = (new IndoClient())->internal(
+                '/auth/jwt', 'POST', true,
                 array('jwt' => single::session()->get('indo/jwt')));
 
-        if ( ! isset($response['data']['rbac'])
-                || ! isset($response['data']['account']['id'])
-                || ! isset($response['data']['organization']['alias'])) {
-            return $this->redirectLogin($route);
+        if ( ! single::user()->login(
+                $response->data->account ?? array(),
+                $response->data->organizations ?? array(),
+                $response->data->role_permissions ?? array())) {
+            return $this->redirectLogin($route, $response->error->message ?? null);
         }
-        
-        single::user()->login($response['data']['account'], $response['data']['organization'], $response['data']['rbac']);
         
         if ( ! $this->isRequireSession($route)) {
             single::session()->lock();
@@ -29,7 +29,7 @@ class Routing extends \codesaur\Http\Routing
         return $route;
     }
     
-    function redirectLogin($route)
+    function redirectLogin($route, $message = null)
     {
         if (single::session()->check('indo/jwt')) {
             single::session()->release('indo/jwt');
@@ -47,7 +47,13 @@ class Routing extends \codesaur\Http\Routing
             }
         }
         
-        return single::redirect('login');
+        $url = single::request()->getPathComplete();
+        $url .= single::router()->generate('login', array())[0];
+        if (isset($message)) {
+            $url .= '?message=' . \urlencode($message);
+        }
+        
+        single::header()->redirect($url);
     }
     
     function isRequireSession($route) : bool

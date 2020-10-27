@@ -25,10 +25,10 @@ class Routing extends \codesaur\Http\Routing
     function getAccountRules() : array
     {
         return array(
-            ['/auth/signup', 'signup@Indoraptor\\Account\\AccountController', ['methods' => 'POST']],
-            ['/auth/forgot', 'forgot@Indoraptor\\Account\\AccountController', ['methods' => 'POST']],
-            ['/auth/get/forgot', 'getForgot@Indoraptor\\Account\\AccountController', ['methods' => 'POST']],
-            ['/auth/set/password', 'setPassword@Indoraptor\\Account\\AccountController', ['methods' => 'POST']]
+            ['/account/signup', 'signup@Indoraptor\\Account\\AccountController', ['methods' => 'POST']],
+            ['/account/forgot', 'forgot@Indoraptor\\Account\\AccountController', ['methods' => 'POST']],
+            ['/account/get/forgot', 'getForgot@Indoraptor\\Account\\AccountController', ['methods' => 'POST']],
+            ['/account/set/password', 'setPassword@Indoraptor\\Account\\AccountController', ['methods' => 'POST']]
         );
     }
     

@@ -17,7 +17,7 @@ class Dashboard extends Boot4
     {
         $menu = array();
         
-        $controller = single::app()->getNamespace() . 'MenuController';
+        $controller = single::app()->getNamespace() . 'Menu';
         if (\class_exists($controller)) {
             $menuController = new $controller();
 

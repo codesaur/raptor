@@ -46,7 +46,7 @@ class LoginController extends DashboardController
         try {
             $post = new Post();
             if ( ! $post->hasArray(array('username', 'password'))) {
-                throw new \Exception('invalid request');
+                throw new \Exception(single::text('invalid-request'));
             }
 
             $credintials = array(
@@ -55,7 +55,7 @@ class LoginController extends DashboardController
             $logdata['username'] = $credintials['username'];
             $response = $this->indopost('/auth/try', $credintials);
             if ( ! isset($response['data']['account']['jwt'])) {
-                throw new \Exception($response['error']['message'] ?? 'invalid response');
+                throw new \Exception($response['error']['message'] ?? single::text('invalid-response!'));
             }
             
             single::session()->set('indo/jwt', $response['data']['account']['jwt']);
@@ -79,25 +79,19 @@ class LoginController extends DashboardController
                     single::session()->set(single::app()->getNamespace() .'Language', $response['data']['account']['code']);
                 }
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             if (DEBUG) {
                 \error_log($e->getMessage());
             }
             
             $reason = 'attempt';
-            switch ($e->getMessage()) {
-                case 'inactive user': $logdata['message'] = single::text('error-account-inactive'); break;
-                case 'invalid request': { $type = 'warning'; $logdata['message'] = single::text('enter-username-password'); } break;
-                case 'account not found': case 'invalid password': $logdata['message'] = single::text('error-incorrect-credentials'); break;
-                default: { $type = 'warning'; $logdata['message'] = single::text('something-went-wrong'); } break;
-            }
+            $logdata['message'] = $e->getMessage();
             
             if (single::session()->check('indo/jwt')) {
                 single::session()->release('indo/jwt');
             }
             
-            single::response()->json(array(
-                'type' => $type ?? 'danger', 'message' => $logdata['message']));
+            single::response()->json(array('type' => 'danger', 'message' => $logdata['message']));
         } finally {
             $this->log($reason ?? 'login', $logdata, LogLevel::Security);
         }
@@ -175,7 +169,7 @@ class LoginController extends DashboardController
         $post = new Post();
         if ( ! $post->hasArray(array('codeUsername', 'codeEmail', 'codePassword', 'codeRePassword'))
                 || $post->value('codePassword') != $post->value('codeRePassword')) {
-            $notice = single::text('invalid-request');
+            $response = array('data' => array('message' => single::text('invalid-request')));
         } else {
             $username = $post->value('codeUsername');
             $email = $post->value('codeEmail', FILTER_SANITIZE_EMAIL);
@@ -183,46 +177,12 @@ class LoginController extends DashboardController
             $payload = array(
                 'username' => $username, 'password' => $password,
                 'email' => $email, 'flag' => single::language()->current());
-            $response = $this->indopost('/auth/signup', $payload);
-            unset($payload['password']);
-        }
-        
-        if (isset($response['data']['error'])) {
-            switch ($response['data']['error']) {
-                case 'mailer': $notice = single::text('emailer-not-set'); break;
-                case 'template': $notice = single::text('email-template-not-set'); break;
-                case 'email': {
-                    $notice = single::text('account-email-exists');
-                    $log = array('message' => "Бүртгэлтэй [$email] хаягаар шинэ хэрэглэгч үүсгэх хүсэлт ирүүллээ. Татгалзав.", 'error' => 'email');
-                } break;
-                case 'username': {
-                    $notice = single::text('account-exists');
-                    $log = array('message' => "Бүртгэлтэй [$username] хэрэглэгчийн нэрээр шинэ хэрэглэгч үүсгэх хүсэлт ирүүллээ. Татгалзав.", 'error' => 'username');
-                } break;
-                case 'newbie': {
-                    $notice = single::text('account-request-exists');
-                    $log = array('message' => "Шинээр $username нэртэй [$email] хаягтай хэрэглэгч үүсгэх хүсэлт ирүүлсэн боловч, уг мэдээллээр урьд нь хүсэлт өгч байсныг бүртгэсэн байсан учир дахин хүсэлт бүртгэхээс татгалзав.", 'error' => 'newbie');
-                } break;
-                case 'payload': $notice = single::text('invalid-request'); break;
-                default: $notice = $response['data']['error']; break;
-            }
-        } elseif (isset($response['data']['id'])) {
-            $success = true;
-            $notice = single::text('to-complete-registration-check-email');
-            $log = array(
-                'id' => $response['data']['id'],
-                'message' => "Шинээр $username нэртэй [$email] хаягтай хэрэглэгч үүсгэх хүсэлт ирүүлснийг хүлээн авч амжилттай бүртгэв."
-            );
-        }
-        
-        if (isset($log)) {
-            $log['payload'] = $payload ?? null;
-            $this->log('request-new-account', $log, LogLevel::Security, 'account', 9);
+            $response = $this->indopost('/account/signup', $payload);
         }
         
         single::response()->json(array(
-            'type' => $success ?? false ? 'success' : 'danger',
-            'message' => $notice ?? single::text('something-went-wrong')));
+            'type' => isset($response['data']['id']) ? 'success' : 'danger',
+            'message' => $response['data']['message'] ?? single::text('something-went-wrong')));
     }
 
     public function requestPassword()
@@ -235,44 +195,16 @@ class LoginController extends DashboardController
         $payload = array(
             'email' => $email, 'flag' => single::language()->current(),
             'login' => single::request()->getHttpHost() . single::link('login'));
-        $response = $this->indopost('/auth/forgot', $payload);
-        
-        if (isset($response['data']['error'])) {
-            switch ($response['data']['error']) {
-                case 'mailer': $notice = single::text('emailer-not-set'); break;
-                case 'template': $notice = single::text('email-template-not-set'); break;
-                case 'inactive': {
-                    $notice = single::text('error-account-inactive');
-                    $log = array('message' => "Эрх нь нээгдээгүй хэрэглэгч [$email] нууц үг шинэчлэх хүсэлт илгээх оролдлого хийв. Татгалзав.", 'error' => 'inactive');
-                } break;
-                case 'account': {
-                    $notice = single::text('account-did-not-exists');
-                    $log = array('message' => "Бүртгэлгүй [$email] хаяг дээр нууц үг шинээр тааруулах хүсэлт илгээхийг оролдлоо. Татгалзав.", 'error' => 'account');
-                } break;
-                case 'invalid': $notice = single::text('invalid-request'); break;                
-            }
-        } elseif (isset($response['data']['forgot'])) {
-            $success = true;
-            $notice = single::text('reset-email-sent');
-            $log = array(
-                'message' => "Хэрэглэгч {$response['data']['forgot']['first_name']} {$response['data']['forgot']['last_name']} [$email] нь нууц үгийг шинээр тааруулах хүсэлт илгээснийг зөвшөөрлөө.",
-                'forgot'  => $response['data']['forgot']
-            );
-        }
-        
-        if (isset($log)) {
-            $log['payload'] = $payload ?? null;
-            $this->log('request-password', $log, LogLevel::Security, 'account', 9);
-        }
+        $response = $this->indopost('/account/forgot', $payload);
         
         single::response()->json(array(
-            'type' => $success ?? false ? 'success' : 'danger',
-            'message' => $notice ?? single::text('something-went-wrong')));
+            'type' => isset($response['data']['forgot']) ? 'success' : 'danger',
+            'message' => $response['data']['message'] ?? single::text('something-went-wrong')));
     }
     
     public function resetPassword($id, $error = null)
     {
-        $response = $this->indopost('/auth/get/forgot', array('use' => $id));
+        $response = $this->indopost('/account/get/forgot', array('use' => $id));
         
         if ( ! isset($response['data'])) {
             $this->log('reset-password', array('message' =>
@@ -326,7 +258,7 @@ class LoginController extends DashboardController
             return single::redirect('home');
         }
         
-        $response = $this->indopost('/auth/get/forgot', array('use' => $post->value('use_id')));
+        $response = $this->indopost('/account/get/forgot', array('use' => $post->value('use_id')));
         if ( ! isset($response['data']) ||
                 $response['data']['account'] != $post->value('account')) {
             return $this->resetPassword($post->value('use_id'), single::text('invalid-request'));
@@ -347,7 +279,7 @@ class LoginController extends DashboardController
             return $this->resetPassword($post->value('use_id'), single::text('password-must-match'));
         }
         
-        $result = $this->indopost('/auth/set/password', $payload);
+        $result = $this->indopost('/account/set/password', $payload);
         if ( ! isset($result['data'])) {
             return $this->resetPassword($post->value('use_id'), single::text('invalid-request'));
         }
@@ -370,8 +302,8 @@ class LoginController extends DashboardController
     
     public function isNotExpired($date, $minutes = 20)
     {
+        $now_date = new \DateTime();
         $then = new \DateTime($date);
-        $now_date =  new \DateTime();        
         $diff = $then->diff($now_date);
         
         return $diff->y == 0 && $diff->m == 0  && $diff->d == 0 && $diff->h == 0 && $diff->i < $minutes;
