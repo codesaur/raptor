@@ -468,25 +468,29 @@ class AccountController extends DashboardController
             $this->indoput('/record?table=newbie&model='
                     . \urlencode('Indoraptor\\Account\\AccountModel'), array('record' => $record));
             
+            $content = $this->indopost('/content',
+                    array('table' => 'templates', '_keyword_' => array('approve-new-account')));
+
+            if (isset($content['data']['approve-new-account']['title'][$record['code']]) &&
+                    isset($content['data']['approve-new-account']['full'][$record['code']])) {
+                $template = new Template();
+                $template->source($content['data']['approve-new-account']['full'][$record['code']]);
+                $template->set('email', $record['email']);
+                $template->set('login', single::link('login'));
+                $template->set('username', $record['username']);
+                
+                $this->indopost('/email', array(
+                    'to' => $record['email'],
+                    'flag' => $record['code'],
+                    'name' => $record['username'],
+                    'message' => $template->output(),
+                    'subject' => content['data']['approve-new-account']['title'][$record['code']]
+                ));
+            }
+            
             $mailer = $this->getMailer();
             if ($mailer) {
-                $content =  $this->indopost('/content',
-                        array('table' => 'templates', '_keyword_' => array('approve-new-account')));
-
-                if (isset($content['data']['approve-new-account']['title'][$record['code']]) &&
-                        isset($content['data']['approve-new-account']['full'][$record['code']])) {
-                    $template = new Template();
-                    $template->source($content['data']['approve-new-account']['full'][$record['code']]);
-                    $template->set('email', $record['email']);
-                    $template->set('login', single::link('login'));
-                    $template->set('username', $record['username']);
-
-                    $mailer->Subject = $content['data']['approve-new-account']['title'][$record['code']];
-                    
-                    $mailer->MsgHTML($template->output());
-                    $mailer->AddAddress($record['email'], $record['username']);
-                    $mailer->Send();
-                }
+                
             }
             
             single::response()->json(array(
