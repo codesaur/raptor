@@ -488,11 +488,6 @@ class AccountController extends DashboardController
                 ));
             }
             
-            $mailer = $this->getMailer();
-            if ($mailer) {
-                
-            }
-            
             single::response()->json(array(
                 'status'  => 'success',
                 'alert'   => 'SweetAlert',
