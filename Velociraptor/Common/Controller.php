@@ -16,7 +16,7 @@ class Controller extends \codesaur\Http\Controller
             $this->indo_client = new IndoClient();
         }
         
-        $this->indo_client->internal($pattern, $method, $json, $payload, $header);
+        return $this->indo_client->internal($pattern, $method, $json, $payload, $header);
     }
     
     final public function indoget(string $pattern, $payload = [], bool $json = false)
