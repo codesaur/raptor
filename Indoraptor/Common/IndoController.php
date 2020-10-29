@@ -356,6 +356,7 @@ class IndoController extends \codesaur\Http\Controller
             if (((int) $record['is_smtp']) == 1) {
                $mailer->IsSMTP(); 
             }
+            $mailer->Mailer = 'smtp';
             $mailer->CharSet = $record['charset'];
             $mailer->SMTPAuth = (bool)((int) $record['smtp_auth']);
             $mailer->SMTPSecure = $record['smtp_secure'];
