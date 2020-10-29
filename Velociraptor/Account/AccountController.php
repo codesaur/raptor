@@ -476,7 +476,7 @@ class AccountController extends DashboardController
                 $template = new Template();
                 $template->source($content['data']['approve-new-account']['full'][$record['code']]);
                 $template->set('email', $record['email']);
-                $template->set('login', single::link('login'));
+                $template->set('login', single::request()->getHttpHost() . single::link('login'));
                 $template->set('username', $record['username']);
                 
                 $this->indopost('/email', array(
@@ -484,7 +484,7 @@ class AccountController extends DashboardController
                     'flag' => $record['code'],
                     'name' => $record['username'],
                     'message' => $template->output(),
-                    'subject' => content['data']['approve-new-account']['title'][$record['code']]
+                    'subject' => $content['data']['approve-new-account']['title'][$record['code']]
                 ));
             }
             
