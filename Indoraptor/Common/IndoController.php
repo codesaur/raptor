@@ -28,30 +28,32 @@ class IndoController extends \codesaur\Http\Controller
     {
         $this->_is_internal = $internal;
         
-        $configuration = array(
-            'driver'    => \getenv('DB_DRIVER', true) ?: 'mysql',
-            'host'      => \getenv('DB_HOST', true) ?: 'localhost',
-            'username'  => \getenv('DB_USERNAME', true) ?: 'root',
-            'password'  => \getenv('DB_PASSWORD', true) ?: '',
-            'name'      => \getenv('DB_NAME', true) ?: 'indoraptor',
-            'engine'    => \getenv('DB_ENGINE', true) ?: 'InnoDB',
-            'charset'   => \getenv('DB_CHARSET', true) ?: 'utf8',
-            'collation' => \getenv('DB_COLLATION', true) ?: 'utf8_unicode_ci',
-            'options'   => array(
-                \PDO::ATTR_ERRMODE     => DEBUG ?
-                \PDO::ERRMODE_EXCEPTION : \PDO::ERRMODE_WARNING,
-                \PDO::ATTR_PERSISTENT  => \getenv('DB_PERSISTENT', true) == 'true'
-            )
-        );
-        
-        $this->conn = new MySQL($configuration);
+        try {
+            $configuration = array(
+                'driver'    => \getenv('DB_DRIVER', true) ?: 'mysql',
+                'host'      => \getenv('DB_HOST', true) ?: 'localhost',
+                'username'  => \getenv('DB_USERNAME', true) ?: 'root',
+                'password'  => \getenv('DB_PASSWORD', true) ?: '',
+                'name'      => \getenv('DB_NAME', true) ?: 'indoraptor',
+                'engine'    => \getenv('DB_ENGINE', true) ?: 'InnoDB',
+                'charset'   => \getenv('DB_CHARSET', true) ?: 'utf8',
+                'collation' => \getenv('DB_COLLATION', true) ?: 'utf8_unicode_ci',
+                'options'   => array(
+                    \PDO::ATTR_ERRMODE     => DEBUG ?
+                    \PDO::ERRMODE_EXCEPTION : \PDO::ERRMODE_WARNING,
+                    \PDO::ATTR_PERSISTENT  => \getenv('DB_PERSISTENT', true) == 'true'
+                )
+            );
+
+            $this->conn = new MySQL($configuration);
+        } catch (\Exception $ex) {
+            $this->error($ex->getMessage());
+        }
         
         if ($this->conn->alive()) {
             if (\getenv('TIME_ZONE_UTC', true)) {
                 $this->conn->exec('SET time_zone = ' . $this->conn->quote(\getenv('TIME_ZONE_UTC', true)));
             }
-        } else {
-            $this->error('CDO: Not connected!', 700);
         }
     }
     

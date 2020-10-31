@@ -129,7 +129,11 @@
                     <img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/25x15/{{ language.current == 'en' ? 'gb' : language.current }}.png" height="15px" class="shadow-sm">
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdown502">
-                {% set urlLang = request.getCleanUrl() ~ request.getParamsAsStr() %}
+                {% if request.getQueryString() == '' %}
+                    {% set urlLang = request.getCleanUrl() %}
+                {% else %}
+                    {% set urlLang = request.getCleanUrl() ~ '?' ~ request.getQueryString() %}
+                {% endif %}
                 {% for lang, country in language.complete() %}
                     <a class="dropdown-item{{ lang == language.current ? ' active' : '' }} language-item" href="{{ 'language'|link({'language': lang}) }}?ulang={{ urlLang }}">
                         <img src="https://cdn.jsdelivr.net/gh/codesaur/resources/dist/flags/16x11/{{ lang == 'en' ? 'gb' : lang }}.png" alt="{{ country }}" style="position:relative;top:-2px"> {{ country }}

@@ -251,9 +251,4 @@ class FileController extends DashboardController
         
         return $result;
     }
-
-    public function getLastError() : int
-    {
-        return $this->file->getLastError();
-    }
 }
