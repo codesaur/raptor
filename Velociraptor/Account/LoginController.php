@@ -4,6 +4,7 @@ use codesaur as single;
 use codesaur\Globals\Get;
 use codesaur\Globals\Post;
 use codesaur\Base\LogLevel;
+use codesaur\Globals\Server;
 
 use Velociraptor\Boot4\Login;
 use Velociraptor\DashboardController;
@@ -93,6 +94,11 @@ class LoginController extends DashboardController
             
             single::response()->json(array('type' => 'danger', 'message' => $logdata['message']));
         } finally {
+            if (isset($response['data']['account']['id'])) {
+                $logdata['created_by'] = $response['data']['account']['id'];
+                $logdata['address'] = (new Server())->determineIP();
+            }
+                
             $this->log($reason ?? 'login', $logdata, LogLevel::Security);
         }
     }

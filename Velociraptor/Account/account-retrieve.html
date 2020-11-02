@@ -94,7 +94,7 @@
         <div class="form-group row">
             <label class="col-3 col-form-label text-right">IP</label>
             <div class="col-9">
-                <input class="form-control" disabled value="{{ log_info['address']|e }}" type="text">
+                <input class="form-control" disabled value="{{ log['info']|json_decode()['address']|e }}" type="text">
             </div>
         </div>
     </div>
