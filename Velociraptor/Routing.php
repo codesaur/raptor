@@ -16,10 +16,14 @@ class Routing extends \codesaur\Http\Routing
                     '/auth/jwt', 'POST', false,
                     array('jwt' => single::session()->get('indo/jwt')));
             
+            if (isset($response['error']['message'])) {
+                throw new \Exception($response['error']['message']);
+            }
+            
             single::user()->login(
-                    $response['data']['account'] ?? array(),
-                    $response['data']['organizations'] ?? array(),
-                    $response['data']['rbac'] ?? array());
+                    $response['data']['account'],
+                    $response['data']['organizations'],
+                    $response['data']['rbac']);
         
             if ($this->isLockSession($route)) {
                 single::session()->lock();
