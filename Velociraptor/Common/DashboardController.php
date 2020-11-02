@@ -73,6 +73,27 @@ abstract class DashboardController extends Controller
         return $lookup['data'] ?? array();
     }
     
+    public function getLastLog(int $id, $reason, $level, $table = 'dashboard')
+    {
+        $response = $this->indopost(
+                "/log/$table/select",
+                array(
+                    'reason'     => $reason,
+                    'level'      => $level,
+                    'created_by' => $id,
+                    'condition'  => array(
+                        'ORDER BY' => 'id Desc LIMIT 1'
+                    )
+                )
+        );
+        
+        if (isset($response['data'])) {
+            return \end($response['data']['rows']);
+        }
+        
+        return null;
+    }
+    
     final public function grab($thing, $arg = null)
     {
         if (single::request()->hasParam($thing))

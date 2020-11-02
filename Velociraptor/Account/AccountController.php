@@ -127,15 +127,19 @@ class AccountController extends DashboardController
                     throw new \Exception("No data for $action!");
                 }
                 
-                $log = $this->getLastLogin($id);
+                $login = $this->getLastLog($id, 'login', LogLevel::Security);
+                $last_act = $this->getLastLog($id, 'request', LogLevel::Basic);
             }
             
             $column = (new AccountDescribe())->getTwigColumns($response['data']['record'] ?? array());
             
             $vars = array(
+                'crud' => $crud,
+                'column' => $column,
+                'login' => $login ?? null,
+                'last_act' => $last_act ?? null,
                 'account' => $this->getAccounts(),
-                'crud' => $crud, 'column' => $column,
-                'log' => $log ?? false, 'lookup' => $this->getLookup(array('status')));
+                'lookup' => $this->getLookup(array('status')));
 
             if ($permission == 'organization') {
                 if ($action == 'insert') {
@@ -501,27 +505,6 @@ class AccountController extends DashboardController
                 'message' => $e->getMessage()
             ));
         }
-    }
-    
-    public function getLastLogin(int $id)
-    {
-        $response = $this->indopost(
-                '/log/dashboard/select',
-                array(
-                    'reason'     => 'login',
-                    'level'      => LogLevel::Security,
-                    'created_by' => $id,
-                    'condition'  => array(
-                        'ORDER BY' => 'id Desc LIMIT 1'
-                    )
-                )
-        );
-        
-        if (isset($response['data'])) {
-            return \end($response['data']['rows']);
-        }
-        
-        return false;
     }
     
     public function orgIndex(Dashboard $view)
