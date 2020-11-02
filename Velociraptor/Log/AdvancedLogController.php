@@ -14,7 +14,7 @@ class AdvancedLogController extends DashboardController
         $view->title(single::text('logs'))->breadcrumb(array(single::text('access-log')));
         
         if ( ! single::user()->can('system_log_index')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         $vars = array(

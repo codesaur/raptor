@@ -30,7 +30,7 @@ class RBACController extends DashboardController
         $view->title('RBAC')->breadcrumb(array(single::text('organization'), $organizations))->breadcrumb(array('RBAC'));
         
         if ( ! single::user()->can('system_rbac')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         $card = new Card(

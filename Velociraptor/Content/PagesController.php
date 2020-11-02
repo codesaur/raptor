@@ -20,7 +20,7 @@ class PagesController extends DashboardController
                 ->breadcrumb(array(single::text('pages')));
 
         if ( ! single::user()->can(single::user()->organization('alias') . '_pages_index')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
 
         $view->alert(single::text('pages-note'), 'flaticon2-list-2', 'alert-primary alert-elevate alert-dismissible');        
@@ -56,8 +56,7 @@ class PagesController extends DashboardController
             }
             
             if ( ! single::user()->can(single::user()->organization('alias') . "_pages_$action")) {
-                (new Dashboard())->noPermission(false, function() { exit; });
-                throw new \Exception("No permission for an [$action]!");
+                return (new Dashboard())->noPermission();
             }
 
             $title = single::text('pages');

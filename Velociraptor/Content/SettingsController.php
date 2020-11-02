@@ -34,7 +34,7 @@ class SettingsController extends DashboardController
         $view->title(single::text('settings'))->breadcrumb(array(single::text('settings')));
         
         if ( ! single::user()->can(single::user()->organization('alias') . '_website_settings')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         $settings = $this->indoget('/settings/' . single::user()->organization('alias'));

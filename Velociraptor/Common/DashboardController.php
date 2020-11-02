@@ -18,7 +18,7 @@ abstract class DashboardController extends Controller
         }
         
         if ( ! ($result ?? false)) {
-            (new Dashboard())->noPermission();
+            return (new Dashboard())->noPermission();
         }
     }
     

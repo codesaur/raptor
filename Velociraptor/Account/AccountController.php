@@ -45,7 +45,7 @@ class AccountController extends DashboardController
         }
         
         if ( ! single::user()->can('system_account_index')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         $response = $this->indopost('/record/retrieve?model='
@@ -170,10 +170,7 @@ class AccountController extends DashboardController
                 \error_log($e->getMessage());
             }
             
-            (new Dashboard())->noPermission(false, function() { exit; });
-            
-            
-            return false;
+            return (new Dashboard())->noPermission();
         }
     }
     

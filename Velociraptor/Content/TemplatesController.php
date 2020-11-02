@@ -20,7 +20,7 @@ class TemplatesController extends DashboardController
                 ->breadcrumb(array(single::text('document-templates')));
         
         if ( ! single::user()->can('system_template_index')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         $card = new Card(array(single::text('document-templates'), 'text-uppercase text-success'), 'flaticon-interface-4');
@@ -55,8 +55,7 @@ class TemplatesController extends DashboardController
             }
             
             if ( ! single::user()->can("system_template_$action")) {
-                (new Dashboard())->noPermission(false, function() { exit; });
-                throw new \Exception("No permission for an [$action]!");
+                return (new Dashboard())->noPermission();
             }
             
             $title = single::text('document-templates');

@@ -23,7 +23,7 @@ class ReportController extends DashboardController
         $view->breadcrumb(array(single::text('website-total-report')));
         
         if ( ! single::user()->can($this->orgAlias . '_web_report')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         if (single::user()->can($this->orgAlias . '_web_report_monthly')) {
@@ -43,7 +43,7 @@ class ReportController extends DashboardController
         $view->breadcrumb(array(single::text('google-analytics')));
         
         if ( ! single::user()->can($this->orgAlias . '_web_google_analytics')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         if (single::user()->can($this->orgAlias . '_web_report')) {

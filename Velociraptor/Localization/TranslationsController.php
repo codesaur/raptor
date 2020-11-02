@@ -20,7 +20,7 @@ class TranslationsController extends DashboardController
                 ->breadcrumb(array(single::text('translation')));
         
         if ( ! single::user()->can('system_translation_index')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         $view->alert(single::text('translation-note'), 'flaticon-exclamation', 'alert-dark');
