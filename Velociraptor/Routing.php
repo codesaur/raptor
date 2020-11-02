@@ -7,72 +7,67 @@ class Routing extends \codesaur\Http\Routing
 {
     function entry($route)
     {
-        if ( ! single::session()->check('indo/jwt')) {
-            return $this->redirectLogin($route);
-        }
+        try {
+            if ( ! single::session()->check('indo/jwt')) {
+                throw new \Exception();
+            }
         
-        $response = (new IndoClient())->internal(
-                '/auth/jwt', 'POST', false,
-                array('jwt' => single::session()->get('indo/jwt')));
-        
-        if ( ! single::user()->login(
-                $response['data']['account'] ?? array(),
-                $response['data']['organizations'] ?? array(),
-                $response['data']['role_permissions'] ?? array())) {
-            return $this->redirectLogin($route, $response['error']['message'] ?? null);
-        }
-        
-        if ( ! $this->isRequireSession($route)) {
-            single::session()->lock();
-        }
-        
-        return $route;
-    }
-    
-    function redirectLogin($route, $message = null)
-    {
-        if (single::session()->check('indo/jwt')) {
-            single::session()->release('indo/jwt');
-        }
-        
-        if ($route instanceof Route) {
-            $class = $route->getController();
+            $response = (new IndoClient())->internal(
+                    '/auth/jwt', 'POST', false,
+                    array('jwt' => single::session()->get('indo/jwt')));
             
-            if (\class_exists($class)) {
-                $controller = new $class();
+            single::user()->login(
+                    $response['data']['account'] ?? array(),
+                    $response['data']['organizations'] ?? array(),
+                    $response['data']['rbac'] ?? array());
+        
+            if ($this->isLockSession($route)) {
+                single::session()->lock();
+            }
+        
+            return $route;            
+        } catch (\Exception $ex) {
+            if (single::session()->check('indo/jwt')) {
+                single::session()->release('indo/jwt');
+            }
 
-                if ($controller instanceof Account\LoginController) {
-                    return $route;
+            if ($route instanceof Route) {
+                $class = $route->getController();
+
+                if (\class_exists($class)) {
+                    $controller = new $class();
+
+                    if ($controller instanceof Account\LoginController) {
+                        return $route;
+                    }
                 }
             }
+
+            $url = single::request()->getPathComplete();
+            $url .= single::router()->generate('login', array())[0];
+            if ( ! empty($ex->getMessage())) {
+                $url .= '?message=' . \urlencode($ex->getMessage()) . '&message_type=danger';
+            }
+
+            single::header()->redirect($url);
         }
-        
-        $url = single::request()->getPathComplete();
-        $url .= single::router()->generate('login', array())[0];
-        if (isset($message)) {
-            $url .= '?message=' . \urlencode($message) . '&message_type=danger';
-        }
-        
-        single::header()->redirect($url);
     }
     
-    function isRequireSession($route) : bool
+    function isLockSession($route) : bool
     {
-        if ( ! $route instanceof Route) {
-            return false;
-        }
-        
-        if ($route->getName() == 'language') {
-            return true;
-        }
-        
-        foreach ($this->getLoginRules() as $rule) {
-            if ($route->getPattern() == $rule[0]) {
-                return true;
+        if ($route instanceof Route) {
+            if ($route->getName() == 'language') {
+                return false;
             }
-        }
-        
-        return false;
+
+            foreach ($this->getLoginRules() as $rule) {
+                if ($route->getPattern() == $rule[0]) {
+                    return false;
+                }
+            }
+        }        
+
+        return true;
     }
     
     final function getBasicRules() : array

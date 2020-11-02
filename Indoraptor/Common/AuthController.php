@@ -80,8 +80,6 @@ class AuthController extends IndoController
 
             unset($account['password']);
 
-            $response = array('account' => $account);     
-            
             $org_model = new OrganizationModel($this->conn);
             $org_user_model = new OrganizationUserModel($this->conn);            
             $stmt = $org_user_model->dataobject()->prepare('SELECT t2.id, t2.name, t2.logo, t2.alias, t2.external ' .
@@ -106,16 +104,11 @@ class AuthController extends IndoController
                unset($organizations[1]);
             }
 
-            $response['organizations'] = $organizations;
-            
-            $rbac = new RBACUser();
-            if ( ! $rbac->init($this->conn, $account['id'], $organizations[0]['alias'])) {
-                throw new \Exception('RBAC user not set!');
-            }
-            
-            $response['role_permissions'] = $rbac;
-
-            return $this->success($response);
+            return $this->success(array(
+                'account' => $account,
+                'organizations' => $organizations,
+                'rbac' => new RBACUser($this->conn, $account['id'], $organizations[0]['alias'])
+            ));
         } catch (\Exception $e) {
             return $this->error($e->getMessage());
         }
