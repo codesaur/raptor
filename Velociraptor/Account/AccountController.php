@@ -137,10 +137,6 @@ class AccountController extends DashboardController
                 'crud' => $crud, 'column' => $column,
                 'log' => $log ?? false, 'lookup' => $this->getLookup(array('status')));
 
-            if ($action == 'retrieve') {
-                return true;
-            }
-            
             if ($permission == 'organization') {
                 if ($action == 'insert') {
                     $this->orgCRUDInsert();
@@ -148,19 +144,24 @@ class AccountController extends DashboardController
                     return false;
                 }
             } else {
-                if ($action == 'insert') {
-                    $caption = single::text('new-account');
-                    $breadcrumb = single::text('add-new-account');
+                $view = new Dashboard();
+
+                if ($action == 'retrieve') {
+                    $caption = $response['data']['record']['first_name'] ?? single::text('account');
                 } else {
-                    $caption = single::text('edit-account');
+                    if ($action == 'update') {
+                        $caption = single::text('edit-account');
+                    } else {
+                        $caption = single::text('new-account');
+                        $breadcrumb = single::text('add-new-account');
+                    }
+
+                    $delete = array('table' => 'accounts', 'logger' => 'account');
+                    $view->addDelete($delete, '#tab-picture', single::text('delete-image-ask'), null, 'strip_file');
                 }
                 
-                $view = new Dashboard("$title - $caption");
+                $view->title("$title - $caption");
                 $view->breadcrumb(array($title, $index))->breadcrumb(array($breadcrumb ?? $caption));
-
-                $delete = array('table' => 'accounts', 'logger' => 'account');
-                $view->addDelete($delete, '#tab-picture', single::text('delete-image-ask'), null, 'strip_file');
-                
                 $view->render(new TwigTemplate(\dirname(__FILE__) . "/account-$action.html", $vars));
             }
             
