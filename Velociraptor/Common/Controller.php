@@ -69,6 +69,11 @@ class Controller extends \codesaur\Http\Controller
             $payload['created_by'] = (int) single::user()->account('id');
         }
         
+        if (isset($data['created_by'])) {
+            $payload['created_by'] = (int) $data['created_by'];
+            unset($data['created_by']);
+        }
+        
         if (empty($table)) {
             $table = single::request()->getParam('logger') ?? 'default';
         }

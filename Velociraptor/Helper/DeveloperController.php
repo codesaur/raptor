@@ -14,7 +14,7 @@ class DeveloperController extends DashboardController
         $view->title(single::text('developer'))->breadcrumb(array(single::text('developer')));
         
         if ( ! single::user()->can('system_developer_index')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         $view->render(new TwigTemplate(\dirname(__FILE__) . '/developer-index-table.html'));

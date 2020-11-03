@@ -45,7 +45,7 @@ class AccountController extends DashboardController
         }
         
         if ( ! single::user()->can('system_account_index')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         $response = $this->indopost('/record/retrieve?model='
@@ -127,20 +127,20 @@ class AccountController extends DashboardController
                     throw new \Exception("No data for $action!");
                 }
                 
-                $log = $this->getLastLogin($id);
+                $login = $this->getLastLog($id, 'login', LogLevel::Security);
+                $last_act = $this->getLastLog($id, 'request', LogLevel::Basic);
             }
             
             $column = (new AccountDescribe())->getTwigColumns($response['data']['record'] ?? array());
             
             $vars = array(
+                'crud' => $crud,
+                'column' => $column,
+                'login' => $login ?? null,
+                'last_act' => $last_act ?? null,
                 'account' => $this->getAccounts(),
-                'crud' => $crud, 'column' => $column,
-                'log' => $log ?? false, 'lookup' => $this->getLookup(array('status')));
+                'lookup' => $this->getLookup(array('status')));
 
-            if ($action == 'retrieve') {
-                return true;
-            }
-            
             if ($permission == 'organization') {
                 if ($action == 'insert') {
                     $this->orgCRUDInsert();
@@ -148,19 +148,24 @@ class AccountController extends DashboardController
                     return false;
                 }
             } else {
-                if ($action == 'insert') {
-                    $caption = single::text('new-account');
-                    $breadcrumb = single::text('add-new-account');
+                $view = new Dashboard();
+
+                if ($action == 'retrieve') {
+                    $caption = $response['data']['record']['first_name'] ?? single::text('account');
                 } else {
-                    $caption = single::text('edit-account');
+                    if ($action == 'update') {
+                        $caption = single::text('edit-account');
+                    } else {
+                        $caption = single::text('new-account');
+                        $breadcrumb = single::text('add-new-account');
+                    }
+
+                    $delete = array('table' => 'accounts', 'logger' => 'account');
+                    $view->addDelete($delete, '#tab-picture', single::text('delete-image-ask'), null, 'strip_file');
                 }
                 
-                $view = new Dashboard("$title - $caption");
+                $view->title("$title - $caption");
                 $view->breadcrumb(array($title, $index))->breadcrumb(array($breadcrumb ?? $caption));
-
-                $delete = array('table' => 'accounts', 'logger' => 'account');
-                $view->addDelete($delete, '#tab-picture', single::text('delete-image-ask'), null, 'strip_file');
-                
                 $view->render(new TwigTemplate(\dirname(__FILE__) . "/account-$action.html", $vars));
             }
             
@@ -170,10 +175,7 @@ class AccountController extends DashboardController
                 \error_log($e->getMessage());
             }
             
-            (new Dashboard())->noPermission(false, function() { exit; });
-            
-            
-            return false;
+            return (new Dashboard())->noPermission();
         }
     }
     
@@ -503,27 +505,6 @@ class AccountController extends DashboardController
                 'message' => $e->getMessage()
             ));
         }
-    }
-    
-    public function getLastLogin(int $id)
-    {
-        $response = $this->indopost(
-                '/log/dashboard/select',
-                array(
-                    'reason'     => 'login',
-                    'level'      => LogLevel::Security,
-                    'created_by' => $id,
-                    'condition'  => array(
-                        'ORDER BY' => 'id Desc LIMIT 1'
-                    )
-                )
-        );
-        
-        if (isset($response['data'])) {
-            return \end($response['data']['rows']);
-        }
-        
-        return false;
     }
     
     public function orgIndex(Dashboard $view)

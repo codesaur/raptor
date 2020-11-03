@@ -13,7 +13,7 @@ class HelperController extends DashboardController
         $view->title('Indoraptor');
         
         if ( ! single::user()->can('system_indoraptor_index')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         $view->render();

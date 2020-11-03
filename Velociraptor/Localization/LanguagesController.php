@@ -21,7 +21,7 @@ class LanguagesController extends DashboardController
                 ->breadcrumb(array(single::text('languages')));
         
         if ( ! single::user()->can('system_language_index')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         $view->callout(single::text('languages-note'), 'danger');

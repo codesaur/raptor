@@ -114,6 +114,7 @@
         const urlParams = new URLSearchParams(queryString);
         if (urlParams && urlParams.get('message')) {
             showMessage(formLogin, urlParams.get('message_type') ?? 'warning', urlParams.get('message'));
+            window.history.replaceState({}, document.title, location.protocol + '//' + location.host + location.pathname);
         }
 
         jQuery.validator.addMethod('passwordMatch', function(value, element) {

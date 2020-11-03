@@ -18,7 +18,7 @@ abstract class DashboardController extends Controller
         }
         
         if ( ! ($result ?? false)) {
-            (new Dashboard())->noPermission();
+            return (new Dashboard())->noPermission();
         }
     }
     
@@ -71,6 +71,27 @@ abstract class DashboardController extends Controller
                 array('table' => $table, 'flag' => single::language()->current()));
         
         return $lookup['data'] ?? array();
+    }
+    
+    public function getLastLog(int $id, $reason, $level, $table = 'dashboard')
+    {
+        $response = $this->indopost(
+                "/log/$table/select",
+                array(
+                    'reason'     => $reason,
+                    'level'      => $level,
+                    'created_by' => $id,
+                    'condition'  => array(
+                        'ORDER BY' => 'id Desc LIMIT 1'
+                    )
+                )
+        );
+        
+        if (isset($response['data'])) {
+            return \end($response['data']['rows']);
+        }
+        
+        return null;
     }
     
     final public function grab($thing, $arg = null)

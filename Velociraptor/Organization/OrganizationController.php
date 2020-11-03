@@ -21,7 +21,7 @@ class OrganizationController extends DashboardController
         $view->title(single::text('organization'))->breadcrumb(array(single::text('organization')));
         
         if ( ! single::user()->can('system_org_index')) {
-            $view->noPermission();
+            return $view->noPermission();
         }
         
         $query = '?logger=organization&controller=' . \urlencode($this->getMe());

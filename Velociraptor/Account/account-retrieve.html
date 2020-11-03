@@ -1,0 +1,120 @@
+<div class="card shadow border-primary mb-4">
+    <div class="card-header bg-light">
+        <span class="mt-2 float-left text-primary text-uppercase">
+            <i class="la la-user"></i>{{ (column['first_name']['value'] ~ ' ' ~ column['last_name']['value'])|e }} <small class="text-warning">ID: {{ column['id']['value'] }}</small>
+        </span>
+        <ul class="nav nav-pills card-header-pills float-right pr-2">
+            <li class="nav-item pl-2">
+                <button class="nav-link btn btn-secondary shadow-sm" onclick="window.history.go(-1);return false;">{{ 'back'|text }}</button>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <input name="{{ column['id']['name'] }}" value="{{ column['id']['value'] }}" readonly type="hidden">
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'firstname'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ column['first_name']['value']|e }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'lastname'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ column['last_name']['value']|e }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'photo'|text }}</label>
+            <div class="col-9">
+                <img src="{{ column['image']['path']|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif') }}" alt="{{ name }}" class="img-fluid">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'email'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ column['email']['value']|e }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'login-name'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ column['username']['value']|e }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'telephone'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ column['phone']['value']|e }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'address'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ column['address']['value']|e }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'status'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ lookup['status'][column['status']['value']] ?? column['status']['value'] }}" type="text">
+            </div>
+        </div>
+        <hr>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'date-created'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ column['created_at']['value'] }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'created-by'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ account[column['created_by']['value']]  }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'date-modified'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ column['updated_at']['value'] }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'updated-by'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ account[column['updated_by']['value']] }}" type="text">
+            </div>
+        </div>
+        <hr>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'last-login'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ login['created_at']|default('Never Logged In') }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">Төхөөрөмжийн хаяг</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ login['info']|json_decode()['address']|e }}" type="text">
+            </div>
+        </div>
+        <hr>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">Сүүлд зочилсон хуудас</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ last_act['info']|json_decode()['url']|e }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">{{ 'date'|text }}</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ last_act['created_at']|e }}" type="text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-3 col-form-label text-right">Төхөөрөмжийн хаяг</label>
+            <div class="col-9">
+                <input class="form-control" disabled value="{{ last_act['info']|json_decode()['address']|e }}" type="text">
+            </div>
+        </div>
+    </div>
+</div>
