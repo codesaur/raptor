@@ -2,7 +2,7 @@
 
 use codesaur\DataObject\CDO;
 
-class SettingsModel extends \Indoraptor\MultiDescribe2
+class SettingsModel extends \Indoraptor\MultiModel2
 {
     function __construct(CDO $conn)
     {
