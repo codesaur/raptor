@@ -116,7 +116,7 @@ class PagesController extends DashboardController
 
             $vars = array(
                 'crud' => $crud, 'action' => $action,
-                'velociraptor_common' => \dirname(__FILE__) . '/../Common',
+                'velociraptor_common' => \dirname(__FILE__) . '/../common',
                 'column' => $column, 'lookup' => $lookup, 'parents' => $parents);
 
             $view->render(new TwigTemplate(\dirname(__FILE__) . '/pages/crud-action-pages.html', $vars));
