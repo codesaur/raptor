@@ -6,7 +6,6 @@ use codesaur\MultiModel\MultiDescribe;
 use Velociraptor\TwigTemplate;
 use Velociraptor\FileController;
 use Velociraptor\ImageController;
-use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 use Indoraptor\Content\MailerDescribe;
@@ -30,17 +29,16 @@ class SettingsController extends DashboardController
     
     public function settings()
     {
-        $view = new Dashboard();
-        $view->title(single::text('settings'))->breadcrumb(array(single::text('settings')));
+        $template = $this->getTemplate(single::text('settings'));
         
         if ( ! single::user()->can(single::user()->organization('alias') . '_website_settings')) {
-            return $view->noPermission();
+            return $template->noPermission();
         }
         
         $settings = $this->indoget('/settings/' . single::user()->organization('alias'));
         
         if ( ! isset($settings['data'])) {
-            return $view->render();
+            return $template->render();
         }
         
         $table = $settings['data']['clean'] ?? 'settings';
@@ -52,7 +50,7 @@ class SettingsController extends DashboardController
         } else {
             $record = $settings['data']['record'];
             $auto_increment = $record['id'];
-            $view->addDelete(
+            $template->addDelete(
                     array('table' => $table, 'logger' => 'settings'),
                     'body', single::text('delete-image-ask'), null, 'strip_file');
         }
@@ -73,7 +71,7 @@ class SettingsController extends DashboardController
         $action = single::link('crud-submit', array('action' => empty($record) ? 'insert' : 'update'))
                 . '?logger=settings&controller=' . \urlencode($this->getMe()) . "&table=$table";
 
-        $view->render(new TwigTemplate(
+        $template->render(new TwigTemplate(
                 \dirname(__FILE__) . '/settings/settings.html',
                 array('column' => $column, 'action' => $action)));
     }
@@ -81,7 +79,7 @@ class SettingsController extends DashboardController
     public function socials()
     {
         if ( ! single::user()->can(single::user()->organization('alias') . '_website_socials')) {
-            return (new Dashboard())->noPermission(true);
+            return $this->getTemplate()->noPermission(true);
         }
 
         $response = $this->indoget('/settings/socials/' . \urlencode(single::user()->organization('alias')));
@@ -104,7 +102,7 @@ class SettingsController extends DashboardController
     public function mailer()
     {
         if ( ! single::user()->can('system_system_mailer')) {
-            return (new Dashboard())->noPermission(true);
+            return $this->getTemplate()->noPermission(true);
         }
         
         $response = $this->indoget('/settings/mailer');

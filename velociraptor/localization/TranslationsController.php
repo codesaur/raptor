@@ -6,7 +6,6 @@ use codesaur\HTML\HTML5 as html;
 
 use Velociraptor\Boot4\Card;
 use Velociraptor\TwigTemplate;
-use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 use Indoraptor\Localization\TranslationDescribe;
@@ -15,15 +14,13 @@ class TranslationsController extends DashboardController
 {
     public function index()
     {
-        $view = new Dashboard();
-        $view->title(single::text('translation'))
-                ->breadcrumb(array(single::text('translation')));
+        $template = $this->getTemplate(single::text('translation'));
         
         if ( ! single::user()->can('system_translation_index')) {
-            return $view->noPermission();
+            return $template->noPermission();
         }
         
-        $view->alert(single::text('translation-note'), 'flaticon-exclamation', 'alert-dark');
+        $template->alert(single::text('translation-note'), 'flaticon-exclamation', 'alert-dark');
         
         $translation = $this->indoget('/translation', [], true);
         if (isset($translation->data->names)) {
@@ -74,8 +71,8 @@ class TranslationsController extends DashboardController
             }
         }
         
-        $view->addDelete(array('logger' => 'localization', 'model' => 'Indoraptor\\Localization\\TranslationModel'));        
-        $view->render($cards ?? null);
+        $template->addDelete(array('logger' => 'localization', 'model' => 'Indoraptor\\Localization\\TranslationModel'));        
+        $template->render($cards ?? null);
     }
     
     public function crud(string $action, $id, $table)
@@ -86,7 +83,7 @@ class TranslationsController extends DashboardController
             }
 
             if ( ! single::user()->can("system_translation_$action")) {
-                return (new Dashboard())->noPermission(true);
+                return $this->getTemplate()->noPermission(true);
             }
 
             $crud = single::link('crud-submit', array('action' => $action))

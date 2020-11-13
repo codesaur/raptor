@@ -6,7 +6,6 @@ use codesaur\HTML\Template;
 use codesaur\Base\LogLevel;
 
 use Velociraptor\TwigTemplate;
-use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 use Indoraptor\Account\AccountDescribe;
@@ -15,14 +14,14 @@ class AccountController extends DashboardController
 {    
     public function index()
     {
-        $view = new Dashboard(single::text('accounts'));
+        $template = $this->getTemplate(single::text('accounts'));
         
         $table = single::request()->getParam('table');
         if ($table && $table != 'accounts') {
             $modal = \dirname(__FILE__) . "/$table-index-modal.html";
             if ( ! single::user()->can("system_{$table}_index")
                     || ! \file_exists($modal)) {
-                return $view->noPermission(true);
+                return $template->noPermission(true);
             }
             
             $response = $this->indopost("/record/retrieve?table=$table&model="
@@ -38,14 +37,12 @@ class AccountController extends DashboardController
                         'rows' => $response['data']['rows'] ?? array())))->render();
         }
         
-        $view->breadcrumb(array(single::text('accounts')));
-        
-        if ($this->orgIndex($view)) {
+        if ($this->orgIndex($template)) {
             return;
         }
         
         if ( ! single::user()->can('system_account_index')) {
-            return $view->noPermission();
+            return $template->noPermission();
         }
         
         $response = $this->indopost('/record/retrieve?model='
@@ -53,8 +50,8 @@ class AccountController extends DashboardController
                 array('condition' => array('ORDER BY' => 'first_name')));
         $accounts = $response['data']['rows'] ?? array();
         
-        $view->callout(single::text('accounts-note'), 'primary', 'flaticon2-avatar');
-        $view->addDelete(array('logger' => 'account', 'model' => 'Indoraptor\\Account\\AccountModel'), 'table');
+        $template->callout(single::text('accounts-note'), 'primary', 'flaticon2-avatar');        
+        $template->addDelete(array('logger' => 'account', 'model' => 'Indoraptor\\Account\\AccountModel'), 'table');
         
         $org_users_query = 'SELECT t1.account_id, t1.organization_id, t1.status ' .
                 'FROM organization_users as t1 JOIN organizations as t2 ON t1.organization_id = t2.id ' .
@@ -89,7 +86,7 @@ class AccountController extends DashboardController
             'lookup' => $this->getLookup(array('status')),
             'organizations' => $organizations_result['data']['rows'] ?? array());
 
-        $view->render(new TwigTemplate(\dirname(__FILE__) . '/account-index.html', $vars));
+        $template->render(new TwigTemplate(\dirname(__FILE__) . '/account-index.html', $vars));
     }
     
     public function crud(string $action, $id)
@@ -148,7 +145,7 @@ class AccountController extends DashboardController
                     return false;
                 }
             } else {
-                $view = new Dashboard();
+                $template = $this->getTemplate();
 
                 if ($action == 'retrieve') {
                     $caption = $response['data']['record']['first_name'] ?? single::text('account');
@@ -161,12 +158,14 @@ class AccountController extends DashboardController
                     }
 
                     $delete = array('table' => 'accounts', 'logger' => 'account');
-                    $view->addDelete($delete, '#tab-picture', single::text('delete-image-ask'), null, 'strip_file');
+                    
+                    $template->addDelete($delete, '#tab-picture', single::text('delete-image-ask'), null, 'strip_file');
                 }
                 
-                $view->title("$title - $caption");
-                $view->breadcrumb(array($title, $index))->breadcrumb(array($breadcrumb ?? $caption));
-                $view->render(new TwigTemplate(\dirname(__FILE__) . "/account-$action.html", $vars));
+                $template->title("$title - $caption");
+                $template->breadcrumb(array($title, $index));
+                $template->breadcrumb(array($breadcrumb ?? $caption));                
+                $template->render(new TwigTemplate(\dirname(__FILE__) . "/account-$action.html", $vars));
             }
             
             return true;
@@ -175,7 +174,7 @@ class AccountController extends DashboardController
                 \error_log($e->getMessage());
             }
             
-            return (new Dashboard())->noPermission();
+            return $this->getTemplate()->noPermission();
         }
     }
     
@@ -294,7 +293,7 @@ class AccountController extends DashboardController
     {
         if (single::request()->getMethod() == 'GET') {
             if ( ! single::user()->can('system_account_organization_set')) {
-                return (new Dashboard())->noPermission(true);
+                return $this->renderNoPermission(null, true);
             }
             
             $sql =  'SELECT ou.organization_id ' .
@@ -507,7 +506,7 @@ class AccountController extends DashboardController
         }
     }
     
-    public function orgIndex(Dashboard $view)
+    public function orgIndex(Template $template)
     {
         $alias = single::user()->organization('alias');
         if ( ! single::user()->can($alias . '_account_index')
@@ -515,11 +514,12 @@ class AccountController extends DashboardController
             return false;
         }
         
-        if (single::user()->can($alias . '_rbac_index')) {
+        if (single::user()->can($alias . '_rbac_index')
+                && $template->hasMethod('addToolbar')) {
             $rbac_link = single::link('crud', array('action' => 'index')) . 
                     '?logger=rbac&controller=' . \urlencode('Velociraptor\\RBAC\\RBACController') .
                     '&alias=' . \urlencode($alias) . '&title=' . \urlencode(single::user()->organization('name'));
-            $view->addToolbar(array('title' => 'Хэрэглэгчийн дүрүүд'), 'flaticon-safe-shield-protection', 'btn-danger shadow-sm', $rbac_link, '#modal');
+            $template->addToolbar(array('title' => 'Хэрэглэгчийн дүрүүд'), 'flaticon-safe-shield-protection', 'btn-danger shadow-sm', $rbac_link, '#modal');
         }
         
         $org_account_query =
@@ -561,7 +561,7 @@ class AccountController extends DashboardController
             'accounts' => $accounts,
             'lookup' => $this->getLookup(array('status')));        
         
-        $view->render(new TwigTemplate(\dirname(__FILE__) . '/org-account-index.html', $vars));
+        $template->render(new TwigTemplate(\dirname(__FILE__) . '/org-account-index.html', $vars));
         
         return true;
     }

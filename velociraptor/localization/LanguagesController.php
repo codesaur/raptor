@@ -7,7 +7,6 @@ use codesaur\HTML\HTML5 as html;
 
 use Velociraptor\Boot4\Card;
 use Velociraptor\TwigTemplate;
-use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 use Indoraptor\Localization\LanguageDescribe;
@@ -16,15 +15,13 @@ class LanguagesController extends DashboardController
 {   
     public function index()
     {
-        $view = new Dashboard();
-        $view->title(single::text('languages'))
-                ->breadcrumb(array(single::text('languages')));
+        $template = $this->getTemplate(single::text('languages'));
         
         if ( ! single::user()->can('system_language_index')) {
-            return $view->noPermission();
+            return $template->noPermission();
         }
         
-        $view->callout(single::text('languages-note'), 'danger');
+        $template->callout(single::text('languages-note'), 'danger');
         
         $card = new Card(array(single::text('language'), 'text-uppercase text-danger'), 'la la-language');
 
@@ -46,9 +43,9 @@ class LanguagesController extends DashboardController
         
         $card->addContent(new TwigTemplate(\dirname(__FILE__) . '/language-index-table.html'));
 
-        $view->addDelete(array('logger' => 'localization', 'model' => 'Indoraptor\\Localization\\LanguageModel'));
+        $template->addDelete(array('logger' => 'localization', 'model' => 'Indoraptor\\Localization\\LanguageModel'));
         
-        $view->render($card);
+        $template->render($card);
     }
     
     public function crud(string $action, $id, $table)
@@ -59,7 +56,7 @@ class LanguagesController extends DashboardController
             }
             
             if ( ! single::user()->can("system_language_$action")) {
-                return (new Dashboard())->noPermission(true);   
+                return $this->getTemplate()->noPermission(true);   
             }
             
             $query = "?logger=localization&table=$table&controller=" . \urlencode($this->getMe());

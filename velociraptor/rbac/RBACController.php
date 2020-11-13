@@ -10,7 +10,6 @@ use codesaur\RBAC\RolePermissionDescribe;
 
 use Velociraptor\Boot4\Card;
 use Velociraptor\TwigTemplate;
-use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 class RBACController extends DashboardController
@@ -26,11 +25,11 @@ class RBACController extends DashboardController
         $organizations = single::link('crud', array('action' => 'index')) .
                 '?logger=organization&controller=' . \urlencode('Velociraptor\\Organization\\OrganizationController');
             
-        $view = new Dashboard();
-        $view->title('RBAC')->breadcrumb(array(single::text('organization'), $organizations))->breadcrumb(array('RBAC'));
+        $template = $this->getTemplate('RBAC', array(single::text('organization'), $organizations));
+        $template->breadcrumb(array('RBAC'));
         
         if ( ! single::user()->can('system_rbac')) {
-            return $view->noPermission();
+            return $template->noPermission();
         }
         
         $card = new Card(
@@ -66,7 +65,7 @@ class RBACController extends DashboardController
                     'permissions' => $permissions['data'] ?? array(),
                     'alias' => $alias, 'role_permission' => $role_permission)));
 
-        $view->render($card);
+        $template->render($card);
     }
     
     public function crud(string $action)
@@ -87,7 +86,7 @@ class RBACController extends DashboardController
                         single::user()->can("{$org_alias}_rbac_user_role")) {
                     $thing = "{$org_alias}_rbac_user_role";
                 } else {
-                    return (new Dashboard())->noPermission(true);
+                    return $this->getTemplate()->noPermission(true);
                 }
             }
             

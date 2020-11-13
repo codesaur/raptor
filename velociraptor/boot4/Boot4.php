@@ -7,13 +7,67 @@ use Velociraptor\IndexTemplate;
 
 class Boot4 extends IndexTemplate
 {
-    function __construct(string $template = null, array $vars = null)
+    function __construct()
     {
         parent::__construct(\dirname(__FILE__) . '/index.html');
-
-        if (isset($template)) {
-            $this->set('content', new TwigTemplate($template, $vars));
+    }
+    
+    public function breadcrumb($item)
+    {
+        if ( ! $this->hasContent()) {
+            return;
         }
+        
+        $breadcrumb = $this->getContent()->has('breadcrumb') ?
+                $this->getContent()->get('breadcrumb') : null;
+
+        if (empty($breadcrumb)) {
+            $breadcrumb = array();
+        }
+
+        if (\is_array($item)) {
+            $breadcrumb[] = array('text' => $item[0], 'link' => $item[1] ?? false);
+        } else {
+            $breadcrumb[] = array('text' => single::text($item), 'link' => single::link($item));
+        }
+
+        $this->getContent()->set('breadcrumb', $breadcrumb);
+    }
+    
+    public function addToolbar(
+            $text, $icon = null, $class = '', $href = 'javascript:;', $modal = null)
+    {
+        if ( ! $this->hasContent()) {
+            return;
+        }
+        
+        $toolbar = $this->getContent()->has('toolbar') ?
+                $this->getContent()->get('toolbar') : null;
+
+        if (empty($toolbar)) {
+            $toolbar = array();
+        }
+        
+        $btn = array('class' => "btn $class", 'href' => $href);
+
+        if (isset($icon)) {
+            $btn['icon'] = $icon;
+        }
+
+        if (isset($modal)) {
+            $btn['data-target'] = $modal;
+            $btn['data-toggle'] = 'modal';
+        }
+
+        if (\is_array($text)) {
+            $btn[\key($text)] = \current($text);
+        } else {
+            $btn['text'] = $text;
+        }
+
+        \array_push($toolbar, $btn);
+
+        $this->getContent()->set('toolbar', $toolbar);
     }
 
     public function alert(
@@ -73,9 +127,9 @@ class Boot4 extends IndexTemplate
         return new Alert($html, $icon, 'alert-danger');
     }
     
-    public function noPermission($modal = false, $callback = null)
+    public function noPermission($is_modal = false, $callback = null)
     {
-        if ($modal) {
+        if ($is_modal) {
             (new TwigTemplate(
                 \dirname(__FILE__) . '/no-permission-modal.html',
                 array('alert' => $this->alertNoPermission(null, false))))->render();
@@ -90,8 +144,14 @@ class Boot4 extends IndexTemplate
         return false;
     }
     
-    public function getFolder() : string
+    public function getSourceFolder() : string
     {
         return \dirname(__FILE__);
     }
+    
+    public function &getContent() : ?TwigTemplate
+    {
+        return $this->get('content');
+    }
 }
+

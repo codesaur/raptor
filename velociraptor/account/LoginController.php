@@ -8,6 +8,7 @@ use codesaur\Globals\Server;
 
 use Velociraptor\Boot4\Login;
 use Velociraptor\DashboardController;
+use Velociraptor\DashboardTemplateInterface;
 
 class LoginController extends DashboardController
 {
@@ -31,13 +32,22 @@ class LoginController extends DashboardController
                 array('table' => 'templates', '_keyword_' => array('tos', 'pp')));
         $vars = $templates['data'] ?? array();        
 
-        $this->getTemplate($vars)->render();
+        $this->getTemplate(null, $vars)->render();
     }
     
-    public function getTemplate(array $vars = [])
+    public function getTemplate(string $title = null, array $vars = []) : DashboardTemplateInterface
     {
         $template = single::app()->getNamespace() . 'LoginTemplate';
-        return \class_exists($template) ? new $template($vars) : new Login($vars);
+        if (\class_exists($template)) {
+            $class = new $template($title, $vars);
+        }
+        
+        if ( ! isset($class)
+               || ! $class instanceof DashboardTemplateInterface) {
+            $class = new Login($title, $vars);
+        }
+        
+        return $class;
     }
     
     public function entry()
@@ -235,22 +245,22 @@ class LoginController extends DashboardController
                 'forgot' => $response['data']), LogLevel::Security, 'account', 9);
             
             $template->title(single::text('set-new-password'));
-            $template->setContentVar('use_id', $id);
-            $template->setContentVar('account', $response['data']['account']);
-            $template->setContentVar('created_at', $response['data']['created_at']);
+            $template->getContent()->set('use_id', $id);
+            $template->getContent()->set('account', $response['data']['account']);
+            $template->getContent()->set('created_at', $response['data']['created_at']);
             
             if (isset($error)) {
-                $template->setContentVar('error', $error);
+                $template->getContent()->set('error', $error);
             }
             
-            $template->get('content')->file($template->getFolder() . '/login-reset-password.html');
+            $template->getContent()->file($template->getSourceFolder() . '/login-reset-password.html');
         } else {
             $this->log('reset-password', array('message' =>
                 'Хугацаа дууссан код ашиглан нууц үг шинээр тааруулахыг хүсэв. Татгалзав.',
                 'forgot' => $response['data']), LogLevel::Security, 'account', 9);
             
             $template->title(single::text('failure'));
-            $template->get('content')->file($template->getFolder() . '/login-forgot.html');
+            $template->getContent()->file($template->getSourceFolder() . '/login-forgot.html');
         }
         
         $template->render();
@@ -295,13 +305,12 @@ class LoginController extends DashboardController
             'account' => $result['data'],
             'use_id' => $post->value('use_id')), LogLevel::Security, 'account', 9);
         
-        $template = $this->getTemplate();
-        $template->title(single::text('success'));
-        $template->setContentVar('title', single::text('success'));
-        $template->setContentVar('notice', single::text('set-new-password-success'));
-        $template->setContentVar('btn', single::text('login'));
-        $template->setContentVar('btn_class', 'primary btn-lg btn-block');
-        $template->get('content')->file($template->getFolder() . '/login-forgot.html');
+        $template = $this->getTemplate(single::text('success'));
+        $template->getContent()->set('title', single::text('success'));
+        $template->getContent()->set('notice', single::text('set-new-password-success'));
+        $template->getContent()->set('btn', single::text('login'));
+        $template->getContent()->set('btn_class', 'primary btn-lg btn-block');
+        $template->getContent()->file($template->getSourceFolder() . '/login-forgot.html');
         
         $template->render();
     }

@@ -2,11 +2,16 @@
 
 use codesaur as single;
 
-class Dashboard extends Boot4
+use Velociraptor\TwigTemplate;
+use Velociraptor\DashboardTemplateInterface;
+
+class Dashboard extends Boot4 implements DashboardTemplateInterface
 {
     function __construct($title = null, array $vars = [])
     {
-        parent::__construct(\dirname(__FILE__) . '/content.html', $vars + $this->getMenu());
+        parent::__construct();
+
+        $this->set('content', new TwigTemplate(\dirname(__FILE__) . '/content.html', $vars + $this->getMenu()));
 
         if (isset($title)) {
             $this->title($title);
@@ -41,53 +46,5 @@ class Dashboard extends Boot4
         }
         
         return $menu;
-    }
-
-    public function breadcrumb($item)
-    {
-        if ($this->hasContent()) {
-            $breadcrumb = $this->get('content')->has('breadcrumb') ?
-                    $this->get('content')->get('breadcrumb') : null;
-        
-            if (empty($breadcrumb)) {
-                $breadcrumb = array();
-            }
-
-            if (\is_array($item)) {
-                $breadcrumb[] = array('text' => $item[0], 'link' => $item[1] ?? false);
-            } else {
-                $breadcrumb[] = array('text' => single::text($item), 'link' => single::link($item));
-            }
-
-            $this->get('content')->set('breadcrumb', $breadcrumb);
-        }
-        
-        return $this;
-    }
-    
-    public function addToolbar(
-            $text, $icon = null, $class = '', $href = 'javascript:;', $modal = null)
-    {
-        $toolbar = $this->get('content')->get('toolbar') ?? array();
-        $btn = array('class' => "btn $class", 'href' => $href);
-        
-        if (isset($icon)) {
-            $btn['icon'] = $icon;
-        }
-        
-        if (isset($modal)) {
-            $btn['data-target'] = $modal;
-            $btn['data-toggle'] = 'modal';
-        }
-
-        if (\is_array($text)) {
-            $btn[\key($text)] = \current($text);
-        } else {
-            $btn['text'] = $text;
-        }
-
-        \array_push($toolbar, $btn);
-        
-        $this->setContentVar('toolbar', $toolbar);
     }
 }

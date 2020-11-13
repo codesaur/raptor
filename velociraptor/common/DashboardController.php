@@ -4,8 +4,6 @@ use codesaur as single;
 use codesaur\Base\Base;
 use codesaur\Base\LogLevel;
 
-use Velociraptor\Boot4\Dashboard;
-
 abstract class DashboardController extends Controller
 {
     public function index()
@@ -14,24 +12,35 @@ abstract class DashboardController extends Controller
         
         if ($this->hasMethod($method_alias)
                 && $this->isCallable($method_alias)) {
-            $result = $this->$method_alias();
+            $this->$method_alias();
+        } else {
+            $you = single::user()->account('first_name') . ' ' . single::user()->account('last_name');
+            
+            $this->getTemplate()->render("Welcome $you!");
+        }
+    }    
+
+    public function getTemplate(string $title = null, $breadcrumb = null, array $vars = []) : DashboardTemplateInterface
+    {
+        $template = single::app()->getNamespace() . 'DashboardTemplate';
+        if (\class_exists($template)) {
+            $class = new $template($title, $vars);
         }
         
-        if ( ! ($result ?? false)) {
-            return (new Dashboard())->noPermission();
+        if ( ! isset($class)
+               || ! $class instanceof DashboardTemplateInterface) {
+            $class = new Boot4\Dashboard($title, $vars);
+            
+            if (isset($breadcrumb)) {
+                $class->breadcrumb($breadcrumb);
+            } elseif (isset($title)) {
+                $class->breadcrumb(array($title));
+            }
         }
+        
+        return $class;
     }
     
-    public function index_system()
-    {
-        $you = single::user()->account('first_name') . ' ' . single::user()->account('last_name');
-            
-        $dashboard = new Dashboard();
-        $dashboard->render("Welcome $you!");
-        
-        return true;
-    }
-
     public function log(
             string $reason, $data = null,
             int $level = LogLevel::Basic, 
@@ -53,10 +62,9 @@ abstract class DashboardController extends Controller
     {
         if (single::user()->isLogin()
                 && single::user()->account('id') != null) {
-            $this->indoput('/record?model='
-                    . \urlencode('Indoraptor\\Account\\AccountModel'),
-                    array('record' =>
-                        array('id' => single::user()->account('id'), 'code' => single::language()->current())));
+            $record = array('record' => array(
+                'id' => single::user()->account('id'), 'code' => single::language()->current()));
+            $this->indoput('/record?model=' . \urlencode('Indoraptor\\Account\\AccountModel'), $record);
         }
     }
     

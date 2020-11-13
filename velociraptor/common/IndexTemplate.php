@@ -1,6 +1,7 @@
 <?php namespace Velociraptor;
 
 use codesaur as single;
+use codesaur\HTML\Template;
 use codesaur\Http\Controller;
 
 class IndexTemplate extends TwigTemplate
@@ -39,7 +40,7 @@ class IndexTemplate extends TwigTemplate
     
     public function hasContent() : bool
     {
-        return $this->get('content') instanceof TwigTemplate;
+        return $this->get('content') instanceof Template;
     }
 
     public function addContent($content)
@@ -51,14 +52,5 @@ class IndexTemplate extends TwigTemplate
         }
         
         return $this;
-    }
-
-    public function setContentVar(string $key, $value)
-    {
-        if ($this->hasContent()) {
-            $this->get('content')->set($key, $value);
-        } else {
-            $this->set($key, $value);
-        }
     }
 }

@@ -9,14 +9,14 @@ class HelperController extends DashboardController
 {
     public function index()
     {
-        $view = new Boot4();
-        $view->title('Indoraptor');
+        $template = new Boot4();
+        $template->title('Indoraptor');
         
         if ( ! single::user()->can('system_indoraptor_index')) {
-            return $view->noPermission();
+            return $template->noPermission();
         }
         
-        $view->render();
+        $template->render();
     }
     
     public function logjson()

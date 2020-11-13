@@ -6,7 +6,6 @@ use codesaur\HTML\HTML5 as html;
 
 use Velociraptor\Boot4\Card;
 use Velociraptor\TwigTemplate;
-use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 use Indoraptor\Content\PagesDescribe;
@@ -15,15 +14,13 @@ class PagesController extends DashboardController
 {
     public function index()
     {
-        $view = new Dashboard();
-        $view->title(single::text('pages'))
-                ->breadcrumb(array(single::text('pages')));
+        $template = $this->getTemplate(single::text('pages'));
 
         if ( ! single::user()->can(single::user()->organization('alias') . '_pages_index')) {
-            return $view->noPermission();
+            return $template->noPermission();
         }
 
-        $view->alert(single::text('pages-note'), 'flaticon2-list-2', 'alert-primary alert-elevate alert-dismissible');        
+        $template->alert(single::text('pages-note'), 'flaticon2-list-2', 'alert-primary alert-elevate alert-dismissible');        
         
         $card = new Card(array(single::text('pages'), 'text-primary text-uppercase'), 'flaticon2-list-3', 'border-primary');        
         
@@ -43,9 +40,9 @@ class PagesController extends DashboardController
 
         $card->addContent(new TwigTemplate(\dirname(__FILE__) . '/pages/index-table.html'));
 
-        $view->addDelete(array('logger' => 'pages', 'model' => 'Indoraptor\\Content\\PagesModel'));
+        $template->addDelete(array('logger' => 'pages', 'model' => 'Indoraptor\\Content\\PagesModel'));
         
-        $view->render($card);
+        $template->render($card);
     }
     
     public function crud(string $action, $id, $table)
@@ -56,7 +53,7 @@ class PagesController extends DashboardController
             }
             
             if ( ! single::user()->can(single::user()->organization('alias') . "_pages_$action")) {
-                return (new Dashboard())->noPermission();
+                return $this->getTemplate()->noPermission();
             }
 
             $title = single::text('pages');
@@ -104,8 +101,8 @@ class PagesController extends DashboardController
                 );
             }
             
-            $view = new Dashboard();
-            $view->title("$title - $caption")->breadcrumb(array($title, $index))->breadcrumb(array($caption));
+            $template = $this->getTemplate("$title - $caption", array($title, $index));
+            $template->breadcrumb(array($caption));
             
             $column = (new PagesDescribe($table))->getTwigColumns($response['data']['record'] ?? array());
             
@@ -119,7 +116,7 @@ class PagesController extends DashboardController
                 'velociraptor_common' => \dirname(__FILE__) . '/../common',
                 'column' => $column, 'lookup' => $lookup, 'parents' => $parents);
 
-            $view->render(new TwigTemplate(\dirname(__FILE__) . '/pages/crud-action-pages.html', $vars));
+            $template->render(new TwigTemplate(\dirname(__FILE__) . '/pages/crud-action-pages.html', $vars));
             
             return true;
         } catch (\Exception $e) {

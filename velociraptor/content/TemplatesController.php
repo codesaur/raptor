@@ -6,7 +6,6 @@ use codesaur\HTML\HTML5 as html;
 
 use Velociraptor\Boot4\Card;
 use Velociraptor\TwigTemplate;
-use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 use Indoraptor\Content\ContentDescribe;
@@ -15,12 +14,10 @@ class TemplatesController extends DashboardController
 {
     public function index()
     {
-        $view = new Dashboard();
-        $view->title(single::text('document-templates'))
-                ->breadcrumb(array(single::text('document-templates')));
+        $template = $this->getTemplate(single::text('document-templates'));
         
         if ( ! single::user()->can('system_template_index')) {
-            return $view->noPermission();
+            return $template->noPermission();
         }
         
         $card = new Card(array(single::text('document-templates'), 'text-uppercase text-success'), 'flaticon-interface-4');
@@ -42,9 +39,9 @@ class TemplatesController extends DashboardController
 
         $card->addContent(new TwigTemplate(\dirname(__FILE__) . '/template/index-table.html'));
 
-        $view->addDelete(array('logger' => 'reference', 'model' => 'Indoraptor\\Content\\ContentModel'));
+        $template->addDelete(array('logger' => 'reference', 'model' => 'Indoraptor\\Content\\ContentModel'));
         
-        $view->render($card);
+        $template->render($card);
     }
     
     public function crud(string $action, $id, $table)
@@ -55,7 +52,7 @@ class TemplatesController extends DashboardController
             }
             
             if ( ! single::user()->can("system_template_$action")) {
-                return (new Dashboard())->noPermission();
+                return $this->getTemplate()->noPermission();
             }
             
             $title = single::text('document-templates');
@@ -81,8 +78,8 @@ class TemplatesController extends DashboardController
                 $caption = single::text('view-record');
             }
             
-            $view = new Dashboard();
-            $view->title("$title - $caption")->breadcrumb(array($title, $index))->breadcrumb(array($breadcrumb ?? $caption));
+            $template = $this->getTemplate("$title - $caption", array($title, $index));
+            $template->breadcrumb(array($breadcrumb ?? $caption));
 
             $column  = (new ContentDescribe())->getTwigColumns($response['data']['record'] ?? array());
             
@@ -94,7 +91,7 @@ class TemplatesController extends DashboardController
                 'lookup' => $lookup,
                 'crud' => $crud, 'action' => $action, 'column' => $column);
 
-            $view->render(new TwigTemplate(\dirname(__FILE__) . '/template/crud-action.html', $vars));
+            $template->render(new TwigTemplate(\dirname(__FILE__) . '/template/crud-action.html', $vars));
             
             return true;
         } catch (\Exception $e) {

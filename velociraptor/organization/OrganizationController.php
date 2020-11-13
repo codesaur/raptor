@@ -8,7 +8,6 @@ use codesaur\HTML\HTML5 as html;
 use Velociraptor\Boot4\Card;
 use Velociraptor\TwigTemplate;
 use Velociraptor\FileController;
-use Velociraptor\Boot4\Dashboard;
 use Velociraptor\DashboardController;
 
 use Indoraptor\Account\OrganizationDescribe;
@@ -17,11 +16,10 @@ class OrganizationController extends DashboardController
 {
     public function index()
     {
-        $view = new Dashboard();
-        $view->title(single::text('organization'))->breadcrumb(array(single::text('organization')));
+        $template = $this->getTemplate(single::text('organization'));
         
         if ( ! single::user()->can('system_org_index')) {
-            return $view->noPermission();
+            return $template->noPermission();
         }
         
         $query = '?logger=organization&controller=' . \urlencode($this->getMe());
@@ -35,9 +33,9 @@ class OrganizationController extends DashboardController
 
         $card->addContent(new TwigTemplate(\dirname(__FILE__) . '/organization-index-table.html'));
         
-        $view->addDelete(array('logger' => 'organization', 'model' => 'Indoraptor\\Account\\OrganizationModel'));
+        $template->addDelete(array('logger' => 'organization', 'model' => 'Indoraptor\\Account\\OrganizationModel'));
 
-        $view->render($card);
+        $template->render($card);
     }
     
     public function crud(string $action, $id)
@@ -49,7 +47,7 @@ class OrganizationController extends DashboardController
             }
             
             if ( ! single::user()->can("system_org_$action")) {
-                return (new Dashboard())->noPermission(true);
+                return $this->getTemplate()->noPermission(true);
             }
 
             $query = '?logger=organization&controller=' . \urlencode($this->getMe());
