@@ -14,7 +14,7 @@ interface DashboardTemplateInterface
     
     public function &get(string $key);
     public function getSourceFolder() : string;
-    public function &getContent() : TwigTemplate;
+    public function &getContent() : ?TwigTemplate;
 
     public function render($content = null);
     
