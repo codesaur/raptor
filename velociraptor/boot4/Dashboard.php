@@ -10,7 +10,7 @@ class Dashboard extends Boot4 implements DashboardTemplateInterface
     function __construct($title = null, array $vars = [])
     {
         parent::__construct();
-
+        
         $this->set('content', new TwigTemplate(\dirname(__FILE__) . '/content.html', $vars));
 
         if (isset($title)) {
@@ -18,7 +18,7 @@ class Dashboard extends Boot4 implements DashboardTemplateInterface
         }
         
         if (single::user()->isLogin()) {
-            $this->setArray($this->getMenu());
+            $this->getContent()->setArray($this->getMenu());
         }
     }
     
