@@ -6,9 +6,7 @@ use codesaur\Globals\Post;
 use codesaur\Base\LogLevel;
 use codesaur\Globals\Server;
 
-use Velociraptor\Boot4\Login;
 use Velociraptor\DashboardController;
-use Velociraptor\DashboardTemplateInterface;
 
 class LoginController extends DashboardController
 {
@@ -30,24 +28,11 @@ class LoginController extends DashboardController
 
         $templates = $this->indopost('/content',
                 array('table' => 'templates', '_keyword_' => array('tos', 'pp')));
-        $vars = $templates['data'] ?? array();        
+        $vars = $templates['data'] ?? array();
 
-        $this->getTemplate(null, $vars)->render();
-    }
-    
-    public function getTemplate(string $title = null, array $vars = []) : DashboardTemplateInterface
-    {
-        $template = single::app()->getNamespace() . 'LoginTemplate';
-        if (\class_exists($template)) {
-            $class = new $template($title, $vars);
-        }
-        
-        if ( ! isset($class)
-               || ! $class instanceof DashboardTemplateInterface) {
-            $class = new Login($title, $vars);
-        }
-        
-        return $class;
+        $template = $this->getTemplate(null, null, $vars);
+        $template->getContent()->file($template->getSourceFolder() . '/login.html');
+        $template->render();
     }
     
     public function entry()

@@ -11,17 +11,20 @@ class Dashboard extends Boot4 implements DashboardTemplateInterface
     {
         parent::__construct();
 
-        $this->set('content', new TwigTemplate(\dirname(__FILE__) . '/content.html', $vars + $this->getMenu()));
+        $this->set('content', new TwigTemplate(\dirname(__FILE__) . '/content.html', $vars));
 
         if (isset($title)) {
             $this->title($title);
+        }
+        
+        if (single::user()->isLogin()) {
+            $this->setArray($this->getMenu());
         }
     }
     
     function getMenu() : array
     {
         $menu = array();
-        
         $controller = single::app()->getNamespace() . 'Menu';
         if (\class_exists($controller)) {
             $menuController = new $controller();
