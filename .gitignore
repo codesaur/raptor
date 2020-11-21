@@ -1,4 +1,6 @@
 /vendor/
+/private/
 /nbproject/
+/www_dashboard/public/
 
 composer.lock

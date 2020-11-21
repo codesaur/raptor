@@ -28,6 +28,7 @@
             "Velociraptor\\": ["velociraptor", "velociraptor/common"],
             "Velociraptor\\Account\\": "velociraptor/account",
             "Velociraptor\\Content\\": "velociraptor/content",
+            "Velociraptor\\File\\": "velociraptor/file",
             "Velociraptor\\Helper\\": "velociraptor/helper",
             "Velociraptor\\Localization\\": "velociraptor/localization",
             "Velociraptor\\Log\\": "velociraptor/log",
