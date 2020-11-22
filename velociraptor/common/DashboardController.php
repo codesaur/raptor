@@ -30,7 +30,9 @@ abstract class DashboardController extends Controller
         if ( ! isset($class)
                || ! $class instanceof DashboardTemplateInterface) {
             $class = new Boot4\Dashboard($title, $vars);
-            
+        }
+       
+        if (isset($class)) {
             if (isset($breadcrumb)) {
                 $class->breadcrumb($breadcrumb);
             } elseif (isset($title)) {
