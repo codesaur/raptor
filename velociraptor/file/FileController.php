@@ -1,8 +1,10 @@
-<?php namespace Velociraptor;
+<?php namespace Velociraptor\File;
 
 use codesaur as single;
 use codesaur\Base\File;
 use codesaur\Base\LogLevel;
+
+use Velociraptor\DashboardController;
 
 defined('_document') || define('_document', \dirname($_SERVER['SCRIPT_FILENAME']));
 
@@ -17,7 +19,7 @@ class FileController extends DashboardController
     public $size_limit;
     
     function __construct(
-            string $folder = '/files', int $allows = 0, $overwrite = false, $sizelimit = false)
+            string $folder, int $allows = 0, $overwrite = false, $sizelimit = false)
     {
         $this->file = new File();
         
@@ -35,11 +37,10 @@ class FileController extends DashboardController
         return $this;
     }
     
-    public function setFolder(
-            string $folder, $local = null, $public = null, bool $relative = true)
+    public function setFolder(string $folder, bool $relative = true)
     {
-        $this->local = ($local ?? (_document . '/public')) . "$folder/";
-        $this->public = ($public ?? single::app()->getPublicUrl($relative)) . "$folder/";
+        $this->local = _document . '/public' . "$folder/";
+        $this->public = single::app()->getPublicUrl($relative) . "$folder/";
     }
     
     public function getPath() : string

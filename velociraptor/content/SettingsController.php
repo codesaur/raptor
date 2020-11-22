@@ -4,9 +4,9 @@ use codesaur as single;
 use codesaur\MultiModel\MultiDescribe;
 
 use Velociraptor\TwigTemplate;
-use Velociraptor\FileController;
 use Velociraptor\ImageController;
 use Velociraptor\DashboardController;
+use Velociraptor\File\FileController;
 
 use Indoraptor\Content\MailerDescribe;
 use Indoraptor\Content\SocialsDescribe;

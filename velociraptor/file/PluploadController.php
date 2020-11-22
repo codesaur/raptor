@@ -1,4 +1,4 @@
-<?php namespace Velociraptor;
+<?php namespace Velociraptor\File;
 
 class PluploadController
 {
