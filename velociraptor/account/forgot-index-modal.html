@@ -50,6 +50,6 @@
     $('table#forgot_requests').DataTable({
         pageLength: 5, responsive: true,
         lengthMenu: [[5, 10, 20, 50, -1], [5, 10, 20, 50, "{{ 'all1'|text }}"]]
-        {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
+        {% if language.current == 'mn' %}, language: {url: "https://cdn.jsdelivr.net/gh/codesaur/resources/dist/datatables/mongolian.json"}{% endif %}
     });
 </script>

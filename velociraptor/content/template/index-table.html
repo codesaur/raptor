@@ -19,7 +19,7 @@
             lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]],
             responsive: true, bStateSave: true, pagingType: 'full_numbers', pageLength: 10, order: [[0, 'asc']],
             ajax: {method: 'GET', url: "{{ 'datatable'|link }}?logger=reference&table=templates&controller=Velociraptor\\Content\\TemplatesController"}
-            {% if language.current == 'mn' %}, language: {url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Mongolian.json"}{% endif %}
+            {% if language.current == 'mn' %}, language: {url: "https://cdn.jsdelivr.net/gh/codesaur/resources/dist/datatables/mongolian.json"}{% endif %}
         });
     });
 </script>
