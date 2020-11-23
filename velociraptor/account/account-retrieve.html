@@ -26,7 +26,7 @@
         <div class="form-group row">
             <label class="col-3 col-form-label text-right">{{ 'photo'|text }}</label>
             <div class="col-9">
-                <img src="{{ column['image']['path']|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif') }}" alt="{{ name }}" class="img-fluid">
+                <img src="{{ column['photo']['value']|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif') }}" alt="{{ name }}" class="img-fluid">
             </div>
         </div>
         <div class="form-group row">

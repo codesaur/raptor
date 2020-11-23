@@ -4,9 +4,9 @@ use codesaur as single;
 use codesaur\MultiModel\MultiDescribe;
 
 use Velociraptor\TwigTemplate;
-use Velociraptor\ImageController;
 use Velociraptor\DashboardController;
 use Velociraptor\File\FileController;
+use Velociraptor\File\ImageController;
 
 use Indoraptor\Content\MailerDescribe;
 use Indoraptor\Content\SocialsDescribe;
@@ -178,7 +178,7 @@ class SettingsController extends DashboardController
                 $file->allowExtensions(['ico']);
                 $icon = $file->upload('txt_favico');
                 if (isset($icon['name'])) {
-                    $record['favico'] = $file->getPathUrl() . $icon['name'];
+                    $record['favico'] = $file->getPathUrl($icon['name']);
                 }
                 
                 $image = (new ImageController("/$table/$auto_increment"))->setTable($table);

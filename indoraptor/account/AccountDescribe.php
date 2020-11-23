@@ -20,7 +20,7 @@ class AccountDescribe extends Describe
                     new Column('country', 'varchar', 4),
                    (new Column('external', 'varchar', 255))->unique(),
                    (new Column('email', 'varchar', 65))->unique()->setPostType(4),
-                   (new Column('photo', 'varchar', 255, ''))->setPostType(2),
+                   (new Column('photo', 'varchar', 255))->setPostType(2),
                     new Column('legend', 'int', 4, 1),
                     new Column('code', 'varchar', 6),
                    (new Column('status', 'tinyint', 1, 0))->setPostType(6),

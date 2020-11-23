@@ -5,7 +5,7 @@ use codesaur\Base\File;
 class ImageController extends FileController
 {
     function __construct(
-            string $folder, int $allows = 3, $overwrite = false, $sizelimit = false)
+            string $folder = 'images', int $allows = 3, $overwrite = false, $sizelimit = false)
     {
         parent::__construct($folder, $allows, $overwrite, $sizelimit);
     }

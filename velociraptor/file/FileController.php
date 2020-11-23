@@ -19,7 +19,7 @@ class FileController extends DashboardController
     public $size_limit;
     
     function __construct(
-            string $folder, int $allows = 0, $overwrite = false, $sizelimit = false)
+            string $folder = 'files', int $allows = 0, $overwrite = false, $sizelimit = false)
     {
         $this->file = new File();
         
@@ -39,18 +39,18 @@ class FileController extends DashboardController
     
     public function setFolder(string $folder, bool $relative = true)
     {
-        $this->local = _document . '/public' . "$folder/";
-        $this->public = single::app()->getPublicUrl($relative) . "$folder/";
+        $this->local = _document . '/public' . $folder;
+        $this->public = single::app()->getPublicUrl($relative) . $folder;
     }
     
-    public function getPath() : string
+    public function getPath(string $fileName) : string
     {
-        return $this->local;
+        return $this->local . "/$fileName";
     }
     
-    public function getPathUrl() : string
+    public function getPathUrl(string $fileName) : string
     {
-        return $this->public;
+        return $this->public . "/$fileName";
     }
 
     public function setSizeLimit(int $size)
@@ -71,7 +71,7 @@ class FileController extends DashboardController
     public function upload($input)
     {
         if ($this->checkInput($input)) {
-            return $this->file->upload($input, $this->local, $this->allow, $this->overwrite, $this->size_limit);
+            return $this->file->upload($input, "$this->local/", $this->allow, $this->overwrite, $this->size_limit);
         }
         
         return false;
@@ -140,7 +140,7 @@ class FileController extends DashboardController
             }
             
             $file_record['primary']['file'] = $upload['dir'] . $upload['name'];
-            $file_record['primary']['path'] = $this->getPathUrl() . $upload['name'];
+            $file_record['primary']['path'] = $this->getPathUrl($upload['name']);
             
             $file = $this->indopost('/record?model='
                     . \urlencode('Indoraptor\\File\\FileModel'), array('record' => $file_record));
@@ -171,7 +171,7 @@ class FileController extends DashboardController
         
         return false;
     }
-
+    
     public function getRecord($record, $flag = null)
     {
         if ( ! isset($record['file'])) {

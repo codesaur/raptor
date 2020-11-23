@@ -123,7 +123,7 @@ class OrganizationController extends DashboardController
             $file->allowExtensions((new File())->getAllowed(3));
             $logo = $file->upload('txt_logo');
             if (isset($logo['name'])) {
-                $record['logo'] = $file->getPathUrl() . $logo['name'];
+                $record['logo'] = $file->getPathUrl($logo['name']);
             }
         }
         

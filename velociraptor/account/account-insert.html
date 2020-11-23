@@ -71,23 +71,13 @@
                     <div class="form-group row">
                         <label class="col-2 col-form-label text-right">{{ 'photo'|text }}</label>
                         <div class="col-10">
-                            <div class="input-group col-5" style="float:left;">
-                            {% if column['image']['path'] is defined and column['id']['value'] is defined %}
-                                <img src="{{ column['image']['path'] }}"
-                                     id="image_current" height="120px" class="img-fluid">
-                                <a style="position:absolute;top:7px;left:17px;"
-                                   files_id="{{ column['image']['files_id'] }}"
-                                   class="delete btn btn-outline-danger btn-pill shadow-sm"
-                                   href="{{ column['id']['value'] }}" pre-img="image_current"><i class="la la-trash"></i></a>
-                            {% endif %}
-                            </div>
                             <div class="fileinput fileinput-new col-7" data-provides="fileinput">
                                 <div class="fileinput-preview img-thumbnail" data-trigger="fileinput" style="width:120px;height:68px;"></div>
                                 <div>
                                     <span class="btn btn-outline-secondary btn-file">
                                         <span class="fileinput-new">{{ 'select-image'|text }}</span>
                                         <span class="fileinput-exists">{{ 'change'|text }}</span>
-                                        <input type="file" name="{{ column['image']['name'] }}" accept="image/*">
+                                        <input type="file" name="{{ column['photo']['name'] }}" accept="image/*">
                                     </span>
                                     <a href="javascript:;" class="btn btn-outline-secondary shadow-sm fileinput-exists" data-dismiss="fileinput">{{ 'remove'|text }}</a>
                                 </div>

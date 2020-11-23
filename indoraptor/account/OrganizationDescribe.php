@@ -12,7 +12,7 @@ class OrganizationDescribe extends Describe
                    (new Column('id', 'bigint', 20))->auto()->primary()->unique()->notNull(),
                     new Column('parent_id', 'bigint', 20),
                     new Column('name', 'varchar', 255),
-                    new Column('logo', 'varchar', 255),
+                   (new Column('logo', 'varchar', 255))->setPostType(2),
                     new Column('home_url', 'varchar', 255),                    
                     new Column('external', 'varchar', 255),
                     new Column('alias', 'varchar', 16, 'common'),

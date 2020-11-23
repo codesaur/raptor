@@ -1,12 +1,14 @@
 <?php namespace Velociraptor\Account;
 
 use codesaur as single;
+use codesaur\Base\File;
 use codesaur\Globals\Post;
 use codesaur\HTML\Template;
 use codesaur\Base\LogLevel;
 
 use Velociraptor\TwigTemplate;
 use Velociraptor\DashboardController;
+use Velociraptor\File\FileController;
 
 use Indoraptor\Account\AccountDescribe;
 
@@ -262,6 +264,20 @@ class AccountController extends DashboardController
                 $auto_increment = (int) $status['data']['Auto_increment'] ?? 1;
 
                 $record['password'] = $post->asPassword($post->value('password_new'));
+            }
+            
+            if (\is_numeric($auto_increment)) {
+                $file = (new FileController("/accounts/$auto_increment"));
+                $file->allowExtensions((new File())->getAllowed(3));
+                $photo = $file->upload('txt_photo');
+                if (isset($photo['name'])) {
+                    $record['photo'] = $file->getPathUrl($photo['name']);
+                }
+            }
+
+            if (isset($record['photo'])
+                    && $this->isEmpty($record['photo'])) {
+                unset($record['photo']);
             }
             
             $response = $this->$method('/record?model='

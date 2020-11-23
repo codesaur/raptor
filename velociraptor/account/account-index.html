@@ -49,9 +49,7 @@
             {% for account in accounts %}
                 <tr id="account_{{ account['id'] }}">
                     <th scope="row">{{ account['id'] }}</th>
-                    <th scope="row">
-                        {% set photo = image.singlePath(account['id']) %}
-                        <img alt="{{ name }}" src="{% if image.isEmpty(photo) %}https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif{% else %}{{ photo }}{% endif %}" width="60px">
+                    <td><img alt="{{ account['first_name'] ~ ' ' ~ account['last_name'] }}" src="{{ account['photo']|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif') }}" width="60px"></td>
                     <td>{{ account['first_name'] ~ ' ' ~ account['last_name'] }}</td>
                     <td>{{ account['username'] }}</td>
                     <td>{{ account['email'] }}</td>

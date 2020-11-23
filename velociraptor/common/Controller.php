@@ -1,6 +1,7 @@
 <?php namespace Velociraptor;
 
 use codesaur as single;
+use codesaur\Base\File;
 use codesaur\Base\LogLevel;
 use codesaur\Globals\Server;
 
@@ -120,5 +121,21 @@ class Controller extends \codesaur\Http\Controller
                 single::translation()->create($name, $text);
             }
         }
+    }
+    
+    public function readPrivateFile(string $table, string $record)
+    {
+        $file = new File();
+        $document = \dirname($_SERVER['SCRIPT_FILENAME']);
+        $filePath = "$document/../private/$table/$record/" . single::request()->getParam('name');
+        
+        if ( ! single::user()->isLogin()
+                || ! $file->exists($filePath)) {
+            return single::header()->respond404();            
+        }
+        
+        single::header()->content($file->getMimeType($filePath));
+        
+        \readfile($filePath);
     }
 }

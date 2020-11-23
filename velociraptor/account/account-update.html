@@ -76,17 +76,11 @@
                         <label class="col-2 col-form-label text-right">{{ 'photo'|text }}</label>
                         <div class="col-10">
                             <div class="text-left row">
-                                <div class="input-group col-5" style="float:left;">
                                 {% if column['photo']['value'] is not empty %}
-                                    <img src="{{ column['photo']['value'] }}"
-                                         id="image_current" height="120px" class="img-fluid">
-                                    <a style="position:absolute;top:7px;left:24px;"
-                                       files_id="{{ column['image']['files_id'] }}"
-                                       class="delete-photo btn btn-outline-danger btn-icon btn-pill" 
-                                       {% if user.account('id') == column['id']['value'] %}on-success="cleanProfileImg();"{% endif %} 
-                                       href="{{ column['id']['value'] }}" pre-img="image_current"><i class="la la-trash"></i></a>
-                                {% endif %}
+                                <div class="input-group col-5" style="float:left;">                                
+                                    <img src="{{ column['photo']['value'] }}" id="image_current" height="120px" class="img-fluid">
                                 </div>
+                                {% endif %}
                                 <div class="fileinput fileinput-new col-7" data-provides="fileinput">
                                     <div class="fileinput-preview img-thumbnail" data-trigger="fileinput" style="width:120px;height:68px;"></div>
                                     <div>
