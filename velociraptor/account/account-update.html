@@ -110,22 +110,6 @@
     </div>
 </form>
 <script type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById('{{ column['password']['name'] }}').addEventListener('change', function() {
-            document.getElementById('password_new').disabled = (this.value === '');
-            document.getElementById('password_retype').disabled = (this.value === '');
-            if (this.value === '') {
-                document.getElementById('password_new').value = '';
-                document.getElementById('password_retype').value = '';
-                document.getElementById('password_new').disabled = true;
-                document.getElementById('password_retype').disabled = true;
-            } else {
-                document.getElementById('password_new').disabled = false;
-                document.getElementById('password_retype').disabled = false;
-            }
-        });
-    });
-    
     function cleanProfileImg() {
         jQuery('#account_profile_image').attr('src', 'https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif');
     }
