@@ -62,44 +62,31 @@ class Menu
                 'query' => 'logger=settings&table=socials&controller=Velociraptor\\Content\\SettingsController'
             );
         }
-        if ( ! empty($content_dropdown)) {
-            $menu[] = array(
-                'text'     => 'website',
-                'dropdown' => $content_dropdown
-            );
-        }
-    }
-    
-    public function getReportMenu(array &$menu)
-    {
-        $report_dropdown = array();
-        
-        if (single::user()->can($this->orgAlias . '_web_report')) {
-            $report_dropdown[] = array(
-                'route' => 'web-report',
-                'text'  => 'website-total-report'
-            );
-        }
-
-        if (single::user()->can($this->orgAlias . '_web_report_monthly')) {
-            $report_dropdown[] = array(
-                'route' => 'web-report-monthly',
-                'text'  => 'website-mounthly-report'
-            );
-        }
-
         if (single::user()->can($this->orgAlias . '_web_google_analytics')) {
-            $report_dropdown[] = array(
+            $content_dropdown[] = array(
                 'divider' => true,
                 'text'    => 'google-analytics',
                 'route'   => 'web-google-analytics'
             );
         }
+        if (single::user()->can($this->orgAlias . '_web_report')) {
+            $content_dropdown[] = array(
+                'divider' => true,
+                'route' => 'web-report',
+                'text'  => 'website-total-report'
+            );
+        }
+        if (single::user()->can($this->orgAlias . '_web_report_monthly')) {
+            $content_dropdown[] = array(
+                'route' => 'web-report-monthly',
+                'text'  => 'website-mounthly-report'
+            );
+        }
 
-        if ( ! empty($report_dropdown)) {
+        if ( ! empty($content_dropdown)) {
             $menu[] = array(
-                'text'     => 'report',
-                'dropdown' => $report_dropdown
+                'text'     => 'website',
+                'dropdown' => $content_dropdown
             );
         }
     }
@@ -221,7 +208,6 @@ class Menu
             $this->$menuMethod($menu);
         }
 
-        $this->getReportMenu($menu);
         $this->getContentMenu($menu);
         
         $this->getSystemMenu($menu);
