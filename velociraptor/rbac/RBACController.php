@@ -309,10 +309,11 @@ class RBACController extends DashboardController
         } 
         
         if ($action == 'update') {
-            if (isset($role_permission['data'][0])) {
+            if ( ! empty($role_permission['data'])) {
                 $response = $this->indodelete('/record?model='
-                        . \urlencode('codesaur\\RBAC\\RolePermission'), array('id' => $role_permission['data'][0]['id']));
-            }            
+                        . \urlencode('codesaur\\RBAC\\RolePermission'), array('id' => \reset($role_permission['data'])['id']));
+                
+            }
         }
         
         return $response['data'] ?? null;
