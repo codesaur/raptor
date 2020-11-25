@@ -117,23 +117,38 @@ class IndoController extends \codesaur\Http\Controller
         return JWT::encode($payload, $key, $alg);
     }
     
-    final public function validate($jwt, $secret = null, $algs = null)
+    final public function validate($jwt = null, $secret = null, $algs = null)
     {
-        $result = $this->decode($jwt,
-                $secret ?? INDO_JWT_SECRET,
-                $algs ?? array(INDO_JWT_ALGORITHM));
-        if ($result['account_id'] ?? false &&
-                ! \getenv(_ACCOUNT_ID_, true)) {
-            \putenv(_ACCOUNT_ID_ . "={$result['account_id']}");
+        if ( ! isset($jwt)) {
+            if ($this->_is_internal) {
+                if (isset($this->_header['HTTP_JWT'])) {
+                    $jwt = $this->_header['HTTP_JWT'];
+                }
+            } else {
+                $server = new Server();
+                if ($server->has('HTTP_JWT')) {
+                    $jwt = $server->raw('HTTP_JWT');
+                } elseif (\getenv('INDO_JWT', true)) {
+                    $jwt = \getenv('INDO_JWT', true);
+                }
+            }
         }
         
-        return $result;
-    }
-    
-    final public function decode($jwt, $key, array $algs)
-    {
         try {
-            return (array) JWT::decode($jwt, $key, $algs);
+            if (empty($jwt)) {
+                throw new \Exception('Undefined JWT!');
+            }
+            
+            $result = (array) JWT::decode($jwt,
+                    $secret ?? INDO_JWT_SECRET,
+                    $algs ?? array(INDO_JWT_ALGORITHM));
+            
+            if ($result['account_id'] ?? false &&
+                ! \getenv(_ACCOUNT_ID_, true)) {
+                \putenv(_ACCOUNT_ID_ . "={$result['account_id']}");
+            }
+            
+            return $result;            
         } catch (\Exception $e) {
             if (DEBUG) {
                 \error_log($e->getMessage());
@@ -145,20 +160,7 @@ class IndoController extends \codesaur\Http\Controller
     
     final public function accept()
     {
-        if ($this->_is_internal) {
-            if (isset($this->_header['HTTP_JWT'])) {
-                return \is_array($this->validate($this->_header['HTTP_JWT']));
-            }
-        } else {
-            $server = new Server();
-            if ($server->has('HTTP_JWT')) {
-                return \is_array($this->validate($server->raw('HTTP_JWT')));
-            } elseif (\getenv('INDO_JWT', true)) {
-                return \is_array($this->validate(\getenv('INDO_JWT', true)));
-            }
-        }
-        
-        return false;
+        return \is_array($this->validate());
     }
     
     final public function payload(bool $assoc = false, int $depth = 512, int $options = 0)

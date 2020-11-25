@@ -138,11 +138,11 @@ class LoginController extends DashboardController
                 'bind' => array(':account_id' => array('variable' => $account_id), ':id' => array('variable' => $id)))
             );
             
-            if (isset($organizations_result['data'][0])) {
+            if (isset($organizations_result['data'][0])
+                    || single::user()->is('system_coder')) {
                 $jwt_info = array(
                     'organization_id' => (int)$id,
                     'account_id' => (int)$account_id);
-                
                 $jwt_result = $this->indopost('/auth/jwt/org', $jwt_info);
                 
                 if (isset($jwt_result['jwt']) && ! $this->isEmpty($jwt_result['jwt'])) {

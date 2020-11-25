@@ -89,19 +89,13 @@
             {% endif %}
             </li>
         {% endfor %}
-            {% set organizations = [] %}
-            {% for org in user.organizations() %}
-                {% if org['id'] != 1 %}
-                    {% set organizations = organizations|merge(org) %}
-                {% endif %}
-            {% endfor %}
-            {% if organizations|length > 1 %}
+            {% if user.organizations()|length > 1 %}
             <li class="nav-item dropdown mr-4">                
                 <a class="nav-link dropdown-toggle" href="javascript:;" id="dropdown500" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ 'organization'|text }}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdown500">
-                {% for org in organizations %}
+                {% for org in user.organizations() %}
                     <a class="dropdown-item {{ org['id'] == user.organization('id') ? ' active' : '' }}" href="{{ 'organization'|link({'id':org['id']}) }}">
                         {{ org['name'] }}
                     </a>
@@ -157,7 +151,7 @@
 {% if breadcrumb is defined %}
 <nav aria-label="breadcrumb" class="shadow mt-n4">
     <ol class="breadcrumb pl-4">
-        <li class="breadcrumb-item"><a href="{{ 'home'|link }}"><i class="flaticon2-protection"></i> {{ 'dashboard'|text }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ home_breadcrumb ?? 'home'|link }}"><i class="flaticon2-protection"></i> {{ 'dashboard'|text }}</a></li>
     {% for item in breadcrumb %}
         {% if not item.link %}{% set link = location %}{% else %}{% set link = item.link %}{% endif %}
         {% if link == location %}

@@ -1,5 +1,6 @@
 <?php namespace Indoraptor;
 
+use codesaur as single;
 use codesaur\Globals\Post;
 use codesaur\RBAC\RBACUser;
 
@@ -87,21 +88,22 @@ class AuthController extends IndoController
                     "WHERE t1.account_id = :id AND t1.is_active = 1 AND t1.status = 1 AND t2.is_active = 1 ORDER By t2.name");            
             $stmt->bindParam(':id', $account['id'], \PDO::PARAM_INT);
             $stmt->execute();
-
+            
             $index = 0;
-            $organizations = array();
+            $organizations = array();            
             $current = $validation['organization_id'] ?? 1;
             if ($stmt->rowCount()) {
                 while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                    $organizations[$row['id'] == $current ? 0 : $index++] = $row;
+                    $index++;
+                    $organizations[$row['id'] == $current ? 0 : $index] = $row;
                 }
             }
             
             if (empty($organizations)) {
                 throw new \Exception('User doesn\'t belong to an organization!');
             } elseif ( ! isset($organizations[0])) {
-               $organizations[0] = $organizations[1];
-               unset($organizations[1]);
+                $organizations[0] = $organizations[1];
+                unset($organizations[1]);
             }
 
             return $this->success(array(
@@ -117,11 +119,11 @@ class AuthController extends IndoController
     final public function jwtOrganization()
     {
         try {
-            $current_login = $this->accept();
-            if ( ! $current_login) {
+            $current_login = $this->validate();
+            if ( ! \is_array($current_login)) {
                 throw new \Exception('Not allowed!');
             }
-
+            
             $payload = $this->payload();
             if ( ! (isset($payload->account_id) && \is_int($payload->account_id))
                     ||  ! (isset($payload->organization_id) && \is_int($payload->organization_id))) {
@@ -130,6 +132,7 @@ class AuthController extends IndoController
             
             $model = new AccountModel($this->conn);
             $account = $model->getByID($current_login['account_id']);
+            
             if ( ! isset($account['id'])
                     || $account['id'] != $payload->account_id) {
                 throw new \Exception('Invalid account!');
@@ -137,19 +140,21 @@ class AuthController extends IndoController
             
             $org_model = new OrganizationModel($this->conn);
             $organization = $org_model->getByID($payload->organization_id);
+            
             if ( ! isset($organization['id'])) {
                 throw new \Exception('Invalid organization!');
             }
-            
             $org_user_model = new OrganizationUserModel($this->conn);
             $user = $org_user_model->retrieve($organization['id'], $account['id']);
-            if ( ! isset($user['id'])) {
+            if ( ! isset($user['id'])
+                    && ! single::user()->is('system_coder')) {
                 throw new \Exception('Account does not belong to an organization!');
             }
 
             $account_org_jwt = array(
                 'account_id' => $account['id'],
                 'organization_id' => $organization['id']);
+            
             return $this->respond(array('jwt' => $this->generate($account_org_jwt)));
         } catch (\Exception $e) {
             return $this->error($e->getMessage());
