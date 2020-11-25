@@ -605,7 +605,7 @@ class Initial
         $m->replaces(array('_keyword_' => 'website', 'type' => 0, 'created_at' => '2020-02-08 19:56:01'), array('mn' => array('title' => 'Вэбсайт'), 'en' => array('title' => 'Website')));
         $m->replaces(array('_keyword_' => 'google', 'type' => 0, 'created_at' => '2020-02-08 19:56:01'), array('mn' => array('title' => 'Google'), 'en' => array('title' => 'Гүүгл')));
         $m->replaces(array('_keyword_' => 'route', 'type' => 0, 'created_at' => '2020-02-10 00:05:36'), array('mn' => array('title' => 'Чиглэл'), 'en' => array('title' => 'Route')));
-        $m->replaces(array('_keyword_' => 'passport', 'type' => 1, 'created_at' => '2020-11-25 13:36:03'), array('mn' => array('title' => 'Passport'), 'en' => array('title' => 'Паспорт')));
+        $m->replaces(array('_keyword_' => 'passport', 'type' => 1, 'created_at' => '2020-11-25 13:36:03'), array('mn' => array('title' => 'Паспорт'), 'en' => array('title' => 'Passport')));
         $m->replaces(array('_keyword_' => 'warehouse', 'type' => 1, 'created_at' => '2020-11-25 13:36:25'), array('mn' => array('title' => 'Агуулах'), 'en' => array('title' => 'Warehouse')));
     }
 
