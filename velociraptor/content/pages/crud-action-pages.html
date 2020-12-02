@@ -150,7 +150,6 @@
                 </div>
                 <div class="tab-pane" id="tab-image" role="tabpanel">
                     <div class="table-container">
-                        <div class="plupload-alert"></div>
                         <div class="alert alert-info mb-2">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
                             <i class="fa fa-info mr-2"></i> {{ 'content-image-note'|text }}
@@ -324,9 +323,6 @@
         {% endif %}
     </div>
 </form>
-<!-- begin: TwigTemplate deer twig gesen function baihgui tul doorh code iig zasah shaardlagatai -->
-{{ twigZASNA(velociraptor_common ~ '/plupload-images.html') }}
- <!-- :end -->
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
 {% if action != 'retrieve' %}
