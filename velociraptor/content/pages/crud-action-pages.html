@@ -324,7 +324,7 @@
     </div>
 </form>
 <script type="text/javascript">
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', function() {
 {% if action != 'retrieve' %}
     {% for code in language.codes() %}
         Dashboard.editor('full_{{ code }}');

@@ -116,7 +116,7 @@ function stripAccount(id, org, name, alias) {
     });
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', function() {
      $('table#org_account').DataTable({
         lengthMenu: [[5, 10, 30, -1], [5, 10, 30, "{{ 'all1'|text }}"]]
         responsive: true, bStateSave: true, pagingType: 'full_numbers', pageLength: 10, order: [[0, 'asc']]
