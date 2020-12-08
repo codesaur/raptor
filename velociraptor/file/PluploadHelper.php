@@ -74,7 +74,7 @@ class PluploadHelper
                 \rename("$filePath.part", $filePath);
             }
 
-            return array('data' => array('file_path' => $filePath));
+            return array('data' => array('file_name' => $name, 'file_path' => $filePath));
         } catch (\Exception $e) {
             return array('error' => array('message' => $e->getMessage()));
         }
