@@ -38,6 +38,8 @@
                         <span class="pl-2 pr-2">
                         {% if item['info']['message'] is not defined or item['info']['message'] is empty %}
                             <span class="text-danger">{{ item['reason'] }}</span> {{ item['info']['request']['uri']|e }}
+                        {% elseif '</a>' in item['info']['message'] %}
+                            {{ item['info']['message'] }}
                         {% else %}
                             {{ item['info']['message']|e }}
                         {% endif %}
