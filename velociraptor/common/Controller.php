@@ -123,11 +123,11 @@ class Controller extends \codesaur\Http\Controller
         }
     }
     
-    public function readPrivateFile(string $table, string $record)
+    public function readPrivateFile()
     {
         $file = new File();
         $document = \dirname($_SERVER['SCRIPT_FILENAME']);
-        $filePath = "$document/../private/$table/$record/" . single::request()->getParam('name');
+        $filePath = "$document/../private/" . single::request()->getParam('name');
         
         if ( ! single::user()->isLogin()
                 || ! $file->exists($filePath)) {

@@ -82,12 +82,12 @@ class Routing extends \codesaur\Http\Routing
             ['/frontend', 'frontend@Velociraptor\\Account\\LoginController', ['name' => 'frontend']],
             ['/datatable', 'onDatatable@Velociraptor\\Helper\\HelperController', ['name' => 'datatable']],
             ['/web/report', 'webReport@Velociraptor\\Report\\ReportController', ['name' => 'web-report']],
+            ['/private/file', 'readPrivateFile@Velociraptor\\Controller', ['methods' => 'GET', 'name' => 'private-file-read']],
             ['/web/report/mounthly', 'webReportMounthly@Velociraptor\\Report\\ReportController', ['name' => 'web-report-mounthly']],
             ['/web/google/analytics', 'webGoogleAnalytics@Velociraptor\\Report\\ReportController', ['name' => 'web-google-analytics']],
             ['/language/:language', 'changeLanguage@Velociraptor\\Account\\LoginController', ['name' => 'language', 'filters' => ['language' => '(\w+)']]],
             ['/crud/:action', 'act@Velociraptor\\CRUDController', ['methods' => 'GET,POST,PUT,DELETE', 'name' => 'crud', 'filters' => ['action' => '(\w+)']]],
             ['/crud/submit/:action', 'submit@Velociraptor\\CRUDController', ['methods' => 'POST', 'name' => 'crud-submit', 'filters' => ['action' => '(\w+)']]],
-            ['/private/:table/:record', 'readPrivateFile@Velociraptor\\Controller', ['methods' => 'GET', 'name' => 'private-file-read', 'filters' => ['table' => '(\w+)', 'record' => '(\w+)']]]
         );
     }
     
