@@ -38,7 +38,7 @@ class PluploadHelper
 
             $name = $file->generateName("$dir/", $name);
             if (empty($name)) {
-                throw new Exception('Failed to set file name.');
+                throw new \Exception('Failed to set file name.');
             }
             $filePath = "$dir/$name";
 
@@ -46,20 +46,20 @@ class PluploadHelper
             $chunks = $post->has('chunks') ? $post->value('chunks', FILTER_VALIDATE_INT) : 0;
 
             if ( ! $out = \fopen("$filePath.part", $chunks ? 'ab' : 'wb')) {
-                throw new Exception('Failed to open output stream.');
+                throw new \Exception('Failed to open output stream.');
             }
             
             if ( ! empty($_FILES)) {
                 if ($_FILES['file']['error']
                         || ! $file->isUploaded($_FILES['file']['tmp_name'])) {
-                    throw new Exception('Failed to move uploaded file.');
+                    throw new \Exception('Failed to move uploaded file.');
                 }
                 if ( ! $in = \fopen($_FILES['file']['tmp_name'], 'rb')) {
                     throw new Exception('Failed to open input stream.');
                 }
             } else {
                 if ( ! $in = \fopen('php://input', 'rb')) {
-                    throw new Exception('Failed to open input stream.');
+                    throw new \Exception('Failed to open input stream.');
                 }
             }
             
