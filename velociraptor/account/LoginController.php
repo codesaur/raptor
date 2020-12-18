@@ -128,7 +128,6 @@ class LoginController extends DashboardController
     public function selectOrganization($id)
     {
         $account_id = single::user()->account('id');
-        
         if ($account_id && $id && single::user()->isLogin()
                 && $id != single::user()->organization('id')) {
             $current_org_id = single::user()->organization('id');
@@ -141,8 +140,9 @@ class LoginController extends DashboardController
                 'bind' => array(':account_id' => array('variable' => $account_id), ':id' => array('variable' => $id)))
             );
             
-            if (isset($organizations_result['data'][0])
-                    || single::user()->is('system_coder')) {
+            if (single::user()->is('system_coder')
+                    || (isset($organizations_result['data'])
+                    && (\reset($organizations_result['data'])['id'] ?? null) == $id)) {
                 $jwt_info = array(
                     'organization_id' => (int)$id,
                     'account_id' => (int)$account_id);
