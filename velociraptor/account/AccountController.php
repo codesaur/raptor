@@ -501,6 +501,7 @@ class AccountController extends DashboardController
 
             $record['id'] = $id;
             $record['is_active'] = 0;
+            $record['address'] = $address ?? '';
             unset($record['status']);
             $this->indoput('/record?table=newbie&model='
                     . \urlencode('Indoraptor\\Account\\AccountModel'), array('record' => $record));
