@@ -72,6 +72,17 @@
         <div class="form-group">
             <input class="form-control" type="password" placeholder="{{ 'retype-password'|text }}" name="codeRePassword" id="codeRePassword"  autocomplete="new-password-retype">
         </div>
+        <hr>
+        <div class="form-group">
+            <label>{{ 'organization'|text }}</label>
+            <select class="form-control" name="organization_name" id="organization_name">
+                <option value="" class="form-control"></option>
+                {% for name in organizations_names %}
+                <option value="{{ name }}" class="form-control">{{ name|e }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <hr>
         <div class="form-group text-center">
         {% if language.current == 'mn' %}
             Бүртгүүлэх товчыг дарснаар, та манай <a data-target="#tos" data-toggle="modal" href="javascript:;">системийг хэрэглэх ерөнхий нөхцөл</a>

@@ -111,11 +111,15 @@
                     <input id="id" name="id" type="hidden">
                     <div class="form-group">
                         <label>{{ 'username'|text }}</label>
-                        <div class="form-control" id="username">ner</div>
+                        <div class="form-control" id="username">username</div>
                     </div>
                     <div class="form-group">
                         <label>{{ 'email'|text }}</label>
-                        <div class="form-control" id="email">ner</div>
+                        <div class="form-control" id="email">email</div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ 'organization'|text }}</label>
+                        <div class="form-control" id="organization">organization</div>
                     </div>
                     <div class="form-group">
                         <label>{{ 'status'|text }}</label>
@@ -158,6 +162,7 @@
             acceptModal.find('#id').val(newbie.id);
             acceptModal.find('#username').html(newbie.username);
             acceptModal.find('#email').html(newbie.email);
+            acceptModal.find('#organization').html(newbie.address);
             /*acceptModal.find('#status' + newbie.status).prop('checked', true);*/
         });
         

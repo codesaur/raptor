@@ -29,7 +29,10 @@ class LoginController extends DashboardController
         $templates = $this->indopost('/content',
                 array('table' => 'templates', '_keyword_' => array('tos', 'pp')));
         $vars = $templates['data'] ?? array();
-
+        
+        $orgs_names = $this->indoget('/account/get/organizations/names');
+        $vars['organizations_names'] = $orgs_names['data'] ?? array();
+        
         $template = $this->getTemplate(null, null, $vars);
         $template->getContent()->file($template->getSourceFolder() . '/login.html');
         $template->render();
@@ -176,8 +179,10 @@ class LoginController extends DashboardController
             $email = $post->value('codeEmail', FILTER_SANITIZE_EMAIL);
             $password = $post->asPassword($post->value('codePassword'));
             $payload = array(
+                'flag' => single::language()->current(),
                 'username' => $username, 'password' => $password,
-                'email' => $email, 'flag' => single::language()->current());
+                'email' => $email, 'organization_name' => $post->value('organization_name'));
+            
             $response = $this->indopost('/account/signup', $payload);
         }
         

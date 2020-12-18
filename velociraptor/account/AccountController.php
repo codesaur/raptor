@@ -460,14 +460,34 @@ class AccountController extends DashboardController
             if (isset($account['data'])) {
                 throw new \Exception(single::text('account-exists') . '<br/>username/email');
             }
-
+            
+            $address = $record['address'] ?? null;
+            
+            if ( ! empty($address)) {
+                $org = $this->indopost(
+                        '/statement?model=' . \urlencode('Indoraptor\\Account\\OrganizationModel'),
+                        array(
+                            'sql' => 'WHERE name=:name AND is_active=1',
+                            'bind' => array(':name' => array('variable' => $address))
+                        )
+                );
+                
+                if (isset($org['data'])) {
+                    $organization = \reset($org['data']);
+                    if (isset($organization['id'])) {
+                        $organization_id = $organization['id'];
+                    }
+                }
+            }
+            
+            $record['address'] = '';
             $record['status'] = $status;
             unset($record['id']);
             unset($record['is_active']);
             unset($record['created_at']);
             unset($record['created_by']);
             unset($record['updated_at']);
-            unset($record['updated_by']);            
+            unset($record['updated_by']);
             $result = $this->indopost('/record?model='
                     . \urlencode('Indoraptor\\Account\\AccountModel'), array('record' => $record));
             
@@ -485,6 +505,11 @@ class AccountController extends DashboardController
             $this->indoput('/record?table=newbie&model='
                     . \urlencode('Indoraptor\\Account\\AccountModel'), array('record' => $record));
             
+            if (isset($organization_id)) {
+                $this->indopost('/record?model=' . \urlencode('Indoraptor\\Account\\OrganizationUserModel'),
+                        array('record' => array('account_id' => $id, 'organization_id' => $organization_id)));
+            }
+
             $content = $this->indopost('/content',
                     array('table' => 'templates', '_keyword_' => array('approve-new-account')));
 

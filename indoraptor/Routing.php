@@ -28,7 +28,8 @@ class Routing extends \codesaur\Http\Routing
             ['/account/signup', 'signup@Indoraptor\\Account\\AccountController', ['methods' => 'POST']],
             ['/account/forgot', 'forgot@Indoraptor\\Account\\AccountController', ['methods' => 'POST']],
             ['/account/get/forgot', 'getForgot@Indoraptor\\Account\\AccountController', ['methods' => 'POST']],
-            ['/account/set/password', 'setPassword@Indoraptor\\Account\\AccountController', ['methods' => 'POST']]
+            ['/account/set/password', 'setPassword@Indoraptor\\Account\\AccountController', ['methods' => 'POST']],            
+            ['/account/get/organizations/names', 'getOrganizationsNames@Indoraptor\\Account\\AccountController']
         );
     }
     
@@ -46,6 +47,7 @@ class Routing extends \codesaur\Http\Routing
     {
         return array(
             ['/content', 'Indoraptor\\Content\\ContentController', ['methods' => 'POST']],
+            
             ['/lookup', 'lookup@Indoraptor\\Content\\ContentController', ['methods' => 'POST']]
         );
     }

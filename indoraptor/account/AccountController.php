@@ -54,10 +54,11 @@ class AccountController extends \Indoraptor\IndoController
             
             $model->setTable('newbie');
             $id = $model->insert(array(
+                'code' => $payload->flag,
                 'email' => $payload->email,
                 'username' => $payload->username,
                 'password' => $payload->password,
-                'code' => $payload->flag));
+                'address' => $payload->organization_name));
             if ( ! $id) {
                 $log = array('error' => 'newbie', 'message' => "Шинээр $payload->username нэртэй [$payload->email] хаягтай хэрэглэгч үүсгэх хүсэлт ирүүлсэн боловч, уг мэдээллээр урьд нь хүсэлт өгч байсныг бүртгэсэн байсан учир дахин хүсэлт бүртгэхээс татгалзав.");
                 throw new \Exception($text['account-request-exists'] ?? 'It looks like information belongs to an existing request.');
@@ -117,7 +118,7 @@ class AccountController extends \Indoraptor\IndoController
             }
             
             $model = new AccountModel($this->conn);
-            $stmt = $model->dataobject()->prepare("SELECT * FROM {$model->getTable()}  WHERE email=:eml");
+            $stmt = $model->dataobject()->prepare("SELECT * FROM {$model->getTable()} WHERE email=:eml");
             $stmt->bindParam(':eml', $payload->email, \PDO::PARAM_STR, $model->getDescribe()->getColumn('email')->getLength());
             $stmt->execute();
             if ($stmt->rowCount() != 1) {
@@ -250,5 +251,18 @@ class AccountController extends \Indoraptor\IndoController
         unset($recorda['updated_by']);            
 
         $this->success($recorda);
+    }
+    
+    public function getOrganizationsNames()
+    {
+        $model = new OrganizationModel($this->conn);
+        $stmt = $model->dataobject()->prepare("SELECT name FROM {$model->getTable()} WHERE is_active=1 ORDER BY name");
+        $stmt->execute();
+        $names = array();
+        while ($data = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $names[] = $data['name'];
+        }
+        
+        $this->respond(array('data' => $names));
     }
 }
