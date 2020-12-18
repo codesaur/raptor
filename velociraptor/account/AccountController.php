@@ -461,8 +461,7 @@ class AccountController extends DashboardController
                 throw new \Exception(single::text('account-exists') . '<br/>username/email');
             }
             
-            $address = $record['address'] ?? null;
-            
+            $address = $record['address'] ?? null;            
             if ( ! empty($address)) {
                 $org = $this->indopost(
                         '/statement?model=' . \urlencode('Indoraptor\\Account\\OrganizationModel'),
@@ -508,7 +507,7 @@ class AccountController extends DashboardController
             
             if (isset($organization_id)) {
                 $this->indopost('/record?model=' . \urlencode('Indoraptor\\Account\\OrganizationUserModel'),
-                        array('record' => array('account_id' => $id, 'organization_id' => $organization_id)));
+                        array('record' => array('account_id' => $result['data']['id'], 'organization_id' => $organization_id)));
             }
 
             $content = $this->indopost('/content',
