@@ -87,7 +87,7 @@
                             {% if account['id'] == user.account('id') or (account['id'] != 1 and user.can('system_account_update')) %}
                             <a href="{{ 'crud'|link({'action':'update'}) }}?logger=account&controller=Velociraptor\Account\AccountController&id={{ account['id'] }}" class="btn btn-primary shadow-sm"><i class="la la-edit"></i></a>
                             {% endif %}
-                            {% if account['id'] != user.account('id') and user.account('id') == 1 and user.can('system_account_delete') %}
+                            {% if account['id'] != user.account('id') and account['id'] != 1 and user.can('system_account_delete') %}
                             <a href="{{ account['id'] }}" on-success="$('#account_{{ account['id'] }}').remove();" class="delete btn btn-danger shadow-sm"><i class="la la-trash"></i></a>
                             {% endif %}
                         </div>
