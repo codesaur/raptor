@@ -55,7 +55,7 @@ class PluploadHelper
                     throw new \Exception('Failed to move uploaded file.');
                 }
                 if ( ! $in = \fopen($_FILES['file']['tmp_name'], 'rb')) {
-                    throw new Exception('Failed to open input stream.');
+                    throw new \Exception('Failed to open input stream.');
                 }
             } else {
                 if ( ! $in = \fopen('php://input', 'rb')) {

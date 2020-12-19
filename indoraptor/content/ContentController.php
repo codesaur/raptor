@@ -5,8 +5,9 @@ class ContentController extends \Indoraptor\IndoController
     public function index()
     {
         $payload = $this->payload(true);
-        if (isset($payload['table'])
-                && isset($payload['_keyword_'])) {
+        
+        if (($this->isInternal() || $this->accept())
+                && isset($payload['table']) && isset($payload['_keyword_'])) {
             $model = new ContentModel($this->conn);
             $model->setTables($payload['table']);
             

@@ -1,12 +1,9 @@
 <?php namespace Indoraptor\Account;
 
-use codesaur as single;
 use codesaur\Base\LogLevel;
-use codesaur\HTML\Template;
 use codesaur\Globals\Server;
 
 use Indoraptor\Logger\LoggerModel;
-use Indoraptor\Content\ContentModel;
 use Indoraptor\Localization\TranslationModel;
 
 class AccountController extends \Indoraptor\IndoController
@@ -44,14 +41,6 @@ class AccountController extends \Indoraptor\IndoController
                 throw new \Exception($text['account-exists'] ?? 'It looks like information belongs to an existing account.');
             }
             
-            $content = new ContentModel($this->conn);
-            $content->setTables('templates');
-            $templates = $content->getByKeyword('request-new-account');
-            if ( ! isset($templates['full'][$payload->flag]) ||
-                    ! isset($templates['title'][$payload->flag])) {
-                throw new \Exception($text['email-template-not-set'] ?? 'Email template not found!');
-            }
-            
             $model->setTable('newbie');
             $id = $model->insert(array(
                 'code' => $payload->flag,
@@ -64,15 +53,7 @@ class AccountController extends \Indoraptor\IndoController
                 throw new \Exception($text['account-request-exists'] ?? 'It looks like information belongs to an existing request.');
             }
             
-            $template = new Template();
-            $template->set('email', $payload->email);
-            $template->set('username', $payload->username);
-            $template->source($templates['full'][$payload->flag]);
-            
-            $this->sendEmail($payload->email, $payload->username, $templates['title'][$payload->flag], $template->output(), $payload->flag);
-            
             $response['id'] = $id;
-            $response['message'] = $text['to-complete-registration-check-email'] ?? 'Thank you. To complete your registration please check your email.';
             $log = array('id' => $id, 'message' => "Шинээр $payload->username нэртэй [$payload->email] хаягтай хэрэглэгч үүсгэх хүсэлт ирүүлснийг хүлээн авч амжилттай бүртгэв.");
         } catch (\Exception $e) {
             if (DEBUG) {
@@ -131,14 +112,6 @@ class AccountController extends \Indoraptor\IndoController
                 $log = array('error' => 'inactive', 'message' => "Эрх нь нээгдээгүй хэрэглэгч [$payload->email] нууц үг шинэчлэх хүсэлт илгээх оролдлого хийв. Татгалзав.");
                 throw new \Exception($text['error-account-inactive'] ?? 'User is not active');
             }
-            
-            $content = new ContentModel($this->conn);
-            $content->setTables('templates');
-            $templates = $content->getByKeyword('forgotten-password-reset');
-            if ( ! isset($templates['full'][$flag]) ||
-                    ! isset($templates['title'][$flag])) {
-                throw new \Exception($text['email-template-not-set'] ?? 'Email template not found!');
-            }
 
             $useid = \uniqid('use');                        
             $forgotModel = new ForgotModel($this->conn);
@@ -156,17 +129,7 @@ class AccountController extends \Indoraptor\IndoController
                 throw new \Exception($text['record-insert-error'] ?? 'Error occurred while inserting record.');
             }
             
-            $template = new Template();
-            $template->set('email', $payload->email);
-            $template->source($templates['full'][$flag]);
-            $login_link = $payload->login ?? (single::app()->getWebUrl(false) . '/dashboard/login');
-            $template->set('link', "$login_link?forgot=$useid");
-            
-            $receiver = $record['first_name'] . ' ' . \mb_substr($record['last_name'], 0, 1, 'UTF-8');
-            $this->sendEmail($payload->email, $receiver, $templates['title'][$flag], $template->output(), $flag);
-            
             $response['forgot'] = $forgot;
-            $response['message'] = $text['reset-email-sent'] ?? 'Нууц үгийг шинэчлэх зааврыг амжилттай илгээлээ.<br />Та заасан имейл хаягаа шалгаж зааврын дагуу нууц үгээ шинэчлэнэ үү!';
             $log = array('forgot' => $response['forgot'], 'message' => "Хэрэглэгч {$response['forgot']['first_name']} {$response['forgot']['last_name']} [$payload->email] нь нууц үгийг шинээр тааруулах хүсэлт илгээснийг зөвшөөрлөө.");
         } catch (\Exception $e) {
             if (DEBUG) {

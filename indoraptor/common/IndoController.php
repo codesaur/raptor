@@ -57,6 +57,11 @@ class IndoController extends \codesaur\Http\Controller
         }
     }
     
+    final public function isInternal()
+    {
+        return $this->_is_internal;
+    }
+    
     final public function isConnected()
     {
         return $this->conn->alive();
@@ -310,73 +315,69 @@ class IndoController extends \codesaur\Http\Controller
         $this->success($result);
     }
 
-    public function email()
+    public function sendEmail()
     {
-        if ( ! $this->accept()) {
-            return $this->error('Not Allowed');
-        }
-        
-        $payload = $this->payload(true);
-        if ( ! isset($payload['to'])
-                || ! isset($payload['subject'])
-                || ! isset($payload['message'])) {
-            return $this->error('Invalid Request');
-        }
-        
         try {
-            $this->sendEmail($payload['to'], $payload['name'] ?? '', $payload['subject'], $payload['message'], $payload['flag'] ?? $this->getAppLanguageCode());
+            if ( ! $this->isInternal() && ! $this->accept()) {
+                throw new \Exception('Not Allowed');
+            }
+
+            $payload = $this->payload(true);
+            if ( ! isset($payload['to'])
+                    || ! isset($payload['subject'])
+                    || ! isset($payload['message'])) {
+                throw new \Exception('Invalid Request');
+            }
+        
+            if (\getenv('MAIL_SENDER', true)) {
+                $mail = new \codesaur\Base\Mail();
+                $mail->sender = \getenv('MAIL_SENDER', true);
+                $mail->to = $payload['to'];
+                $mail->message = $payload['message'];
+                $mail->subject = $payload['subject'];
+                $mail->send();
+            } else {
+                $model = new Content\MailerModel($this->conn);
+                $rows = $model->getRows();
+                $record = \end($rows);
+
+                if (empty($record) || ! isset($record['charset'])
+                        || ! isset($record['host']) || ! isset($record['port'])
+                        || ! isset($record['email']) || ! isset($record['name'])
+                        || ! isset($record['username']) || ! isset($record['password'])
+                        || ! isset($record['is_smtp']) || ! isset($record['smtp_auth']) || ! isset($record['smtp_secure'])) {
+                    $translation = new Localization\TranslationModel($this->conn);
+                    $translation->setTables('dashboard');
+                    $text = $translation->retrieve($payload['flag'] ?? $this->getAppLanguageCode());
+                    throw new \Exception($text['emailer-not-set'] ?? 'Email carrier not found!');
+                }
+
+                $mailer = new \PHPMailer\PHPMailer\PHPMailer(DEBUG ? true : null);
+                if (((int) $record['is_smtp']) == 1) {
+                   $mailer->IsSMTP(); 
+                }
+                $mailer->Mailer = 'smtp';
+                $mailer->CharSet = $record['charset'];
+                $mailer->SMTPAuth = (bool)((int) $record['smtp_auth']);
+                $mailer->SMTPSecure = $record['smtp_secure'];
+                $mailer->Host = $record['host'];
+                $mailer->Port = $record['port'];
+                $mailer->Username = $record['username'];
+                $mailer->Password = $record['password'];
+                $mailer->SetFrom($record['email'], $record['name']);
+                $mailer->AddReplyTo($record['email'], $record['name']);
+                $mailer->SMTPOptions = array('ssl' => array(
+                    'verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true));
+
+                $mailer->MsgHTML($payload['message']);
+                $mailer->Subject = $payload['subject'];
+                $mailer->AddAddress($payload['to'], $payload['name'] ?? '');
+                $mailer->Send();
+            }
+            
             $this->success(array('message' => 'Email successfully sent to destination'));
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());
-        }
-    }
-    
-    public function sendEmail($to, $name, $subject, $message, $flag = 'en')
-    {
-        if (\getenv('MAIL_SENDER', true)) {
-            $mail = new \codesaur\Base\Mail();
-            $mail->sender = \getenv('MAIL_SENDER', true);
-            $mail->to = $to;
-            $mail->message = $message;
-            $mail->subject = $subject;
-            $mail->send();
-        } else {
-            $model = new Content\MailerModel($this->conn);
-            $rows = $model->getRows();
-            $record = \end($rows);
-
-            if (empty($record) || ! isset($record['charset'])
-                    || ! isset($record['host']) || ! isset($record['port'])
-                    || ! isset($record['email']) || ! isset($record['name'])
-                    || ! isset($record['username']) || ! isset($record['password'])
-                    || ! isset($record['is_smtp']) || ! isset($record['smtp_auth']) || ! isset($record['smtp_secure'])) {
-                $translation = new Localization\TranslationModel($this->conn);
-                $translation->setTables('dashboard');
-                $text = $translation->retrieve($flag);
-                throw new \Exception($text['emailer-not-set'] ?? 'Email carrier not found!');
-            }
-
-            $mailer = new \PHPMailer\PHPMailer\PHPMailer(DEBUG ? true : null);
-            if (((int) $record['is_smtp']) == 1) {
-               $mailer->IsSMTP(); 
-            }
-            $mailer->Mailer = 'smtp';
-            $mailer->CharSet = $record['charset'];
-            $mailer->SMTPAuth = (bool)((int) $record['smtp_auth']);
-            $mailer->SMTPSecure = $record['smtp_secure'];
-            $mailer->Host = $record['host'];
-            $mailer->Port = $record['port'];
-            $mailer->Username = $record['username'];
-            $mailer->Password = $record['password'];
-            $mailer->SetFrom($record['email'], $record['name']);
-            $mailer->AddReplyTo($record['email'], $record['name']);
-            $mailer->SMTPOptions = array('ssl' => array(
-                'verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true));
-            
-            $mailer->MsgHTML($message);
-            $mailer->Subject = $subject;
-            $mailer->AddAddress($to, $name);
-            $mailer->Send();
         }
     }
     

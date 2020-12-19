@@ -4,6 +4,7 @@ use codesaur as single;
 use codesaur\Globals\Get;
 use codesaur\Globals\Post;
 use codesaur\Base\LogLevel;
+use codesaur\HTML\Template;
 use codesaur\Globals\Server;
 
 use Velociraptor\DashboardController;
@@ -186,26 +187,78 @@ class LoginController extends DashboardController
             $response = $this->indopost('/account/signup', $payload);
         }
         
-        single::response()->json(array(
-            'type' => isset($response['data']['id']) ? 'success' : 'danger',
-            'message' => $response['data']['message'] ?? single::text('something-went-wrong')));
+        if ( ! isset($response['data']['id'])) {
+            return single::response()->json(array('type' => 'danger', 'message' => $response['data']['message'] ?? single::text('something-went-wrong')));            
+        }
+        
+        $templates_content = $this->indopost('/content',
+                array('table' => 'templates', '_keyword_' => 'request-new-account'));
+        
+        if (isset($templates_content['data']['request-new-account'])) {
+            $template = new Template();
+            $template->set('email', $payload['email']);
+            $template->set('username', $payload['username']);
+            $template->source($templates_content['data']['request-new-account']['full'][$payload['flag']]);
+            
+            $this->indopost('/send/email', array(
+                'to' => $payload['email'],
+                'flag' => $payload['flag'],
+                'name' => $payload['username'],
+                'message' => $template->output(),
+                'subject' => $templates_content['data']['request-new-account']['title'][$payload['flag']]
+            ));
+        }
+        
+        single::response()->json(array('type' => 'success', 'message' => $response['data']['message'] ?? single::text('to-complete-registration-check-email')));
     }
 
     public function requestPassword()
     {
-        $post = new Post();
-        if ($post->has('codeForgetEmail')) {
-            $email = $post->value('codeForgetEmail', FILTER_SANITIZE_EMAIL);
+        try {
+            $post = new Post();
+            if ( ! $post->has('codeForgetEmail')) {
+                throw new \Exception('invalid-request');
+            }
+            
+            $payload = array(
+                'flag' => single::language()->current(),
+                'email' => $post->value('codeForgetEmail', FILTER_SANITIZE_EMAIL), 
+                'login' => single::request()->getHttpHost() . single::link('login'));
+            $response = $this->indopost('/account/forgot', $payload);
+
+            if ( ! isset($response['data']['forgot']['use_id'])) {
+                throw new \Exception($response['data']['message'] ?? single::text('something-went-wrong'));            
+            }
+
+            $templates_content = $this->indopost('/content',
+                    array('table' => 'templates', '_keyword_' => 'forgotten-password-reset'));
+
+            if ( ! isset($templates_content['data']['forgotten-password-reset'])) {
+                throw new \Exception(single::text('email-template-not-set'));
+            }
+            
+            $template = new Template();
+            $template->set('email', $payload['email']);
+            $template->set('link', "{$payload['login']}?forgot={$response['data']['forgot']['use_id']}");
+            $template->source($templates_content['data']['forgotten-password-reset']['full'][$payload['flag']]);
+            $receiver = $response['data']['forgot']['first_name'] . ' ' . \mb_substr($response['data']['forgot']['last_name'], 0, 1, 'UTF-8');
+            
+            $email_send = $this->indopost('/send/email', array(
+                'name' => $receiver,
+                'to' => $payload['email'],
+                'flag' => $payload['flag'],
+                'message' => $template->output(),
+                'subject' => $templates_content['data']['forgotten-password-reset']['title'][$payload['flag']]
+            ));
+            
+            if ( ! isset($email_send['data'])) {
+                throw new \Exception($email_send['error']['message'] ?? single::text('something-went-wrong'));
+            }
+            
+            single::response()->json(array('type' => 'success', 'message' => $response['data']['message'] ?? single::text('reset-email-sent')));
+        } catch (\Exception $ex) {
+            single::response()->json(array('type' => 'danger', 'message' => $ex->getMessage()));
         }
-        
-        $payload = array(
-            'email' => $email, 'flag' => single::language()->current(),
-            'login' => single::request()->getHttpHost() . single::link('login'));
-        $response = $this->indopost('/account/forgot', $payload);
-        
-        single::response()->json(array(
-            'type' => isset($response['data']['forgot']) ? 'success' : 'danger',
-            'message' => $response['data']['message'] ?? single::text('something-went-wrong')));
     }
     
     public function resetPassword($id, $error = null)
