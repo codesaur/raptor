@@ -263,6 +263,6 @@ class AccountController extends \Indoraptor\IndoController
             $names[] = $data['name'];
         }
         
-        $this->respond(array('data' => $names));
+        $this->success($names);
     }
 }
