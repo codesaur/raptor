@@ -521,7 +521,7 @@ class AccountController extends DashboardController
                 $template->set('login', single::request()->getHttpHost() . single::link('login'));
                 $template->set('username', $record['username']);
                 
-                $this->indopost('/send/email', array(
+                $this->indopost('/send/smtp/email', array(
                     'to' => $record['email'],
                     'flag' => $record['code'],
                     'name' => $record['username'],

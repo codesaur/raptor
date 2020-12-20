@@ -200,7 +200,7 @@ class LoginController extends DashboardController
             $template->set('username', $payload['username']);
             $template->source($templates_content['data']['request-new-account']['full'][$payload['flag']]);
             
-            $this->indopost('/send/email', array(
+            $this->indopost('/send/smtp/email', array(
                 'to' => $payload['email'],
                 'flag' => $payload['flag'],
                 'name' => $payload['username'],
@@ -243,7 +243,7 @@ class LoginController extends DashboardController
             $template->source($templates_content['data']['forgotten-password-reset']['full'][$payload['flag']]);
             $receiver = $response['data']['forgot']['first_name'] . ' ' . \mb_substr($response['data']['forgot']['last_name'], 0, 1, 'UTF-8');
             
-            $email_send = $this->indopost('/send/email', array(
+            $email_send = $this->indopost('/send/smtp/email', array(
                 'name' => $receiver,
                 'to' => $payload['email'],
                 'flag' => $payload['flag'],

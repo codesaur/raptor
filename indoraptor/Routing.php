@@ -9,7 +9,8 @@ class Routing extends \codesaur\Http\Routing
             ['/status', 'status@Indoraptor\\IndoController', ['methods' => 'POST']],
             ['/cdo/query', 'query@Indoraptor\\IndoController', ['methods' => 'POST']],
             ['/statement', 'statement@Indoraptor\\IndoController', ['methods' => 'POST']],
-            ['/send/email', 'sendEmail@Indoraptor\\IndoController', ['methods' => 'POST']]
+            ['/send/email', 'sendEmail@Indoraptor\\IndoController', ['methods' => 'POST']],
+            ['/send/smtp/email', 'sendSMTPEmail@Indoraptor\\IndoController', ['methods' => 'POST']]
         );
     }
     
