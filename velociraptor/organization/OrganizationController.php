@@ -148,7 +148,7 @@ class OrganizationController extends DashboardController
         $lookup = $this->getLookup(array('status'));
         
         $response = $this->indopost('/record/retrieve?model='
-                .  \urlencode('Indoraptor\\Account\\OrganizationModel'));
+                . \urlencode('Indoraptor\\Account\\OrganizationModel'));
                 
         if (single::user()->can('system_org_index')
                 && isset($response['data']['clean'])) {

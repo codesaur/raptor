@@ -176,7 +176,7 @@ class PagesController extends DashboardController
         $rows = array();
         $table = single::user()->organization('alias');
         $response = $this->indopost(
-                "/record/retrieve?table=$table&model=" .  \urlencode('Indoraptor\\Content\\PagesModel'),
+                "/record/retrieve?table=$table&model=" . \urlencode('Indoraptor\\Content\\PagesModel'),
                 array('condition' => array('ORDER BY' => 'parent_id, position, id')));
         if (isset($response['data']['clean']) &&
                 single::user()->can(single::user()->organization('alias') . '_pages_index')) {

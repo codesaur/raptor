@@ -51,7 +51,7 @@
                     <th scope="row">{{ account['id'] }}</th>
                     <td><img alt="{{ account['first_name'] ~ ' ' ~ account['last_name'] }}" src="{{ account['photo']|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif') }}" width="60px"></td>
                     <td>{{ account['first_name'] ~ ' ' ~ account['last_name'] }}</td>
-                    <td>{{ account['username'] }}</td>
+                    <td>{{ account['username'] }}{% if account['phone'] is not null and account['phone'] is not empty %} / {{ account['phone'] }}{% endif %}</td>
                     <td>{{ account['email'] }}</td>
                     <td>
                         <a href="{{ 'account-organization-set'|link({'id':account['id']}) }}"

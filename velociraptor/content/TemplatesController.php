@@ -147,7 +147,7 @@ class TemplatesController extends DashboardController
         $lookup = $this->getLookup(array('status', 'template_type'));
         
         $response = $this->indopost('/record/retrieve?table=templates&model='
-                .  \urlencode('Indoraptor\\Content\\ContentModel'), array('condition' => array('ORDER BY' => '_keyword_')));
+                . \urlencode('Indoraptor\\Content\\ContentModel'), array('condition' => array('ORDER BY' => '_keyword_')));
         if (isset($response['data']['clean']) && single::user()->can('system_template_index')) {
             $table = $response['data']['clean'];
             $query = "?logger=reference&table=$table&controller=" . \urlencode($this->getMe());
