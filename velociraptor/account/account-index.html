@@ -37,8 +37,7 @@
                     <th scope="col">ID</th>
                     <th scope="col">{{ 'photo'|text }}</th>
                     <th scope="col">{{ 'name'|text }}</th>
-                    <th scope="col"><!--{{ 'login-name'|text }}--></th>
-                    <th scope="col">{{ 'email'|text }}</th>
+                    <th scope="col">{{ 'login-name'|text }}</th>
                     <th scope="col">{{ 'organization'|text }}</th>
                     <th scope="col">{{ 'user-role'|text }}</th>
                     <th scope="col">{{ 'status'|text }}</th>
@@ -50,9 +49,14 @@
                 <tr id="account_{{ account['id'] }}">
                     <th scope="row">{{ account['id'] }}</th>
                     <td><img alt="{{ account['first_name'] ~ ' ' ~ account['last_name'] }}" src="{{ account['photo']|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/boot4/no-account.gif') }}" width="60px"></td>
-                    <td>{{ account['first_name'] ~ ' ' ~ account['last_name'] }}</td>
-                    <td>{{ account['username'] }}{% if account['phone'] is not null and account['phone'] is not empty %} / {{ account['phone'] }}{% endif %}</td>
-                    <td>{{ account['email'] }}</td>
+                    <td>
+                        {{ account['first_name'] ~ ' ' ~ account['last_name'] }}
+                        {% if account['phone'] is not null and account['phone'] is not empty %}<br/><a class="badge badge-secondary mt-2" href="tel:{{ account['phone'] }}"><i class="la la-phone"></i> {{ account['phone'] }}</a>{% endif %}
+                    </td>
+                    <td>
+                        {{ account['username'] }}
+                        <br/><a class="badge badge-info mt-2" href="mailto:{{ account['email'] }}"><i class="la la-envelope"></i> {{ account['email'] }}</a>
+                    </td>
                     <td>
                         <a href="{{ 'account-organization-set'|link({'id':account['id']}) }}"
                            class="ajax-modal btn btn-dark btn-sm shadow-sm" data-target="#modal" data-toggle="modal"><i class="la la-bank"></i>
@@ -61,7 +65,7 @@
                         {% if status == 0 %}
                             {%  set org_badge = 'secondary' %}
                         {% else %}
-                            {%  set org_badge = organizations[org]['alias'] == 'system' ? 'info' : 'warning' %}
+                            {%  set org_badge = organizations[org]['alias'] == 'system' ? 'primary' : 'warning' %}
                         {% endif %}
                         <a href="{{ 'crud'|link({'action':'retrieve'}) }}?logger=organization&controller=Velociraptor\Organization\OrganizationController&id={{ organizations[org]['id'] }}"
                            class="ajax-modal badge badge-{{ org_badge }}" data-target="#modal" data-toggle="modal">{{ organizations[org]['name'] }}
