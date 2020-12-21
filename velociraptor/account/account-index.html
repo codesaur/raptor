@@ -55,7 +55,7 @@
                     </td>
                     <td>
                         {{ account['username'] }}
-                        <br/><a class="badge badge-info mt-2" href="mailto:{{ account['email'] }}"><i class="la la-envelope"></i> {{ account['email'] }}</a>
+                        <br/><a class="badge badge-success mt-2" href="mailto:{{ account['email'] }}"><i class="la la-envelope"></i> {{ account['email'] }}</a>
                     </td>
                     <td>
                         <a href="{{ 'account-organization-set'|link({'id':account['id']}) }}"
@@ -77,7 +77,7 @@
                            class="ajax-modal btn btn-danger btn-sm shadow-sm" data-target="#modal" data-toggle="modal"><i class="flaticon-safe-shield-protection"></i>
                         </a>
                     {% for role in account['roles'] %}
-                        <span class="badge badge-{{ role == 'system_coder' ? 'primary' : 'success' }} shadow-sm">{{ role }}</span>
+                        <span class="badge badge-{{ role == 'system_coder' ? 'primary' : 'warning' }} shadow-sm">{{ role }}</span>
                     {% endfor %}
                     </td>
                     <td>
