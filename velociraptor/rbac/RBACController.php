@@ -29,7 +29,7 @@ class RBACController extends DashboardController
         $template->breadcrumb(array('RBAC'));
         
         if ( ! single::user()->can('system_rbac')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
         
         $card = new Card(
@@ -86,7 +86,7 @@ class RBACController extends DashboardController
                         single::user()->can("{$org_alias}_rbac_user_role")) {
                     $thing = "{$org_alias}_rbac_user_role";
                 } else {
-                    return $this->getTemplate()->noPermission(true);
+                    return $this->getTemplate()->alertErrorPermission(null, 'flaticon-security', true,  true);
                 }
             }
             

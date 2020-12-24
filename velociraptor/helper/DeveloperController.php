@@ -12,7 +12,7 @@ class DeveloperController extends DashboardController
         $template = $this->getTemplate(single::text('developer'));
         
         if ( ! single::user()->can('system_developer_index')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
         
         $template->render(new TwigTemplate(\dirname(__FILE__) . '/developer-index-table.html'));

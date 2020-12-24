@@ -19,7 +19,7 @@ class OrganizationController extends DashboardController
         $template = $this->getTemplate(single::text('organization'));
         
         if ( ! single::user()->can('system_org_index')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
         
         $query = '?logger=organization&controller=' . \urlencode($this->getMe());
@@ -33,7 +33,7 @@ class OrganizationController extends DashboardController
 
         $card->addContent(new TwigTemplate(\dirname(__FILE__) . '/organization-index-table.html'));
         
-        $template->addDelete(array('logger' => 'organization', 'model' => 'Indoraptor\\Account\\OrganizationModel'));
+        $template->addDeleteScript(array('logger' => 'organization', 'model' => 'Indoraptor\\Account\\OrganizationModel'));
 
         $template->render($card);
     }
@@ -47,7 +47,7 @@ class OrganizationController extends DashboardController
             }
             
             if ( ! single::user()->can("system_org_$action")) {
-                return $this->getTemplate()->noPermission(true);
+                return $this->getTemplate()->alertErrorPermission(null, 'flaticon-security', true,  true);
             }
 
             $query = '?logger=organization&controller=' . \urlencode($this->getMe());

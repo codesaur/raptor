@@ -11,11 +11,6 @@ use Velociraptor\DashboardController;
 
 class LoginController extends DashboardController
 {
-    public function frontend()
-    {
-        single::header()->location(single::app()->getWebUrl(false));
-    }
-
     public function index()
     {
         $get = new Get();
@@ -35,7 +30,8 @@ class LoginController extends DashboardController
         $vars['organizations_names'] = $orgs_names['data'] ?? array();
         
         $template = $this->getTemplate(null, null, $vars);
-        $template->getContent()->file($template->getSourceFolder() . '/login.html');
+        $source_dir = \dirname($template->getFileName());
+        $template->getContent()->file("$source_dir/login.html");
         $template->render();
     }
     
@@ -281,6 +277,7 @@ class LoginController extends DashboardController
         }
 
         $template = $this->getTemplate();
+        $source_dir = \dirname($template->getFileName());
         
         if ($this->isNotExpired($response['data']['created_at'])) {
             $this->log('reset-password', array(
@@ -296,14 +293,14 @@ class LoginController extends DashboardController
                 $template->getContent()->set('error', $error);
             }
             
-            $template->getContent()->file($template->getSourceFolder() . '/login-reset-password.html');
+            $template->getContent()->file("$source_dir/login-reset-password.html");
         } else {
             $this->log('reset-password', array('message' =>
                 'Хугацаа дууссан код ашиглан нууц үг шинээр тааруулахыг хүсэв. Татгалзав.',
                 'forgot' => $response['data']), LogLevel::Security, 'account', 9);
             
             $template->title(single::text('failure'));
-            $template->getContent()->file($template->getSourceFolder() . '/login-forgot.html');
+            $template->getContent()->file("$source_dir/login-forgot.html");
         }
         
         $template->render();
@@ -349,16 +346,17 @@ class LoginController extends DashboardController
             'use_id' => $post->value('use_id')), LogLevel::Security, 'account', 9);
         
         $template = $this->getTemplate(single::text('success'));
+        $source_dir = \dirname($template->getFileName());
         $template->getContent()->set('title', single::text('success'));
         $template->getContent()->set('notice', single::text('set-new-password-success'));
         $template->getContent()->set('btn', single::text('login'));
         $template->getContent()->set('btn_class', 'primary btn-lg btn-block');
-        $template->getContent()->file($template->getSourceFolder() . '/login-forgot.html');
+        $template->getContent()->file("$source_dir/login-forgot.html");
         
         $template->render();
     }
     
-    public function isNotExpired($date, $minutes = 20)
+    function isNotExpired($date, $minutes = 20)
     {
         $now_date = new \DateTime();
         $then = new \DateTime($date);

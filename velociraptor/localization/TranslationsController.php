@@ -17,7 +17,7 @@ class TranslationsController extends DashboardController
         $template = $this->getTemplate(single::text('translation'));
         
         if ( ! single::user()->can('system_translation_index')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
         
         $template->alert(single::text('translation-note'), 'flaticon-exclamation', 'alert-dark');
@@ -71,7 +71,7 @@ class TranslationsController extends DashboardController
             }
         }
         
-        $template->addDelete(array('logger' => 'localization', 'model' => 'Indoraptor\\Localization\\TranslationModel'));        
+        $template->addDeleteScript(array('logger' => 'localization', 'model' => 'Indoraptor\\Localization\\TranslationModel'));        
         $template->render($cards ?? null);
     }
     
@@ -83,7 +83,7 @@ class TranslationsController extends DashboardController
             }
 
             if ( ! single::user()->can("system_translation_$action")) {
-                return $this->getTemplate()->noPermission(true);
+                return $this->getTemplate()->alertErrorPermission(null, 'flaticon-security', true,  true);
             }
 
             $crud = single::link('crud-submit', array('action' => $action))

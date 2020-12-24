@@ -79,7 +79,6 @@ class Routing extends \codesaur\Http\Routing
         return array(
             ['/log', 'logjson@Velociraptor\\Helper\\HelperController', ['name' => 'log-json']],
             ['/indoraptor', 'Velociraptor\\Helper\\HelperController', ['name' => 'indoraptor']],
-            ['/frontend', 'frontend@Velociraptor\\Account\\LoginController', ['name' => 'frontend']],
             ['/datatable', 'onDatatable@Velociraptor\\Helper\\HelperController', ['name' => 'datatable']],
             ['/web/report', 'webReport@Velociraptor\\Report\\ReportController', ['name' => 'web-report']],
             ['/private/file', 'readPrivateFile@Velociraptor\\Controller', ['methods' => 'GET', 'name' => 'private-file-read']],

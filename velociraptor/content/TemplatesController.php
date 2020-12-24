@@ -17,7 +17,7 @@ class TemplatesController extends DashboardController
         $template = $this->getTemplate(single::text('document-templates'));
         
         if ( ! single::user()->can('system_template_index')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
         
         $card = new Card(array(single::text('document-templates'), 'text-uppercase text-success'), 'flaticon-interface-4');
@@ -39,7 +39,7 @@ class TemplatesController extends DashboardController
 
         $card->addContent(new TwigTemplate(\dirname(__FILE__) . '/template/index-table.html'));
 
-        $template->addDelete(array('logger' => 'reference', 'model' => 'Indoraptor\\Content\\ContentModel'));
+        $template->addDeleteScript(array('logger' => 'reference', 'model' => 'Indoraptor\\Content\\ContentModel'));
         
         $template->render($card);
     }
@@ -52,7 +52,7 @@ class TemplatesController extends DashboardController
             }
             
             if ( ! single::user()->can("system_template_$action")) {
-                return $this->getTemplate()->noPermission();
+                return $this->getTemplate()->alertErrorPermission();
             }
             
             $title = single::text('document-templates');

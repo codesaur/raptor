@@ -12,7 +12,7 @@ class AdvancedLogController extends DashboardController
         $template = $this->getTemplate(single::text('logs'), array(single::text('access-log')));
         
         if ( ! single::user()->can('system_log_index')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
         
         $vars = array(
@@ -36,7 +36,7 @@ class AdvancedLogController extends DashboardController
             }
             
             if ( ! single::user()->can('system_log_index')) {
-                return $this->getTemplate()->noPermission(true);
+                return $this->getTemplate()->alertErrorPermission(null, 'flaticon-security', true,  true);
             }
             
             $logdata = $this->indoget("/log/$table/$id");

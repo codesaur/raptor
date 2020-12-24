@@ -34,7 +34,7 @@ class Boot4 extends IndexTemplate
         $this->getContent()->set('breadcrumb', $breadcrumb);
     }
     
-    public function addToolbar(
+    public function toolbar(
             $text, $icon = null, $class = '', $href = 'javascript:;', $modal = null)
     {
         if ( ! $this->hasContent()) {
@@ -90,8 +90,34 @@ class Boot4 extends IndexTemplate
         
         return $this->addContent(new Callout($content, $type, $icon, "$class shadow-sm", $close, $id));
     }
+    
+    public function &getContent() : ?TwigTemplate
+    {
+        return $this->get('content');
+    }
 
-    public function addDelete(
+    public function alertErrorPermission($message = null, $icon = 'flaticon-security', $reload = true, $is_modal = false)
+    {
+        if ( ! isset($message)) {
+            $message = single::text('system-no-permission');
+        }
+        
+        if ($reload) {
+            $message .= ' <i class="flaticon2-reload float-right" style="cursor:pointer" onclick="window.location.reload()"></i>';
+        }
+        
+        $content = new Alert($message, $icon, 'alert-danger');
+        
+        if ($is_modal) {
+            (new TwigTemplate(\dirname(__FILE__) . '/no-permission-modal.html', array('content' => $content)))->render();
+        } else {
+            $this->addContent($content)->render();
+        }
+        
+        return false;
+    }
+    
+    public function addDeleteScript(
             $data, $container = 'table',
             $question = null, $action = null,
             $crud = 'delete', $method = null, $selector = null)
@@ -116,42 +142,4 @@ class Boot4 extends IndexTemplate
 
         $this->addContent($delete_script);
     }
-    
-    public function alertNoPermission($icon = 'flaticon-security', $reload = true)
-    {
-        $html = single::text('system-no-permission');
-        if ($reload) {
-            $html .= ' <i class="flaticon2-reload float-right" style="cursor:pointer" onclick="window.location.reload()"></i>';
-        }
-        
-        return new Alert($html, $icon, 'alert-danger');
-    }
-    
-    public function noPermission($is_modal = false, $callback = null)
-    {
-        if ($is_modal) {
-            (new TwigTemplate(
-                \dirname(__FILE__) . '/no-permission-modal.html',
-                array('alert' => $this->alertNoPermission(null, false))))->render();
-        } else {
-            $this->addContent($this->alertNoPermission())->render();
-        }
-        
-        if (isset($callback)) {
-            $callback();
-        }
-        
-        return false;
-    }
-    
-    public function getSourceFolder() : string
-    {
-        return \dirname(__FILE__);
-    }
-    
-    public function &getContent() : ?TwigTemplate
-    {
-        return $this->get('content');
-    }
 }
-

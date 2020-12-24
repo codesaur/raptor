@@ -18,7 +18,7 @@ class LanguagesController extends DashboardController
         $template = $this->getTemplate(single::text('languages'));
         
         if ( ! single::user()->can('system_language_index')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
         
         $template->callout(single::text('languages-note'), 'danger');
@@ -43,7 +43,7 @@ class LanguagesController extends DashboardController
         
         $card->addContent(new TwigTemplate(\dirname(__FILE__) . '/language-index-table.html'));
 
-        $template->addDelete(array('logger' => 'localization', 'model' => 'Indoraptor\\Localization\\LanguageModel'));
+        $template->addDeleteScript(array('logger' => 'localization', 'model' => 'Indoraptor\\Localization\\LanguageModel'));
         
         $template->render($card);
     }
@@ -56,7 +56,7 @@ class LanguagesController extends DashboardController
             }
             
             if ( ! single::user()->can("system_language_$action")) {
-                return $this->getTemplate()->noPermission(true);   
+                return $this->getTemplate()->alertErrorPermission(null, 'flaticon-security', true,  true);   
             }
             
             $query = "?logger=localization&table=$table&controller=" . \urlencode($this->getMe());

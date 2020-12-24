@@ -17,7 +17,7 @@ class PagesController extends DashboardController
         $template = $this->getTemplate(single::text('pages'));
 
         if ( ! single::user()->can(single::user()->organization('alias') . '_pages_index')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
 
         $template->alert(single::text('pages-note'), 'flaticon2-list-2', 'alert-primary alert-elevate alert-dismissible');        
@@ -40,7 +40,7 @@ class PagesController extends DashboardController
 
         $card->addContent(new TwigTemplate(\dirname(__FILE__) . '/pages/index-table.html'));
 
-        $template->addDelete(array('logger' => 'pages', 'model' => 'Indoraptor\\Content\\PagesModel'));
+        $template->addDeleteScript(array('logger' => 'pages', 'model' => 'Indoraptor\\Content\\PagesModel'));
         
         $template->render($card);
     }
@@ -53,7 +53,7 @@ class PagesController extends DashboardController
             }
             
             if ( ! single::user()->can(single::user()->organization('alias') . "_pages_$action")) {
-                return $this->getTemplate()->noPermission();
+                return $this->getTemplate()->alertErrorPermission();
             }
 
             $title = single::text('pages');

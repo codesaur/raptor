@@ -3,6 +3,7 @@
 use codesaur as single;
 
 use Velociraptor\Boot4\Boot4;
+use Velociraptor\Boot4\Alert;
 use Velociraptor\DashboardController;
 
 class HelperController extends DashboardController
@@ -12,11 +13,15 @@ class HelperController extends DashboardController
         $template = new Boot4();
         $template->title('Indoraptor');
         
-        if ( ! single::user()->can('system_indoraptor_index')) {
-            return $template->noPermission();
+        try {
+            if ( ! single::user()->can('system_indoraptor_index')) {
+                throw new \Exception(single::text('system-no-permission'));
+            }
+        } catch (\Exception $ex) {
+            $template->addContent(new Alert($ex->getMessage(), 'flaticon-security', 'alert-danger'));
+        } finally {
+            $template->render();
         }
-        
-        $template->render();
     }
     
     public function logjson()

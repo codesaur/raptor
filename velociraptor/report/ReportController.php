@@ -21,15 +21,15 @@ class ReportController extends DashboardController
         $template = $this->getTemplate($title, array(single::text('website-total-report')));
         
         if ( ! single::user()->can($this->orgAlias . '_web_report')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
         
         if (single::user()->can($this->orgAlias . '_web_report_monthly')) {
-            $template->addToolbar(array('title' => \ucwords(single::text('website-mounthly-report'))), 'flaticon-calendar-with-a-clock-time-tools', 'btn-info shadow-sm', single::link('web-report-monthly'));
+            $template->toolbar(array('title' => \ucwords(single::text('website-mounthly-report'))), 'flaticon-calendar-with-a-clock-time-tools', 'btn-info shadow-sm', single::link('web-report-monthly'));
         }
         
         if (single::user()->can($this->orgAlias . '_web_google_analytics')) {
-            $template->addToolbar(array('text' => 'google-analytics'), 'flaticon-analytics', 'btn-warning shadow-sm', single::link('web-google-analytics'));
+            $template->toolbar(array('text' => 'google-analytics'), 'flaticon-analytics', 'btn-warning shadow-sm', single::link('web-google-analytics'));
         }
         
         $template->render(new TwigTemplate(\dirname(__FILE__) . '/web-report.html'));
@@ -40,15 +40,15 @@ class ReportController extends DashboardController
         $template = $this->getTemplate(single::text('website') . ' - ' . single::text('google-analytics'), array(single::text('google-analytics')));
         
         if ( ! single::user()->can($this->orgAlias . '_web_google_analytics')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
         
         if (single::user()->can($this->orgAlias . '_web_report')) {
-            $template->addToolbar(array('text' => 'website-total-report'), 'flaticon-line-graph', 'btn-success shadow-sm', single::link('web-report'));
+            $template->toolbar(array('text' => 'website-total-report'), 'flaticon-line-graph', 'btn-success shadow-sm', single::link('web-report'));
         }
         
         if (single::user()->can($this->orgAlias . '_web_report_monthly')) {
-            $template->addToolbar(array('text' => 'website-mounthly-report'), 'flaticon-calendar-with-a-clock-time-tools', 'btn-info shadow-sm', single::link('web-report-monthly'));
+            $template->toolbar(array('text' => 'website-mounthly-report'), 'flaticon-calendar-with-a-clock-time-tools', 'btn-info shadow-sm', single::link('web-report-monthly'));
         }
         
         $template->render(new TwigTemplate(

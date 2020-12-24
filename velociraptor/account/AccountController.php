@@ -23,7 +23,7 @@ class AccountController extends DashboardController
             $modal = \dirname(__FILE__) . "/$table-index-modal.html";
             if ( ! single::user()->can("system_{$table}_index")
                     || ! \file_exists($modal)) {
-                return $template->noPermission(true);
+                return $template->alertErrorPermission(null, 'flaticon-security', true,  true);
             }
             
             $response = $this->indopost("/record/retrieve?table=$table&model="
@@ -44,7 +44,7 @@ class AccountController extends DashboardController
         }
         
         if ( ! single::user()->can('system_account_index')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
         
         $response = $this->indopost('/record/retrieve?model='
@@ -53,7 +53,7 @@ class AccountController extends DashboardController
         $accounts = $response['data']['rows'] ?? array();
         
         $template->callout(single::text('accounts-note'), 'primary', 'flaticon2-avatar');        
-        $template->addDelete(array('logger' => 'account', 'model' => 'Indoraptor\\Account\\AccountModel'), 'table');
+        $template->addDeleteScript(array('logger' => 'account', 'model' => 'Indoraptor\\Account\\AccountModel'), 'table');
         
         $org_users_query = 'SELECT t1.account_id, t1.organization_id, t1.status ' .
                 'FROM organization_users as t1 JOIN organizations as t2 ON t1.organization_id = t2.id ' .
@@ -161,7 +161,7 @@ class AccountController extends DashboardController
 
                     $delete = array('table' => 'accounts', 'logger' => 'account');
                     
-                    $template->addDelete($delete, '#tab-picture', single::text('delete-image-ask'), null, 'strip_file');
+                    $template->addDeleteScript($delete, '#tab-picture', single::text('delete-image-ask'), null, 'strip_file');
                 }
                 
                 $template->title("$title - $caption");
@@ -176,7 +176,7 @@ class AccountController extends DashboardController
                 \error_log($e->getMessage());
             }
             
-            return $this->getTemplate()->noPermission();
+            return $this->getTemplate()->alertErrorPermission();
         }
     }
     
@@ -309,7 +309,7 @@ class AccountController extends DashboardController
     {
         if (single::request()->getMethod() == 'GET') {
             if ( ! single::user()->can('system_account_organization_set')) {
-                return $this->renderNoPermission(null, true);
+                return $this->getTemplate()->alertErrorPermission();
             }
             
             $sql =  'SELECT ou.organization_id ' .
@@ -560,7 +560,7 @@ class AccountController extends DashboardController
             $rbac_link = single::link('crud', array('action' => 'index')) . 
                     '?logger=rbac&controller=' . \urlencode('Velociraptor\\RBAC\\RBACController') .
                     '&alias=' . \urlencode($alias) . '&title=' . \urlencode(single::user()->organization('name'));
-            $template->addToolbar(array('title' => 'Хэрэглэгчийн дүрүүд'), 'flaticon-safe-shield-protection', 'btn-danger shadow-sm', $rbac_link, '#modal');
+            $template->toolbar(array('title' => 'Хэрэглэгчийн дүрүүд'), 'flaticon-safe-shield-protection', 'btn-danger shadow-sm', $rbac_link, '#modal');
         }
         
         $org_account_query =

@@ -5,7 +5,7 @@ class Routing extends \codesaur\Http\Routing
     function getBasics() : array
     {
         return array(
-            ['', 'view@Indoraptor\\IndoController'],
+            ['', 'about@Indoraptor\\IndoController'],
             ['/status', 'status@Indoraptor\\IndoController', ['methods' => 'POST']],
             ['/cdo/query', 'query@Indoraptor\\IndoController', ['methods' => 'POST']],
             ['/statement', 'statement@Indoraptor\\IndoController', ['methods' => 'POST']]

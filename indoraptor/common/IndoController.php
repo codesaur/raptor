@@ -420,8 +420,12 @@ class IndoController extends \codesaur\Http\Controller
         return 'en';
     }
     
-    final public function view()
+    final public function about()
     {
-        single::header()->redirect(single::app()->getWebUrl(false) . '/dashboard/indoraptor');
+        $this->respond(array(
+            'framework' => single::about(),
+            'class'     => $this->getMe(),
+            'author'    => single::author()
+        ));
     }
 }

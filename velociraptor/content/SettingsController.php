@@ -32,7 +32,7 @@ class SettingsController extends DashboardController
         $template = $this->getTemplate(single::text('settings'));
         
         if ( ! single::user()->can(single::user()->organization('alias') . '_website_settings')) {
-            return $template->noPermission();
+            return $template->alertErrorPermission();
         }
         
         $settings = $this->indoget('/settings/' . single::user()->organization('alias'));
@@ -50,7 +50,7 @@ class SettingsController extends DashboardController
         } else {
             $record = $settings['data']['record'];
             $auto_increment = $record['id'];
-            $template->addDelete(
+            $template->addDeleteScript(
                     array('table' => $table, 'logger' => 'settings'),
                     'body', single::text('delete-image-ask'), null, 'strip_file');
         }
@@ -79,7 +79,7 @@ class SettingsController extends DashboardController
     public function socials()
     {
         if ( ! single::user()->can(single::user()->organization('alias') . '_website_socials')) {
-            return $this->getTemplate()->noPermission(true);
+            return $this->getTemplate()->alertErrorPermission(null, 'flaticon-security', true,  true);
         }
 
         $response = $this->indoget('/settings/socials/' . \urlencode(single::user()->organization('alias')));
@@ -102,7 +102,7 @@ class SettingsController extends DashboardController
     public function mailer()
     {
         if ( ! single::user()->can('system_system_mailer')) {
-            return $this->getTemplate()->noPermission(true);
+            return $this->getTemplate()->alertErrorPermission(null, 'flaticon-security', true,  true);
         }
         
         $response = $this->indoget('/settings/mailer');
