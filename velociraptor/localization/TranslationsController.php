@@ -52,7 +52,7 @@ class TranslationsController extends DashboardController
                     $cards[$table] = new Card(array($table, "text-uppercase text-$color"), 'la la-language', "border-$color mb-4");
                     
                     $query = "?logger=localization&table=$table&controller=" . \urlencode($this->getMe());
-                    if (single::user()->can('system_translatione_insert')) {
+                    if (single::user()->can('system_translation_insert')) {
                         $cards[$table]->addButton(single::text('new'),
                                 single::link('crud', array('action' => 'insert')) . $query,
                                 "btn btn-$color shadow-sm text-uppercase", 'flaticon-add', 'data-target="#modal" data-toggle="modal"');
