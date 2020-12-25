@@ -130,7 +130,7 @@ abstract class DashboardController extends Controller
         }
     }
     
-    final function getAccounts() : array
+    public function getAccounts() : array
     {
         $response = $this->indopost('/record/retrieve?model='
                     . \urlencode('Indoraptor\\Account\\AccountModel'),
