@@ -98,7 +98,7 @@ class Boot4 extends IndexTemplate
 
     public function alertErrorPermission($message = null, $icon = 'flaticon-security', $reload = true, $is_modal = false)
     {
-        if ( ! isset($message)) {
+        if (empty($message)) {
             $message = single::text('system-no-permission');
         }
         
