@@ -203,7 +203,7 @@
     <div class="container-fluid text-light">
         <div class="clearfix">
             <span class="float-left">
-                <a href="{{ home_global ?? request.getHttpHost() }}" target="__blank"><img class="float-left pr-3" height="24px" src="{{ meta['shortcut icon']|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/images/ololt-leafs.png') }}"></a>
+                <a href="{{ home_global ?? request.getHttpHost() }}" target="_blank"><img class="float-left pr-3" height="24px" src="{{ meta['shortcut icon']|default('https://cdn.jsdelivr.net/gh/codesaur/resources/dist/images/ololt-leafs.png') }}"></a>
                 {{ 'now'|date('Y') }} &copy; {{ copyright }} - {{ 'dashboard'|text }}
             </span>
             <div class="float-right d-none d-xl-block">

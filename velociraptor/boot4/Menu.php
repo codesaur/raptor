@@ -222,7 +222,7 @@ class Menu
                 'route' => 'crud',
                 'title' => 'Documentation',
                 'icon'  => 'flaticon-light',
-                'attr'  => 'target="__blank"',
+                'attr'  => 'target="_blank"',
                 'param' => array('action' => 'index'),
                 'query' => 'logger=developer&controller=Velociraptor\\Helper\\DocumentationController'
             );
@@ -233,7 +233,7 @@ class Menu
                 'route' => 'crud',
                 'text'  => 'developer',
                 'icon'  => 'flaticon2-user-1',
-                'attr'  => 'target="__blank"',
+                'attr'  => 'target="_blank"',
                 'param' => array('action' => 'index'),
                 'query' => 'logger=developer&controller=Velociraptor\\Helper\\DeveloperController'
             );
@@ -244,7 +244,7 @@ class Menu
                 'route' => 'crud',
                 'title' => 'Indoraptor',
                 'icon'  => 'flaticon2-protected',
-                'attr'  => 'target="__blank"',
+                'attr'  => 'target="_blank"',
                 'param' => array('action' => 'index'),
                 'query' => 'logger=developer&controller=Velociraptor\\Helper\\HelperController'
             );
@@ -256,7 +256,7 @@ class Menu
                 'route' => 'log-json',
                 'text'  => 'access-log',
                 'icon'  => 'flaticon2-ui',
-                'attr'  => 'target="__blank"'
+                'attr'  => 'target="_blank"'
             );
             if (single::request()->hasParam('logger')) {
                 $item['query'] = 'table=' . \urlencode(single::request()->getParam('logger'));
