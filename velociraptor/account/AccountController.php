@@ -9,6 +9,7 @@ use codesaur\Base\LogLevel;
 use Velociraptor\TwigTemplate;
 use Velociraptor\DashboardController;
 use Velociraptor\File\FileController;
+use Velociraptor\DashboardTemplateInterface;
 
 use Indoraptor\Account\AccountDescribe;
 
@@ -556,7 +557,7 @@ class AccountController extends DashboardController
         }
         
         if (single::user()->can($alias . '_rbac_index')
-                && $template->hasMethod('addToolbar')) {
+                && $template instanceof DashboardTemplateInterface) {
             $rbac_link = single::link('crud', array('action' => 'index')) . 
                     '?logger=rbac&controller=' . \urlencode('Velociraptor\\RBAC\\RBACController') .
                     '&alias=' . \urlencode($alias) . '&title=' . \urlencode(single::user()->organization('name'));
