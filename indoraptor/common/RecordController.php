@@ -8,10 +8,7 @@ class RecordController extends IndoController
     public function insert()
     {
         $model = $this->grabmodel(true);        
-        if ( ! \in_array($model->getMe(), array(
-            //'Indoraptor\\Localization\\LanguageModel',
-            //'Indoraptor\\Localization\\TranslationModel'
-        )) &&  ! $this->accept()) {
+        if ( ! $this->accept()) {
             return $this->error('Not Allowed');
         }
         
@@ -39,10 +36,7 @@ class RecordController extends IndoController
     public function update()
     {
         $model = $this->grabmodel(true);        
-        if ( ! \in_array($model->getMe(), array(
-            //'Indoraptor\\Localization\\LanguageModel',
-            //'Indoraptor\\Localization\\TranslationModel'
-        )) &&  ! $this->accept()) {
+        if ( ! $this->accept()) {
             return $this->error('Not Allowed');
         }
         
@@ -97,10 +91,7 @@ class RecordController extends IndoController
     public function retrieve()
     {
         $model = $this->grabmodel(true);
-        if ( ! \in_array($model->getMe(), array(
-            //'Indoraptor\\Localization\\LanguageModel',
-            //'Indoraptor\\Localization\\TranslationModel'
-        )) &&  ! $this->accept()) {
+        if ( ! $this->accept()) {
             return $this->error('Not Allowed');
         }
         

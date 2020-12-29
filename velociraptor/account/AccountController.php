@@ -53,7 +53,7 @@ class AccountController extends DashboardController
                 array('condition' => array('ORDER BY' => 'first_name')));
         $accounts = $response['data']['rows'] ?? array();
         
-        $template->callout(single::text('accounts-note'), 'primary', 'flaticon2-avatar');        
+        $template->callout(single::text('accounts-note'), 'primary', 'flaticon2-avatar');
         $template->addDeleteScript(array('logger' => 'account', 'model' => 'Indoraptor\\Account\\AccountModel'), 'table');
         
         $org_users_query = 'SELECT t1.account_id, t1.organization_id, t1.status ' .

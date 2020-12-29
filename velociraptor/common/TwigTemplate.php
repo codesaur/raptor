@@ -2,7 +2,7 @@
 
 use codesaur as single;
 
-class TwigTemplate extends \codesaur\HTML\TemplateTwig
+class TwigTemplate extends \codesaur\HTML\TwigTemplate
 {
     protected $twig;
     
