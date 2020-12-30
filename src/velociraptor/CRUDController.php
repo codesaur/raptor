@@ -305,7 +305,6 @@ class CRUDController extends DashboardController
             }
             
             $response = $this->indodelete($uri, $payload);
-            
             if ($response['data']['id'] ?? false) {
                 single::response()->json(array(
                     'status'  => 'success',

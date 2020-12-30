@@ -1,12 +1,12 @@
 # codesaur - raptor
-An elegant object-oriented application development framework for PHP 7.1 or newer
+An elegant object-oriented application development framework for PHP 7.2 or newer
 
 # Credits
 Narankhuu <codesaur@gmail.com>, +976 99000287, Munkhiin Ololt LLC, https://www.ololt.mn 
 
 Copyright (c) 2012 - 2020
 
-    version: 4
+    version: 5
     package: Swift seizer
     
     Velociraptor (/vɪˈlɒsɪræptər/; meaning "swift seizer" in Latin) is a genus of dromaeosaurid theropod dinosaur that lived

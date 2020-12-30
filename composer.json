@@ -1,6 +1,6 @@
 {
     "name": "codesaur/raptor",
-    "description": "An elegant object-oriented application development framework for PHP 7.1 or newer",
+    "description": "An elegant object-oriented application development framework for PHP 7.2 or newer",
     "keywords": ["codesaur","mongol","mongolia","mongolian","ololt","framework","narankhuu","coden","php framework","php","кодзавр","монгол","ололт","мөнхийн","мөнхийн-ололт","мөнхийн ололт","наранхүү","коден","munkhiin ololt","ерөнхий бүтэц","фреймворк","raptor","velociraptor","indoraptor","swift seizer","mongoliensis","content management system","агуулга удирдах систем","cms"],
     "homepage": "https://ololt.mn/codesaur",
     "authors": [
@@ -11,31 +11,31 @@
         }
     ],
     "require": {
-        "codesaur/erketu": "^8.2.4",
+        "codesaur/erketu": "^8.2.5",
         "firebase/php-jwt": "^5.2.0",
         "phpmailer/phpmailer": "^6.0"
     },
     "autoload": {
         "psr-4": {
-            "Indoraptor\\": ["indoraptor", "indoraptor/common"],
-            "Indoraptor\\Account\\": "indoraptor/account",
-            "Indoraptor\\Content\\": "indoraptor/content",
-            "Indoraptor\\File\\": "indoraptor/file",
-            "Indoraptor\\Helper\\": "indoraptor/helper",
-            "Indoraptor\\Localization\\": "indoraptor/localization",
-            "Indoraptor\\Logger\\": "indoraptor/logger",
-            "Indoraptor\\RBAC\\": "indoraptor/rbac",
-            "Velociraptor\\": ["velociraptor", "velociraptor/common"],
-            "Velociraptor\\Account\\": "velociraptor/account",
-            "Velociraptor\\Content\\": "velociraptor/content",
-            "Velociraptor\\File\\": "velociraptor/file",
-            "Velociraptor\\Helper\\": "velociraptor/helper",
-            "Velociraptor\\Localization\\": "velociraptor/localization",
-            "Velociraptor\\Log\\": "velociraptor/log",
-            "Velociraptor\\Organization\\": "velociraptor/organization",
-            "Velociraptor\\RBAC\\": "velociraptor/rbac",
-            "Velociraptor\\Report\\": "velociraptor/report",
-            "Velociraptor\\Boot4\\": "velociraptor/boot4"
+            "Indoraptor\\": "src/indoraptor",
+            "Indoraptor\\Account\\": "src/indoraptor/account",
+            "Indoraptor\\Content\\": "src/indoraptor/content",
+            "Indoraptor\\File\\": "src/indoraptor/file",
+            "Indoraptor\\Helper\\": "src/indoraptor/helper",
+            "Indoraptor\\Localization\\": "src/indoraptor/localization",
+            "Indoraptor\\Logger\\": "src/indoraptor/logger",
+            "Indoraptor\\RBAC\\": "src/indoraptor/rbac",
+            "Velociraptor\\": "src/velociraptor",
+            "Velociraptor\\Account\\": "src/velociraptor/account",
+            "Velociraptor\\Content\\": "src/velociraptor/content",
+            "Velociraptor\\File\\": "src/velociraptor/file",
+            "Velociraptor\\Helper\\": "src/velociraptor/helper",
+            "Velociraptor\\Localization\\": "src/velociraptor/localization",
+            "Velociraptor\\Log\\": "src/velociraptor/log",
+            "Velociraptor\\Organization\\": "src/velociraptor/organization",
+            "Velociraptor\\RBAC\\": "src/velociraptor/rbac",
+            "Velociraptor\\Report\\": "src/velociraptor/report",
+            "Velociraptor\\Boot4\\": "src/velociraptor/boot4"
         }
     },
     "license": "MIT",
