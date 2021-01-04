@@ -310,7 +310,7 @@ class AccountController extends DashboardController
     {
         if (single::request()->getMethod() == 'GET') {
             if ( ! single::user()->can('system_account_organization_set')) {
-                return $this->getTemplate()->alertErrorPermission();
+                return $this->getTemplate()->alertErrorPermission(null, 'flaticon-security', true,  true);
             }
             
             $sql =  'SELECT ou.organization_id ' .
@@ -551,8 +551,8 @@ class AccountController extends DashboardController
     public function orgIndex(Template $template)
     {
         $alias = single::user()->organization('alias');
-        if ( ! single::user()->can($alias . '_account_index')
-                || single::user()->is('system_coder')) {
+        if (( ! single::user()->can($alias . '_account_index')
+                || single::user()->can('system_account_index')) || single::user()->is('system_coder')) {
             return false;
         }
         
