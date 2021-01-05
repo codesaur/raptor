@@ -137,7 +137,7 @@ class LoginController extends DashboardController
                 'bind' => array(':account_id' => array('variable' => $account_id), ':id' => array('variable' => $id)))
             );
             
-            if (single::user()->is('system_coder')
+            if (single::user()->can('system_org_index')
                     || (isset($organizations_result['data'])
                     && (\reset($organizations_result['data'])['id'] ?? null) == $id)) {
                 $jwt_info = array(
