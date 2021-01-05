@@ -551,8 +551,8 @@ class AccountController extends DashboardController
     public function orgIndex(Template $template)
     {
         $alias = single::user()->organization('alias');
-        if (( ! single::user()->can($alias . '_account_index')
-                || single::user()->can('system_account_index')) || single::user()->is('system_coder')) {
+        if (single::user()->can('system_account_index')
+                || ! single::user()->can($alias . '_account_index')) {
             return false;
         }
         
